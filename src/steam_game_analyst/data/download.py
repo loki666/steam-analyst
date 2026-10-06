@@ -5,7 +5,7 @@ Sources
 catalog : FronkonGames/steam-games-dataset on Hugging Face (MIT)         -> data/raw/catalog/
 reviews : Mendeley Data jxy85cr3th v2 (31M reviews, 2020-2024)          -> data/raw/reviews/
 news    : Steam Web API ISteamNews/GetNewsForApp for the subset appids  -> data/raw/news/<appid>.json
-wiki    : nyuuzyou/fandom on Hugging Face, filtered to subset wikis     -> data/raw/wiki/<wiki>.jsonl
+wiki    : see data/wiki.py (Fandom MediaWiki API per game)
 """
 
 from __future__ import annotations
@@ -156,40 +156,4 @@ def download_news(
             else:
                 dest.write_text(r.text)
             time.sleep(delay)
-    return out_dir
-
-
-# ----------------------------------------------------------------------------- wiki
-def download_wiki(
-    raw_dir: Path, hf_repo: str, wikis: Iterable[str], max_pages_per_wiki: int = 400
-) -> Path:
-    """Stream nyuuzyou/fandom and keep pages from the given wiki domains.
-
-    The dataset is sharded parquet; we read shard by shard with pyarrow over HTTP range
-    requests (via `datasets` streaming) to avoid downloading all 6 GB.
-    """
-    from datasets import load_dataset  # optional dependency (ml extra)
-
-    out_dir = raw_dir / "wiki"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    wanted = set(wikis)
-    done = {p.stem for p in out_dir.glob("*.jsonl")}
-    wanted -= done
-    if not wanted:
-        console.print("[dim]wiki: nothing to do[/]")
-        return out_dir
-    counts: dict[str, int] = {w: 0 for w in wanted}
-    handles = {w: open(out_dir / f"{w}.jsonl", "a", encoding="utf-8") for w in wanted}
-    try:
-        ds = load_dataset(hf_repo, split="train", streaming=True)
-        for row in tqdm(ds, desc="fandom stream"):
-            wiki = (row.get("metadata") or {}).get("wiki") or row.get("wiki") or ""
-            if wiki in wanted and counts[wiki] < max_pages_per_wiki:
-                handles[wiki].write(json.dumps(row, ensure_ascii=False) + "\n")
-                counts[wiki] += 1
-                if all(c >= max_pages_per_wiki for c in counts.values()):
-                    break
-    finally:
-        for h in handles.values():
-            h.close()
     return out_dir

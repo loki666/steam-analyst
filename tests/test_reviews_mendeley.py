@@ -44,3 +44,26 @@ def test_mendeley_author_name_is_not_kept(tmp_path):
     assert "user" not in df.columns
     flat = df.select(pl.concat_str(pl.all().cast(pl.Utf8), separator="|")).to_series()
     assert not flat.str.contains("Alice|Bob").any()
+
+
+def test_mendeley_reviews_have_no_language_until_detected(tmp_path):
+    df = _build(tmp_path)
+    assert df["language"].null_count() == df.height
+
+    filled = transform.fill_languages(df)
+    assert filled["language"].to_list() == ["english", "english"]
+
+
+def test_sample_reviews_without_language_filter_keeps_all_languages():
+    from steam_game_analyst.data import subset
+
+    df = pl.DataFrame(
+        {
+            "appid": [1, 1, 1],
+            "language": ["english", "chinese", None],
+            "voted_up": [True, False, True],
+            "created_at": [datetime(2024, 1, 1)] * 3,
+        }
+    )
+    assert subset.sample_reviews(df, per_game=10, languages=[]).height == 3
+    assert subset.sample_reviews(df, per_game=10, languages=["english"]).height == 1

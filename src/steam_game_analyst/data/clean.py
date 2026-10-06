@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import re
+from collections.abc import Sequence
 from datetime import date, datetime
+from functools import lru_cache
 
 from bs4 import BeautifulSoup
 
@@ -148,3 +150,30 @@ def is_patch_note(title: str | None, tags: list[str] | None = None) -> bool:
     if tags and any(t.lower() in {"patchnotes", "patch_notes", "patch notes"} for t in tags):
         return True
     return bool(title and PATCH_WORDS.search(title))
+
+
+# ----------------------------------------------------------------------------- language
+MIN_LETTERS_FOR_LANGUAGE = 8  # "gg", "10/10": too short to tell
+
+
+@lru_cache(maxsize=1)
+def _language_detector():  # type: ignore[no-untyped-def]
+    from lingua import LanguageDetectorBuilder
+
+    return LanguageDetectorBuilder.from_all_languages().with_preloaded_language_models().build()
+
+
+def detect_languages(texts: Sequence[str | None]) -> list[str]:
+    """Lower-case language names ("english", "chinese", ...) via lingua; "unknown" when the
+    text is too short or undecided. Runs in parallel (~100k short texts/s)."""
+    out = ["unknown"] * len(texts)
+    idx = [
+        i
+        for i, t in enumerate(texts)
+        if t and sum(ch.isalpha() for ch in t) >= MIN_LETTERS_FOR_LANGUAGE
+    ]
+    found = _language_detector().detect_languages_in_parallel_of([texts[i] for i in idx])
+    for i, lang in zip(idx, found, strict=True):
+        if lang is not None:
+            out[i] = lang.name.lower()
+    return out

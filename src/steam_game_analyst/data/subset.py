@@ -15,7 +15,7 @@ def select_games(
     Rules, in order:
       1. `must_include` appids are always in (if present in the catalog).
       2. Candidates: released within [release_from, release_to], with at least
-         `min_english_reviews` reviews available (from `review_counts`: appid, n_reviews),
+         `min_reviews` reviews available (any language) (from `review_counts`: appid, n_reviews),
          at least one genre and none of `exclude_genres` (non-game software).
       3. Spread across genres: at most `genre_quota` games per primary genre (first genre),
          filling by descending review count so popular games come first within each genre.
@@ -28,7 +28,7 @@ def select_games(
                 pl.lit(cfg.release_from).str.to_date(), pl.lit(cfg.release_to).str.to_date()
             )
         )
-        .filter(pl.col("n_reviews") >= cfg.min_english_reviews)
+        .filter(pl.col("n_reviews") >= cfg.min_reviews)
         .filter(pl.col("genres").list.len().fill_null(0) > 0)
         .filter(~pl.col("genres").list.eval(pl.element().is_in(cfg.exclude_genres)).list.any())
         .with_columns(pl.col("genres").list.first().fill_null("Unknown").alias("primary_genre"))
@@ -59,7 +59,11 @@ def sample_reviews(
 ) -> pl.DataFrame:
     """Stratified cap per game: split the quota between positive and negative reviews, and
     within each spread across years, so the sample keeps the time dimension for trend questions."""
-    df = reviews.filter(pl.col("language").is_in([lang.lower() for lang in languages]))
+    df = (
+        reviews.filter(pl.col("language").is_in([lang.lower() for lang in languages]))
+        if languages
+        else reviews
+    )
     df = df.with_columns(
         pl.col("created_at").dt.year().fill_null(0).alias("_year"),
         pl.col("voted_up").fill_null(True).alias("_up"),

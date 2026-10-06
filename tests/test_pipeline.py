@@ -62,7 +62,7 @@ def test_select_games_respects_window_and_must_include(raw_dataset):
         {"appid": [1245620, 1091500, 892970, 1145360, 999001], "n_reviews": [120] * 5}
     )
     cfg = load_pipeline_config().subset
-    cfg.n_games, cfg.min_english_reviews, cfg.must_include = 3, 100, [999001]
+    cfg.n_games, cfg.min_reviews, cfg.must_include = 3, 100, [999001]
     chosen = subset.select_games(games, counts, cfg)
     assert chosen.height == 3
     assert 999001 in chosen["appid"].to_list()  # must_include wins even if less popular

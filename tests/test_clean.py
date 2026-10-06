@@ -76,3 +76,17 @@ def test_split_companies_keeps_corporate_suffixes_together():
     assert clean.split_companies("2202GAMES,LLC") == ["2202GAMES, LLC"]
     assert clean.split_companies(None) == []
     assert clean.split_companies(["Larian Studios"]) == ["Larian Studios"]
+
+
+def test_detect_languages_labels_and_short_texts():
+    out = clean.detect_languages(
+        [
+            "Great game, love the combat and the music!",
+            "bug是真的多 能不能修复一下骷髅头武器丢到地图外面",
+            "Не понимаю откуда такое количество положительных отзывов",
+            "gg",
+            "10/10",
+            None,
+        ]
+    )
+    assert out == ["english", "chinese", "russian", "unknown", "unknown", "unknown"]

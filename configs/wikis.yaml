@@ -1,0 +1,21 @@
+# Fandom wiki overrides for `sga data download-wiki`: appid -> wiki slug (<slug>.fandom.com),
+# or null when the guessed wiki is wrong and the game should have none.
+# Guesses are validated against the wiki's site name, which still lets through wikis that
+# share a generic word with the game; those are pinned to null here (checked 2026-10-06 by
+# sampling page titles).
+
+# guessed wiki is about something else
+2923300: null   # Banana -> banana.fandom.com is a meme wiki
+949230: null    # Cities: Skylines II -> cities.fandom.com covers real-world cities
+1288310: null   # Firework -> firework.fandom.com covers real fireworks
+1274140: null   # One Dreamer: Prologue -> prologue.fandom.com is "Prologue: Go Wayback!"
+1382910: null   # Hell Architect: Prologue -> same
+1934680: null   # Age of Mythology: Retold -> retold.fandom.com is an unrelated story wiki
+1259980: null   # RIDE 4 -> ride.fandom.com is a TV series
+1650010: null   # RIDE 5 -> same
+529340: null    # Victoria 3 -> victoria.fandom.com is the TV series
+1054490: null   # Wingspan -> wingspan.fandom.com is an unrelated story wiki
+
+# film/franchise wikis with little about the game itself
+1202130: null   # Starship Troopers: Terran Command
+1839950: null   # Terminator: Dark Fate - Defiance

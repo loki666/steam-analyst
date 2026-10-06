@@ -12,7 +12,12 @@ import polars as pl
 
 from steam_game_analyst.config import CleaningConfig
 from steam_game_analyst.data import clean
-from steam_game_analyst.data.schemas import GAMES_SCHEMA, NEWS_SCHEMA, REVIEWS_SCHEMA
+from steam_game_analyst.data.schemas import (
+    GAMES_SCHEMA,
+    NEWS_SCHEMA,
+    REVIEWS_SCHEMA,
+    WIKI_SCHEMA,
+)
 
 # ----------------------------------------------------------------------------- helpers
 _CATALOG_ALIASES: dict[str, list[str]] = {
@@ -314,7 +319,8 @@ def build_reviews(raw: pl.DataFrame, cfg: CleaningConfig) -> pl.DataFrame:
 
     df = raw.select(
         col("appid").cast(pl.Int64, strict=False).alias("appid"),
-        col("language", "english").cast(pl.Utf8).str.to_lowercase().alias("language"),
+        # Mendeley has no language column: left null here, detected after sampling
+        col("language", None).cast(pl.Utf8).str.to_lowercase().alias("language"),
         col("review_text").cast(pl.Utf8).alias("review_text"),
         _to_bool(col("voted_up")).alias("voted_up"),
         col("votes_up", 0).cast(pl.Int64, strict=False).alias("votes_up"),
@@ -354,6 +360,19 @@ def build_reviews(raw: pl.DataFrame, cfg: CleaningConfig) -> pl.DataFrame:
         )
     )
     return df.select(list(REVIEWS_SCHEMA.keys())).cast(REVIEWS_SCHEMA, strict=False)  # type: ignore[arg-type]
+
+
+def fill_languages(reviews: pl.DataFrame) -> pl.DataFrame:
+    """Detect the language of reviews whose source did not provide one."""
+    missing = reviews["language"].is_null().arg_true().to_list()
+    if not missing:
+        return reviews
+    texts = reviews["review_text"].to_list()
+    detected = clean.detect_languages([texts[i] for i in missing])
+    langs = reviews["language"].to_list()
+    for i, lang in zip(missing, detected, strict=True):
+        langs[i] = lang
+    return reviews.with_columns(pl.Series("language", langs, dtype=pl.Utf8))
 
 
 # ----------------------------------------------------------------------------- news
@@ -398,3 +417,37 @@ def build_news(news_dir: Path, appids: Iterable[int] | None = None) -> pl.DataFr
         .alias("published_at")
     )
     return df.select(list(NEWS_SCHEMA.keys())).cast(NEWS_SCHEMA, strict=False)  # type: ignore[arg-type]
+
+
+# ----------------------------------------------------------------------------- wiki
+def build_wiki(wiki_dir: Path, appids: Iterable[int]) -> pl.DataFrame:
+    """data/raw/wiki/<slug>.jsonl -> one row per page section, for wikis of the given games."""
+    subset_ids = set(appids)
+    map_file = wiki_dir / "wiki_map.json"
+    mapping = json.loads(map_file.read_text()) if map_file.exists() else []
+    rows: list[dict] = []
+    for entry in mapping:
+        ids = sorted(a for a in entry["appids"] if a in subset_ids)
+        page_file = wiki_dir / f"{entry['slug']}.jsonl"
+        if not ids or not page_file.exists():
+            continue
+        # split on "\n" only: splitlines() also breaks on U+2028 & co. inside JSON strings
+        for line in page_file.read_text(encoding="utf-8").split("\n"):
+            if not line.strip():
+                continue
+            page = json.loads(line)
+            for sec in page["sections"]:
+                rows.append(
+                    {
+                        "section_id": clean.stable_id(page["slug"], page["pageid"], sec["heading"]),
+                        "slug": page["slug"],
+                        "appids": ids,
+                        "pageid": page["pageid"],
+                        "title": page["title"],
+                        "heading": sec["heading"],
+                        "url": page["url"],
+                        "text": sec["text"],
+                        "n_chars": len(sec["text"]),
+                    }
+                )
+    return pl.DataFrame(rows, schema=WIKI_SCHEMA)  # type: ignore[arg-type]

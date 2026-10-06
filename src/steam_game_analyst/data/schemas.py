@@ -68,11 +68,13 @@ NEWS_SCHEMA: dict[str, pl.DataType] = {
 }
 
 WIKI_SCHEMA: dict[str, pl.DataType] = {
-    "page_id": pl.Utf8,
-    "appid": pl.Int64,
-    "wiki": pl.Utf8,  # e.g. "eldenring.fandom.com"
+    "section_id": pl.Utf8,  # stable hash of (slug, pageid, heading)
+    "slug": pl.Utf8,  # <slug>.fandom.com
+    "appids": pl.List(pl.Int64),  # subset games sharing this wiki (Hades + Hades II)
+    "pageid": pl.Int64,
     "title": pl.Utf8,
-    "text": pl.Utf8,  # wikitext cleaned to plain text with "## section" markers
-    "categories": pl.List(pl.Utf8),
+    "heading": pl.Utf8,  # "Recipe > Upgrades"; "" for the lead
+    "url": pl.Utf8,
+    "text": pl.Utf8,  # plain text, templates rendered
     "n_chars": pl.Int32,
 }

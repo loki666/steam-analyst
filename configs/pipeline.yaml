@@ -17,21 +17,26 @@ sources:
     feeds: "steam_community_announcements"   # patch notes / announcements only; empty = all feeds
     rate_limit_per_sec: 2
   wiki:
-    # nyuuzyou/fandom on HF (CC BY-SA 3.0): streamed and filtered to wikis of games in the subset.
-    hf_repo: nyuuzyou/fandom
-    max_pages_per_game: 400
+    # Fandom wikis (CC BY-SA 3.0) via each wiki's MediaWiki API. The nyuuzyou/fandom HF dump
+    # has no per-page wiki id, so it cannot be filtered to our games.
+    max_pages_per_wiki: 300      # largest main-namespace articles
+    min_page_bytes: 1500         # skip stubs
+    rate_per_sec: 2
+    overrides_file: wikis.yaml   # configs/wikis.yaml: appid -> slug (or null to skip)
 
 subset:
   n_games: 300                   # SGA_SUBSET_GAMES
-  reviews_per_game: 500          # SGA_REVIEWS_PER_GAME; stratified by (voted_up, year)
-  min_english_reviews: 500
+  reviews_per_game: 1500         # SGA_REVIEWS_PER_GAME; stratified by (voted_up, year)
+  min_reviews: 500               # reviews available in any language
   release_from: "2020-01-01"
   release_to: "2024-12-31"
-  languages: ["english"]
+  # Mendeley has no language column: every sampled review is language-tagged with lingua.
+  # Empty keeps all languages (bge-m3 is multilingual); e.g. ["english"] filters before sampling.
+  languages: []
   # Spread the subset across genres so it is not 300 shooters.
   genre_quota: 40                # max games per primary genre
   # Always include these appids (live-service / early-access titles with rich patch histories).
-  must_include: [1245620, 1091500, 892970, 1623730, 1145360, 2379780, 1086940, 1174180, 1938090, 2358720]
+  must_include: [1245620, 1091500, 892970, 1623730, 1145360, 1145350, 2379780, 1086940, 1174180, 1938090, 2358720]
   # Non-game software genres. Apps with any of these, or with no genre at all, are skipped
   # (must_include still wins).
   exclude_genres:

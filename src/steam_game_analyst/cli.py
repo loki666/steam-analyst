@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from typing import Annotated
 
 import typer
 from rich.console import Console
@@ -63,10 +64,41 @@ def download_news() -> None:
     dl(s.raw_dir, appids, s.steam_api_key, cfg.news)
 
 
+@data_app.command("download-wiki")
+def download_wiki() -> None:
+    """Fandom wiki pages for the subset games (requires games.parquet)."""
+    import httpx
+    import polars as pl
+    import yaml
+
+    from steam_game_analyst.data.wiki import FandomClient, download_wikis
+
+    s, cfg = get_settings(), load_pipeline_config()
+    games_file = s.processed_dir / "games.parquet"
+    if not games_file.exists():
+        raise typer.BadParameter("games.parquet missing; run `sga data build` first")
+    games = pl.read_parquet(games_file, columns=["appid", "name"]).rows()
+    wcfg = cfg.wiki
+    overrides_path = s.configs_dir / wcfg.overrides_file
+    overrides = (
+        (yaml.safe_load(overrides_path.read_text()) or {}) if overrides_path.exists() else {}
+    )
+    with httpx.Client(timeout=30, headers={"User-Agent": s.http_user_agent}) as client:
+        fc = FandomClient(client, rate_per_sec=wcfg.rate_per_sec)
+        download_wikis(
+            s.raw_dir,
+            games,
+            fc,
+            max_pages=wcfg.max_pages_per_wiki,
+            min_length=wcfg.min_page_bytes,
+            overrides={int(k): v for k, v in overrides.items()},
+        )
+
+
 @data_app.command("build")
 def build(
     step: str = typer.Argument(
-        "all", help="all | games | counts | subset | reviews | news | duckdb"
+        "all", help="all | games | counts | subset | reviews | news | wiki | duckdb"
     ),
 ) -> None:
     """Raw -> processed Parquet -> DuckDB."""
@@ -79,6 +111,7 @@ def build(
         "subset": lambda: b.step_games_subset(s, cfg),
         "reviews": lambda: b.step_reviews(s, cfg),
         "news": lambda: b.step_news(s),
+        "wiki": lambda: b.step_wiki(s),
         "duckdb": lambda: b.step_duckdb(s),
         "all": lambda: b.build_all(s, cfg),
     }
@@ -88,7 +121,10 @@ def build(
 
 
 @data_app.command("all")
-def data_all(skip_news: bool = typer.Option(False, help="Skip the Steam news download")) -> None:
+def data_all(
+    skip_news: bool = typer.Option(False, help="Skip the Steam news download"),
+    skip_wiki: bool = typer.Option(False, help="Skip the Fandom wiki download"),
+) -> None:
     """Download everything and build all tables (the `make data` target)."""
     from steam_game_analyst.data import build as b
 
@@ -100,8 +136,11 @@ def data_all(skip_news: bool = typer.Option(False, help="Skip the Steam news dow
     b.step_games_subset(s, cfg)
     if not skip_news:
         download_news()
+    if not skip_wiki:
+        download_wiki()
     b.step_reviews(s, cfg)
     b.step_news(s)
+    b.step_wiki(s)
     b.step_duckdb(s)
 
 
@@ -122,11 +161,148 @@ def stats() -> None:
     con.close()
 
 
-# ----------------------------------------------------------------------------- stubs
+# ----------------------------------------------------------------------------- index / ask
+def _store():
+    from qdrant_client import QdrantClient
+
+    from steam_game_analyst.retrieval.store import ChunkStore
+
+    s = get_settings()
+    return ChunkStore(QdrantClient(url=s.qdrant_url, timeout=60), s.qdrant_collection)
+
+
+def _embedder(device: str):
+    from steam_game_analyst.retrieval.embed import SentenceEmbedder
+
+    s = get_settings()
+    return SentenceEmbedder(s.embed_model, device=device, cache_dir=str(s.models_dir / "hf"))
+
+
 @index_app.command("build")
-def index_build() -> None:
-    """W2: not implemented yet."""
-    console.print("[yellow]index build: coming in W2[/]")
+def index_build(
+    source: Annotated[
+        list[str] | None,
+        typer.Option("--source", "-s", help="review | news | wiki (repeatable; default all)"),
+    ] = None,
+    recreate: bool = typer.Option(False, help="Drop and rebuild the Qdrant collection"),
+    device: str = typer.Option(None, help="Embedding device (default: SGA_INDEX_EMBED_DEVICE)"),
+) -> None:
+    """Chunk the processed tables, embed them and load them into Qdrant."""
+    from steam_game_analyst.retrieval.index import build_index
+
+    s = get_settings()
+    counts = build_index(
+        s.processed_dir,
+        _store(),
+        _embedder(device or s.index_embed_device),
+        sources=tuple(source or ("review", "news", "wiki")),
+        recreate=recreate,
+    )
+    console.print(counts)
+
+
+@app.command("ask")
+def ask(
+    question: str = typer.Argument(..., help="Question about the games in the subset"),
+    k: int = typer.Option(8, help="Chunks to retrieve"),
+    model: str = typer.Option(None, help="Ollama model (default: SGA_LLM_MODEL, the 14B)"),
+    game: Annotated[
+        list[str] | None, typer.Option(help="Restrict to a game name (repeatable)")
+    ] = None,
+    doc_type: Annotated[
+        list[str] | None, typer.Option(help="review | patch_note | news | wiki (repeatable)")
+    ] = None,
+    min_hours: int = typer.Option(None, help="Reviews from players with at least N hours"),
+    language: str = typer.Option(None, help="Reviews in one language, e.g. english, chinese"),
+    no_llm: bool = typer.Option(False, "--no-llm", help="Only show the retrieved sources"),
+) -> None:
+    """Baseline RAG: retrieve with metadata filters and answer with cited sources."""
+    import polars as pl
+
+    from steam_game_analyst.retrieval import rag
+    from steam_game_analyst.retrieval.filters import SearchFilters
+    from steam_game_analyst.retrieval.query import GameIndex
+
+    s = get_settings()
+    games = GameIndex.from_frame(pl.read_parquet(s.processed_dir / "games.parquet"))
+    game, doc_type = game or [], doc_type or []
+    appids = tuple(a for g in game for a, _ in games.find(g, strict=False))
+    if game and not appids:
+        raise typer.BadParameter(f"no game in the subset matches {game}")
+    overrides = SearchFilters(
+        appids=appids,
+        doc_types=tuple(doc_type),
+        min_playtime_min=min_hours * 60 if min_hours is not None else None,
+        language=language.lower() if language else None,
+    )
+    retriever = rag.Retriever(_store(), _embedder(s.query_embed_device), games)
+    if no_llm:
+        r = retriever.retrieve(question, k=k, overrides=overrides)
+        _print_retrieval(r)
+        _print_sources(r.hits)
+        return
+    llm = rag.OllamaChat(s.ollama_host, model or s.llm_model)
+    try:
+        ans = rag.answer(question, retriever, llm, k=k, overrides=overrides)
+    except RuntimeError as e:
+        console.print(f"[red]{e}[/]")
+        raise typer.Exit(1) from e
+    if ans.retrieval:
+        _print_retrieval(ans.retrieval)
+    console.print(f"\n{ans.text}\n")
+    _print_sources(ans.sources, cited=set(ans.cited))
+
+
+def _print_retrieval(r) -> None:
+    games = ", ".join(n for _, n in r.parsed.games) or "none"
+    f = {k: v for k, v in r.filters.__dict__.items() if v not in (None, ())}
+    note = f"  [yellow](relaxed: {', '.join(r.relaxed)})[/]" if r.relaxed else ""
+    console.print(f"[dim]games: {games} · filters: {f}[/]{note}")
+
+
+def _print_sources(hits, cited: set[int] | None = None) -> None:
+    from steam_game_analyst.retrieval.rag import describe
+
+    for i, h in enumerate(hits, start=1):
+        mark = "" if cited is None or i in cited else "[dim]"
+        url = h.payload.get("url") or ""
+        text = " ".join(h.payload.get("text", "").split())[:160]
+        console.print(f"{mark}[{i}] {describe(h)} ({h.score:.2f}) {url}\n    {text}")
+
+
+# ----------------------------------------------------------------------------- stubs
+
+
+@eval_app.command("synth")
+def eval_synth(
+    per_type: int = typer.Option(
+        25, help="Questions per doc type (review, patch_note, news, wiki)"
+    ),
+    model: str = typer.Option(None, help="Ollama model (default: SGA_LLM_DEV_MODEL)"),
+    seed: int = typer.Option(13),
+) -> None:
+    """Start the gold set: one LLM-written question per sampled chunk (hand-check before use)."""
+    import polars as pl
+
+    from steam_game_analyst.eval.synth import generate_questions, sample_chunks
+    from steam_game_analyst.retrieval.index import SOURCES
+    from steam_game_analyst.retrieval.rag import OllamaChat
+
+    s = get_settings()
+    games_df = pl.read_parquet(s.processed_dir / "games.parquet", columns=["appid", "name"])
+    names: dict[int, str] = dict(games_df.iter_rows())
+    chunks = []
+    for file, make_chunks in SOURCES.values():
+        if (s.processed_dir / file).exists():
+            chunks += make_chunks(pl.read_parquet(s.processed_dir / file), names)
+    picked = sample_chunks(chunks, per_type=per_type, seed=seed)
+    llm_model = model or s.llm_dev_model
+    llm = OllamaChat(s.ollama_host, llm_model, options={"temperature": 0.7, "num_ctx": 4096})
+    items = generate_questions(picked, llm, model=llm_model)
+    out = s.data_dir / "eval" / "synthetic_questions.jsonl"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text("".join(json.dumps(i, ensure_ascii=False) + "\n" for i in items))
+    console.print(f"wrote {len(items)} questions -> {out}")
 
 
 @eval_app.command("all")

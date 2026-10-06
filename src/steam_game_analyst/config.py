@@ -37,6 +37,11 @@ class Settings(BaseSettings):
     llm_dev_model: str = "qwen2.5:7b-instruct-q4_K_M"
     embed_model: str = "BAAI/bge-m3"
     rerank_model: str = "BAAI/bge-reranker-base"
+    # The 3080 has 10 GB: bge-m3 (~1.2 GB fp16) and the 14B LLM (~9 GB) do not fit together,
+    # so bulk indexing uses the GPU and query-time embedding stays on the CPU.
+    index_embed_device: str = "cuda"
+    query_embed_device: str = "cpu"
+    qdrant_collection: str = "sga_chunks"
 
     subset_games: int | None = None
     reviews_per_game: int | None = None
@@ -45,6 +50,13 @@ class Settings(BaseSettings):
     steam_api_key: str | None = Field(default=None, validation_alias="STEAM_API_KEY")
     ollama_host: str = Field(default="http://localhost:11434", validation_alias="OLLAMA_HOST")
     qdrant_url: str = Field(default="http://localhost:6333", validation_alias="QDRANT_URL")
+    # Optional contact appended to the User-Agent for public APIs (Fandom asks for one).
+    http_contact: str | None = None
+
+    @property
+    def http_user_agent(self) -> str:
+        contact = f"; {self.http_contact}" if self.http_contact else ""
+        return f"steam-game-analyst/0.1 (research project{contact})"
 
     @property
     def raw_dir(self) -> Path:
@@ -62,10 +74,10 @@ class Settings(BaseSettings):
 class SubsetConfig(BaseModel):
     n_games: int = 300
     reviews_per_game: int = 500
-    min_english_reviews: int = 500
+    min_reviews: int = 500  # any language
     release_from: str = "2020-01-01"
     release_to: str = "2024-12-31"
-    languages: list[str] = ["english"]
+    languages: list[str] = []  # empty = keep every language (each review is tagged)
     genre_quota: int = 40
     must_include: list[int] = []
     # Steam lists software under genres too; any of these disqualifies an app.
@@ -86,6 +98,13 @@ class NewsConfig(BaseModel):
     rate_limit_per_sec: float = 2.0
 
 
+class WikiConfig(BaseModel):
+    max_pages_per_wiki: int = 300
+    min_page_bytes: int = 1500  # skip stubs
+    rate_per_sec: float = 2.0
+    overrides_file: str = "wikis.yaml"  # in configs/: appid -> slug, or null to skip
+
+
 class PipelineConfig(BaseModel):
     sources: dict[str, Any] = {}
     subset: SubsetConfig = SubsetConfig()
@@ -94,6 +113,10 @@ class PipelineConfig(BaseModel):
     @property
     def news(self) -> NewsConfig:
         return NewsConfig(**self.sources.get("news", {}))
+
+    @property
+    def wiki(self) -> WikiConfig:
+        return WikiConfig(**self.sources.get("wiki", {}))
 
 
 @lru_cache(maxsize=1)

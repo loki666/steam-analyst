@@ -6,7 +6,8 @@ Steps (each idempotent, each writes one artefact):
   3. games.parquet         the selected subset (+ n_reviews)
   4. reviews.parquet       cleaned, sampled reviews for the subset
   5. news.parquet          patch notes / announcements for the subset (needs raw/news)
-  6. sga.duckdb            views over the parquet files + a few derived tables
+  6. wiki.parquet          fandom wiki sections for the subset (needs raw/wiki)
+  7. sga.duckdb            views over the parquet files + a few derived tables
 """
 
 from __future__ import annotations
@@ -94,7 +95,11 @@ def step_reviews(settings: Settings, cfg: PipelineConfig) -> pl.DataFrame:
     for appid, path in zip(paths["appid"], paths["path"], strict=True):
         raw = transform.read_review_file(Path(path), appid=int(appid))
         df = transform.build_reviews(raw, cfg.cleaning)
-        df = subset.sample_reviews(df, cfg.subset.reviews_per_game, cfg.subset.languages)
+        langs = cfg.subset.languages
+        if langs:  # filtering by language: detect everything first
+            df = transform.fill_languages(df)
+        df = subset.sample_reviews(df, cfg.subset.reviews_per_game, langs)
+        df = transform.fill_languages(df)  # no-op when already detected
         frames.append(df)
     reviews = (
         pl.concat(frames, how="vertical_relaxed")
@@ -155,6 +160,18 @@ LEFT JOIN (SELECT appid, count(*) n_news, sum(CASE WHEN is_patch_note THEN 1 ELS
 """
 
 
+def step_wiki(settings: Settings) -> pl.DataFrame:
+    out = settings.processed_dir / "wiki.parquet"
+    appids = pl.read_parquet(settings.processed_dir / "games.parquet", columns=["appid"])
+    df = transform.build_wiki(settings.raw_dir / "wiki", appids["appid"].to_list())
+    df.write_parquet(out)
+    console.print(
+        f"wiki: {df.height:,} sections from {df['pageid'].n_unique() if df.height else 0} pages "
+        f"in {df['slug'].n_unique() if df.height else 0} wikis -> {out}"
+    )
+    return df
+
+
 def step_duckdb(settings: Settings) -> Path:
     db = settings.duckdb_path
     db.parent.mkdir(parents=True, exist_ok=True)
@@ -164,7 +181,13 @@ def step_duckdb(settings: Settings) -> Path:
     con = duckdb.connect(str(db))
     try:
         con.execute(DUCKDB_DDL.format(p=settings.processed_dir.as_posix()))
-        n = con.execute("SELECT count(*) FROM reviews").fetchone()[0]
+        if (settings.processed_dir / "wiki.parquet").exists():
+            con.execute(
+                "CREATE OR REPLACE VIEW wiki AS SELECT * FROM read_parquet("
+                f"'{settings.processed_dir.as_posix()}/wiki.parquet')"
+            )
+        row = con.execute("SELECT count(*) FROM reviews").fetchone()
+        n = row[0] if row else 0
     finally:
         con.close()
     console.print(f"duckdb: {db} ready ({n:,} reviews)")
@@ -177,4 +200,5 @@ def build_all(settings: Settings, cfg: PipelineConfig) -> None:
     step_games_subset(settings, cfg)
     step_reviews(settings, cfg)
     step_news(settings)
+    step_wiki(settings)
     step_duckdb(settings)
