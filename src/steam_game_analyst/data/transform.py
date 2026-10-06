@@ -212,10 +212,10 @@ def build_games(raw: pl.DataFrame) -> pl.DataFrame:
         .map_elements(clean.strip_html, return_dtype=pl.Utf8)
         .alias("about_the_game"),
         pl.col("_dev")
-        .map_elements(clean.split_list, return_dtype=pl.List(pl.Utf8))
+        .map_elements(clean.split_companies, return_dtype=pl.List(pl.Utf8))
         .alias("developers"),
         pl.col("_pub")
-        .map_elements(clean.split_list, return_dtype=pl.List(pl.Utf8))
+        .map_elements(clean.split_companies, return_dtype=pl.List(pl.Utf8))
         .alias("publishers"),
         pl.col("_genres")
         .map_elements(clean.split_list, return_dtype=pl.List(pl.Utf8))

@@ -101,6 +101,31 @@ def split_list(s: str | list[str] | None, sep: str = ",") -> list[str]:
     return [x.strip() for x in s.split(sep) if x.strip()]
 
 
+_COMPANY_SEP = re.compile(r",(?=\S)")
+_CORP_SUFFIX = re.compile(
+    r"^(inc|llc|ltd|limited|co|corp|gmbh|s\.?a|s\.?r\.?l|b\.?v|pty|plc|ab|oy|kk)\.?$",
+    re.IGNORECASE,
+)
+
+
+def split_companies(s: str | list[str] | None) -> list[str]:
+    """Developer/publisher field -> names. Companies are separated by a bare comma, while
+    ", " is part of a name ("FromSoftware, Inc.,Bandai Namco" -> 2 companies). A piece that
+    is only a corporate suffix ("Kairosoft Co.,Ltd") is re-attached to the name before it."""
+    if s is None or isinstance(s, list) or str(s).strip().startswith("["):
+        return split_list(s)
+    names: list[str] = []
+    for part in _COMPANY_SEP.split(str(s).strip().rstrip(",")):
+        part = part.strip()
+        if not part:
+            continue
+        if names and _CORP_SUFFIX.match(part):
+            names[-1] = f"{names[-1]}, {part}"
+        else:
+            names.append(part)
+    return names
+
+
 def tags_from_field(s: str | dict | None, top: int = 20) -> list[str]:
     """FronkonGames `tags` is either a JSON dict {tag: votes} or a comma list. Return names by votes."""
     if not s:

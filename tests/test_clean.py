@@ -54,3 +54,25 @@ def test_is_patch_note():
     assert clean.is_patch_note("Hotfix for crashes")
     assert clean.is_patch_note("Summer Sale!", ["patchnotes"])
     assert not clean.is_patch_note("Summer Sale!")
+
+
+def test_split_companies_keeps_corporate_suffixes_together():
+    # FronkonGames separates companies with a bare comma; ", " belongs to a name.
+    assert clean.split_companies("FromSoftware, Inc.,Bandai Namco Entertainment") == [
+        "FromSoftware, Inc.",
+        "Bandai Namco Entertainment",
+    ]
+    assert clean.split_companies("CAPCOM Co., Ltd.") == ["CAPCOM Co., Ltd."]
+    assert clean.split_companies("Treyarch,Raven Software") == ["Treyarch", "Raven Software"]
+    assert clean.split_companies("CyberStep, Inc.,Rideon Works Co. Ltd,") == [
+        "CyberStep, Inc.",
+        "Rideon Works Co. Ltd",
+    ]
+    # suffix written without the space is re-attached (and normalised)
+    assert clean.split_companies("Kairosoft Co.,Ltd,Chiptune,Inc.") == [
+        "Kairosoft Co., Ltd",
+        "Chiptune, Inc.",
+    ]
+    assert clean.split_companies("2202GAMES,LLC") == ["2202GAMES, LLC"]
+    assert clean.split_companies(None) == []
+    assert clean.split_companies(["Larian Studios"]) == ["Larian Studios"]
