@@ -3,7 +3,9 @@ versions, so each loader maps through an alias table and fails loudly on missing
 
 from __future__ import annotations
 
+import csv
 import json
+from collections.abc import Iterable
 from pathlib import Path
 
 import polars as pl
@@ -51,8 +53,8 @@ _REVIEW_ALIASES: dict[str, list[str]] = {
     "appid": ["appid", "app_id", "AppID", "game_id"],
     "language": ["language", "lang"],
     "review_text": ["review", "review_text", "text", "content"],
-    "voted_up": ["voted_up", "recommended", "voted up", "rating"],
-    "votes_up": ["votes_up", "helpful", "votes up"],
+    "voted_up": ["voted_up", "recommended", "voted up", "rating", "recommend"],
+    "votes_up": ["votes_up", "helpful", "votes up", "helpfulness"],
     "votes_funny": ["votes_funny", "funny"],
     "weighted_vote_score": ["weighted_vote_score"],
     "playtime_at_review_min": [
@@ -67,9 +69,19 @@ _REVIEW_ALIASES: dict[str, list[str]] = {
     ],
     "steam_purchase": ["steam_purchase"],
     "received_for_free": ["received_for_free"],
-    "written_during_early_access": ["written_during_early_access"],
-    "created_at": ["timestamp_created", "created", "date", "timestamp"],
+    "written_during_early_access": ["written_during_early_access", "early_access_review"],
+    "created_at": ["timestamp_created", "created", "date", "timestamp", "post_date"],
+    # Mendeley: hours on record when scraped (not at review time)
+    "playtime_hours": ["playtime"],
 }
+
+# Tried in order; format inference fails on a whole column, so formats are explicit.
+_REVIEW_DATE_FORMATS = (
+    "%B %d, %Y",  # Mendeley: "May 10, 2024"
+    "%Y-%m-%d %H:%M:%S",
+    "%Y-%m-%dT%H:%M:%S",
+    "%Y-%m-%d",
+)
 
 
 def _resolve(df: pl.DataFrame, aliases: dict[str, list[str]], required: set[str]) -> dict[str, str]:
@@ -91,7 +103,7 @@ def _to_bool(expr: pl.Expr) -> pl.Expr:
         pl.when(
             expr.cast(pl.Utf8)
             .str.to_lowercase()
-            .is_in(["true", "1", "yes", "recommended", "positive", "t"])
+            .is_in(["true", "1", "yes", "recommended", "positive", "t", "early access review"])
         )
         .then(True)
         .when(
@@ -113,6 +125,28 @@ def read_catalog_raw(path: Path) -> pl.DataFrame:
         data = json.loads(path.read_text(encoding="utf-8"))
         rows = [{"AppID": k, **v} for k, v in data.items()]
         return pl.DataFrame(rows, infer_schema_length=None)
+    with path.open(encoding="utf-8-sig", newline="") as fh:
+        reader = csv.reader(fh)
+        header = next(reader)
+        first_row = next(reader, None)
+    if "DiscountDLC count" in header:
+        # FronkonGames ships "Discount" and "DLC count" merged in the header; without this
+        # every column after Price is read one to the left (Genres holds Categories, ...).
+        i = header.index("DiscountDLC count")
+        fixed = [*header[:i], "Discount", "DLC count", *header[i + 1 :]]
+        if first_row is not None and len(first_row) != len(fixed):
+            raise ValueError(
+                f"{path}: repaired header has {len(fixed)} columns but rows have "
+                f"{len(first_row)}; the upstream CSV layout changed"
+            )
+        return pl.read_csv(
+            path,
+            has_header=False,
+            skip_rows=1,
+            new_columns=fixed,
+            infer_schema_length=10_000,
+            ignore_errors=True,
+        )
     return pl.read_csv(
         path, infer_schema_length=10_000, ignore_errors=True, truncate_ragged_lines=True
     )
@@ -251,12 +285,32 @@ def build_reviews(raw: pl.DataFrame, cfg: CleaningConfig) -> pl.DataFrame:
                     time_unit="s",
                 )
             )
-            .otherwise(created.cast(pl.Utf8).str.to_datetime(strict=False))
+            .otherwise(
+                pl.coalesce(
+                    created.cast(pl.Utf8).str.strptime(pl.Datetime("us"), fmt, strict=False)
+                    for fmt in _REVIEW_DATE_FORMATS
+                )
+            )
             .cast(pl.Datetime("us"))
         )
         if "created_at" in m
         else pl.lit(None, dtype=pl.Datetime("us"))
     )
+
+    if "playtime_forever_min" in m:
+        playtime_forever = col("playtime_forever_min").cast(pl.Int64, strict=False)
+    else:
+        hours = (
+            col("playtime_hours", None)
+            .cast(pl.Utf8)
+            .str.replace_all(",", "")
+            .cast(pl.Float64, strict=False)
+        )
+        playtime_forever = (hours * 60).round().cast(pl.Int64)
+    early_access = _to_bool(col("written_during_early_access", None))
+    if m.get("written_during_early_access") == "early_access_review":
+        # Mendeley marks early-access reviews with a label and leaves the rest empty
+        early_access = early_access.fill_null(False)
 
     df = raw.select(
         col("appid").cast(pl.Int64, strict=False).alias("appid"),
@@ -271,12 +325,10 @@ def build_reviews(raw: pl.DataFrame, cfg: CleaningConfig) -> pl.DataFrame:
         col("playtime_at_review_min", None)
         .cast(pl.Int64, strict=False)
         .alias("playtime_at_review_min"),
-        col("playtime_forever_min", None)
-        .cast(pl.Int64, strict=False)
-        .alias("playtime_forever_min"),
+        playtime_forever.alias("playtime_forever_min"),
         _to_bool(col("steam_purchase", None)).alias("steam_purchase"),
         _to_bool(col("received_for_free", None)).alias("received_for_free"),
-        _to_bool(col("written_during_early_access", None)).alias("written_during_early_access"),
+        early_access.alias("written_during_early_access"),
         created_expr.alias("created_at"),
     )
     if cfg.strip_html:
@@ -305,10 +357,14 @@ def build_reviews(raw: pl.DataFrame, cfg: CleaningConfig) -> pl.DataFrame:
 
 
 # ----------------------------------------------------------------------------- news
-def build_news(news_dir: Path) -> pl.DataFrame:
-    """All data/raw/news/<appid>.json -> canonical `news` table."""
+def build_news(news_dir: Path, appids: Iterable[int] | None = None) -> pl.DataFrame:
+    """data/raw/news/<appid>.json -> canonical `news` table, limited to `appids` if given
+    (the raw folder keeps files from earlier subsets)."""
+    keep = {str(a) for a in appids} if appids is not None else None
     rows: list[dict] = []
     for p in sorted(news_dir.glob("*.json")):
+        if keep is not None and p.stem not in keep:
+            continue
         try:
             payload = json.loads(p.read_text(encoding="utf-8"))
         except json.JSONDecodeError:

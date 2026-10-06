@@ -111,10 +111,9 @@ def step_reviews(settings: Settings, cfg: PipelineConfig) -> pl.DataFrame:
 def step_news(settings: Settings) -> pl.DataFrame:
     out = settings.processed_dir / "news.parquet"
     news_dir = settings.raw_dir / "news"
-    df = (
-        transform.build_news(news_dir)
-        if news_dir.exists()
-        else transform.build_news(Path("/nonexistent"))
+    appids = pl.read_parquet(settings.processed_dir / "games.parquet", columns=["appid"])
+    df = transform.build_news(
+        news_dir if news_dir.exists() else Path("/nonexistent"), appids["appid"].to_list()
     )
     df.write_parquet(out)
     console.print(

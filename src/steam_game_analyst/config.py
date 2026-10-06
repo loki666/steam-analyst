@@ -68,6 +68,8 @@ class SubsetConfig(BaseModel):
     languages: list[str] = ["english"]
     genre_quota: int = 40
     must_include: list[int] = []
+    # Steam lists software under genres too; any of these disqualifies an app.
+    exclude_genres: list[str] = []
 
 
 class CleaningConfig(BaseModel):

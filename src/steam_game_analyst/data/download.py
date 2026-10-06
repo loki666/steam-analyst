@@ -78,6 +78,15 @@ def download_catalog(raw_dir: Path, hf_repo: str, hf_file: str | None = None) ->
 
 
 # ----------------------------------------------------------------------------- reviews
+def mendeley_download_url(entry: dict) -> str:
+    """Download URL of one Mendeley file entry (public API is snake_case; older docs camelCase)."""
+    details = entry.get("content_details") or entry.get("contentDetails") or {}
+    url = details.get("download_url") or details.get("downloadUrl")
+    if not url:
+        raise ValueError(f"no download url for Mendeley file {entry.get('filename')!r}")
+    return url
+
+
 def download_reviews(
     raw_dir: Path, mendeley_id: str, version: int = 2, extract: bool = True
 ) -> Path:
@@ -91,7 +100,7 @@ def download_reviews(
             .json()
         )
         for f in meta:
-            url = f["contentDetails"]["downloadUrl"]
+            url = mendeley_download_url(f)
             name = f["filename"]
             dest = _stream_download(url, out_dir / name, client, desc=name)
             if extract and name.lower().endswith(".zip"):

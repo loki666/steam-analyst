@@ -14,8 +14,9 @@ def select_games(
 
     Rules, in order:
       1. `must_include` appids are always in (if present in the catalog).
-      2. Candidates: released within [release_from, release_to] and with at least
-         `min_english_reviews` reviews available (from `review_counts`: appid, n_reviews).
+      2. Candidates: released within [release_from, release_to], with at least
+         `min_english_reviews` reviews available (from `review_counts`: appid, n_reviews),
+         at least one genre and none of `exclude_genres` (non-game software).
       3. Spread across genres: at most `genre_quota` games per primary genre (first genre),
          filling by descending review count so popular games come first within each genre.
     Returns the selected rows of `games` with an added `n_reviews` column.
@@ -28,6 +29,8 @@ def select_games(
             )
         )
         .filter(pl.col("n_reviews") >= cfg.min_english_reviews)
+        .filter(pl.col("genres").list.len().fill_null(0) > 0)
+        .filter(~pl.col("genres").list.eval(pl.element().is_in(cfg.exclude_genres)).list.any())
         .with_columns(pl.col("genres").list.first().fill_null("Unknown").alias("primary_genre"))
         .sort("n_reviews", descending=True)
     )

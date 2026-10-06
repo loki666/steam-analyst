@@ -4,7 +4,8 @@
 #   docker compose run --rm pipeline data    # one-shot: download + build tables
 #   docker compose --profile trace up -d     # adds Langfuse tracing on :3000
 #
-# Requires: Docker Engine 24+, Compose v2, NVIDIA Container Toolkit for GPU passthrough.
+# Requires: Docker Engine 25+, Compose v2.30+, NVIDIA Container Toolkit with a CDI spec
+# (`sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml`) for GPU passthrough.
 
 x-app-image: &app-image
   build:
@@ -38,8 +39,8 @@ services:
       resources:
         reservations:
           devices:
-            - driver: nvidia
-              count: all
+            - driver: cdi
+              device_ids: ["nvidia.com/gpu=all"]
               capabilities: [gpu]
     healthcheck:
       test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
@@ -76,8 +77,8 @@ services:
       resources:
         reservations:
           devices:
-            - driver: nvidia
-              count: all
+            - driver: cdi
+              device_ids: ["nvidia.com/gpu=all"]
               capabilities: [gpu]
 
   # One-shot jobs: `docker compose run --rm pipeline <command>` (data | index | eval | shell)
@@ -93,8 +94,8 @@ services:
       resources:
         reservations:
           devices:
-            - driver: nvidia
-              count: all
+            - driver: cdi
+              device_ids: ["nvidia.com/gpu=all"]
               capabilities: [gpu]
 
   # Optional tracing (profile: trace)
