@@ -115,3 +115,14 @@ def test_review_volume_counts_the_cleaned_population_not_the_sample(settings):
     con.close()
     assert monthly[0] == cleaned.height
     assert monthly[1] <= 30 and monthly[2] == cleaned["voted_up"].sum()
+
+
+def test_sample_reviews_does_not_depend_on_input_row_order(raw_dataset):
+    p = raw_dataset / "reviews" / "1091500_120.csv"
+    reviews = transform.build_reviews(
+        transform.read_review_file(p, appid=1091500), load_pipeline_config().cleaning
+    )
+    a = subset.sample_reviews(reviews, per_game=30, languages=[])
+    b = subset.sample_reviews(reviews.reverse(), per_game=30, languages=[])
+    c = subset.sample_reviews(reviews.sample(fraction=1.0, shuffle=True, seed=7), 30, [])
+    assert sorted(a["review_id"]) == sorted(b["review_id"]) == sorted(c["review_id"])

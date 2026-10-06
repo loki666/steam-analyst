@@ -64,7 +64,10 @@ def sample_reviews(
         if languages
         else reviews
     )
-    df = df.with_columns(
+    # canonical row order first: the seeded shuffle ranks rows by position, and upstream
+    # dedup does not keep a stable order, so without this the sample changed between runs
+    keys = ["appid", "review_id"] if "review_id" in df.columns else df.columns
+    df = df.sort(keys).with_columns(
         pl.col("created_at").dt.year().fill_null(0).alias("_year"),
         pl.col("voted_up").fill_null(True).alias("_up"),
     )
