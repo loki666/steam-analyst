@@ -33,6 +33,9 @@ Runs on one Linux box with an NVIDIA GPU via Docker Compose. No paid API.
 Raw data is downloaded at build time and never committed. Author/Steam ids are dropped
 during cleaning; only derived artefacts (aggregates, embeddings, models) are published.
 
+Coverage, sampling choices, known gaps and privacy: [docs/DATA_CARD.md](docs/DATA_CARD.md).
+Exploratory analysis: [notebooks/01_eda.ipynb](notebooks/01_eda.ipynb).
+
 ## Quick start (host with Docker + NVIDIA Container Toolkit)
 
 ```bash

@@ -42,3 +42,16 @@ def test_read_catalog_raw_fails_loudly_when_repair_does_not_fit(tmp_path):
 
     with pytest.raises(ValueError, match="layout changed"):
         transform.read_catalog_raw(p)
+
+
+def test_games_without_votes_have_unknown_reception_not_zero(tmp_path):
+    p = tmp_path / "games.csv"
+    p.write_text(
+        "AppID,Name,Release date,Price,Positive,Negative\n"
+        '1,Voted,"Jan 1, 2022",9.99,90,10\n'
+        '2,No votes in snapshot,"Jan 1, 2022",0,0,0\n'
+    )
+    games = transform.build_games(transform.read_catalog_raw(p)).sort("appid")
+    assert games["positive_ratio"].to_list() == [0.9, None]
+    assert games["positive"].to_list() == [90, None]
+    assert games["negative"].to_list() == [10, None]

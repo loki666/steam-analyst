@@ -238,9 +238,17 @@ def build_games(raw: pl.DataFrame) -> pl.DataFrame:
         .then(pl.col("_meta"))
         .otherwise(None)
         .alias("metacritic_score"),
-        (pl.col("positive") / (pl.col("positive") + pl.col("negative")).clip(lower_bound=1)).alias(
-            "positive_ratio"
-        ),
+    )
+    # The catalog snapshot has no votes for some apps (positive = negative = 0, e.g. many
+    # free-to-play titles): that is "unknown", not "0% positive".
+    no_votes = (pl.col("positive").fill_null(0) + pl.col("negative").fill_null(0)) == 0
+    df = df.with_columns(
+        pl.when(no_votes).then(None).otherwise(pl.col("positive")).alias("positive"),
+        pl.when(no_votes).then(None).otherwise(pl.col("negative")).alias("negative"),
+        pl.when(no_votes)
+        .then(None)
+        .otherwise(pl.col("positive") / (pl.col("positive") + pl.col("negative")))
+        .alias("positive_ratio"),
     )
     df = df.drop([c for c in df.columns if c.startswith("_")])
     df = df.filter(pl.col("appid").is_not_null() & pl.col("name").is_not_null()).unique(
