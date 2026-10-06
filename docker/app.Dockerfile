@@ -12,23 +12,24 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PATH="/opt/venv/bin:/root/.local/bin:$PATH"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        python3.11 python3.11-venv python3.11-dev curl ca-certificates git build-essential \
+        curl ca-certificates git build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# uv for fast, reproducible installs
+# uv for fast, reproducible installs; it also fetches a managed Python 3.12
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /root/.local/bin/
+RUN uv python install 3.12
 
 WORKDIR /app
 
 # Install dependencies first (layer cache), then the project itself.
 COPY pyproject.toml uv.lock* ./
-RUN uv sync --frozen --no-install-project --all-extras --no-dev --python 3.11 || \
-    uv sync --no-install-project --all-extras --no-dev --python 3.11
+RUN uv sync --frozen --no-install-project --all-extras --no-dev --python 3.12 || \
+    uv sync --no-install-project --all-extras --no-dev --python 3.12
 
 COPY src ./src
 COPY configs ./configs
 COPY README.md ./
-RUN uv sync --all-extras --no-dev --python 3.11
+RUN uv sync --all-extras --no-dev --python 3.12
 
 EXPOSE 8501
 CMD ["sga", "--help"]
