@@ -1,8 +1,13 @@
 """Documents -> retrieval chunks, one strategy per document type.
 
 reviews     one chunk per review (long ones split), header "<game> review (recommended)"
-news        patch notes / announcements split on paragraphs, header "<game> patch notes: <title>"
-wiki        one chunk per page section (long ones split), header "<game> wiki: <page> > <section>"
+news        patch notes / announcements, header "<game> patch notes: <title>"
+wiki        one page section at a time, header "<game> wiki: <page> > <section>"
+
+Splitting follows the LLM Engineer's Handbook: structure first (paragraphs; wiki pages are
+already split into sections), then sentences, packed up to a token budget measured with the
+embedding model's own tokenizer; only a sentence longer than the budget is cut by tokens.
+Overlap is carried between pieces of one long paragraph, not across paragraph breaks.
 
 The header is embedded with the body (it anchors short texts to their game); the payload
 keeps the bare body plus every field retrieval can filter on. No author ids are ever stored.
@@ -12,16 +17,21 @@ from __future__ import annotations
 
 import re
 import uuid
-from collections.abc import Iterator, Mapping
+from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
 import polars as pl
 
-MAX_WORDS = 300  # ~400-450 bge-m3 tokens: well under its 512-token window
-MAX_CHARS = 1200  # CJK: ~1 token per character, so cap characters too
-OVERLAP_WORDS = 30
+TokenCounter = Callable[[str], int]
+
+# bge-m3 reads 512 tokens: body budget leaves room for the header and special tokens
+MAX_TOKENS = 448
+OVERLAP_TOKENS = 48
+_CJK_CHAR = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")
+# handbook sentence regex (keeps "e.g.", "Mr.") + CJK full stops, which need no space after
+_SENTENCE_END = re.compile(r"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=[.?!])\s+|(?<=[。！？])")
 _PROFILE_LINK = re.compile(
     r"https?://(?:www\.)?steamcommunity\.com/(?:id|profiles)/[^\s/]+/?", re.IGNORECASE
 )
@@ -35,60 +45,133 @@ class Chunk:
     payload: dict[str, Any]
 
 
-def _hard_split(text: str, max_chars: int, overlap_chars: int) -> list[str]:
-    step = max(max_chars - overlap_chars, 1)
-    return [text[i : i + max_chars] for i in range(0, len(text), step) if text[i : i + max_chars]]
+# ----------------------------------------------------------------------------- token counting
+def approx_token_count(text: str) -> int:
+    """Tokenizer-free estimate: one per word, one per CJK character."""
+    cjk = len(_CJK_CHAR.findall(text))
+    return cjk + len(_CJK_CHAR.sub(" ", text).split())
 
 
-def _split_long(para: str, max_words: int, max_chars: int, overlap: int) -> list[str]:
-    """Words windows with `overlap`; any window still over `max_chars` (CJK, no spaces) is
-    cut by characters."""
-    words = para.split()
+def hf_token_counter(model_name: str, cache_dir: str | None = None) -> TokenCounter:
+    """Exact token count with the embedding model's own (fast) tokenizer."""
+    from transformers import AutoTokenizer
+
+    tok = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir)
+    tok.model_max_length = 10**9  # counting only: silence the "longer than max length" warning
+
+    def count(text: str) -> int:
+        return len(tok(text, add_special_tokens=False)["input_ids"])
+
+    return count
+
+
+# ----------------------------------------------------------------------------- splitting
+@dataclass(frozen=True)
+class _Unit:
+    text: str
+    tokens: int
+    para: int  # paragraph index: overlap never crosses a paragraph break
+    whole_para: bool
+
+
+def split_sentences(text: str) -> list[str]:
+    return [s.strip() for s in _SENTENCE_END.split(text) if s and s.strip()]
+
+
+def _cut(sentence: str, max_tokens: int, overlap_tokens: int, count: TokenCounter) -> list[str]:
+    """Last resort for a sentence over budget: word windows, or character windows when there
+    are no spaces (CJK, URLs). A token never spans less than one character, so a window of
+    `max_tokens` characters always fits."""
+    words = sentence.split()
+    if len(words) <= 1:
+        step = max(max_tokens - min(overlap_tokens, max_tokens // 2), 1)
+        return [sentence[i : i + max_tokens] for i in range(0, len(sentence), step)]
     pieces: list[str] = []
-    step = max(max_words - overlap, 1)
-    for start in range(0, len(words), step):
-        pieces.append(" ".join(words[start : start + max_words]))
-        if start + max_words >= len(words):
-            break
-    out: list[str] = []
-    for piece in pieces:
-        out += [piece] if len(piece) <= max_chars else _hard_split(piece, max_chars, overlap * 4)
+    cur: list[str] = []
+    n = 0
+    for w in words:
+        wn = count(w)
+        if wn > max_tokens:  # one giant "word"
+            pieces += [" ".join(cur)] if cur else []
+            pieces += _cut(w, max_tokens, overlap_tokens, count)
+            cur, n = [], 0
+            continue
+        if cur and n + wn > max_tokens:
+            pieces.append(" ".join(cur))
+            keep: list[str] = []
+            kn = 0
+            for prev in reversed(cur):  # word-level overlap
+                pn = count(prev)
+                if kn + pn > overlap_tokens:
+                    break
+                keep.insert(0, prev)
+                kn += pn
+            cur, n = keep, kn
+        cur.append(w)
+        n += wn
+    if cur:
+        pieces.append(" ".join(cur))
+    return pieces
+
+
+def _units(text: str, max_tokens: int, overlap_tokens: int, count: TokenCounter) -> list[_Unit]:
+    units: list[_Unit] = []
+    paras = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+    for i, para in enumerate(paras):
+        n = count(para)
+        if n <= max_tokens:
+            units.append(_Unit(para, n, i, True))
+            continue
+        for sent in split_sentences(para):
+            sn = count(sent)
+            pieces = [sent] if sn <= max_tokens else _cut(sent, max_tokens, overlap_tokens, count)
+            units += [_Unit(p, sn if p is sent else count(p), i, False) for p in pieces]
+    return units
+
+
+def _join(units: list[_Unit]) -> str:
+    out = units[0].text
+    for prev, u in zip(units, units[1:], strict=False):
+        out += (" " if u.para == prev.para else "\n\n") + u.text
     return out
 
 
 def split_text(
     text: str,
-    max_words: int = MAX_WORDS,
-    overlap: int = OVERLAP_WORDS,
-    max_chars: int = MAX_CHARS,
+    max_tokens: int = MAX_TOKENS,
+    overlap_tokens: int = OVERLAP_TOKENS,
+    count: TokenCounter = approx_token_count,
 ) -> list[str]:
-    """Pack paragraphs into chunks of at most `max_words` words and `max_chars` characters
-    (the character cap matters for CJK text, which has no spaces); longer paragraphs are
-    split with `overlap` words carried into the next piece."""
+    """Structure first, then sentences, packed up to `max_tokens` (see module docstring)."""
+    text = text.strip()
+    if not text:
+        return []
+    if len(text) <= max_tokens or count(text) <= max_tokens:  # most reviews: no splitting
+        return [text]
     chunks: list[str] = []
-    current: list[str] = []
-    n_words = n_chars = 0
-    for para in (p.strip() for p in re.split(r"\n\s*\n", text)):
-        if not para:
-            continue
-        words = len(para.split())
-        if words > max_words or len(para) > max_chars:
-            if current:
-                chunks.append("\n\n".join(current))
-                current, n_words, n_chars = [], 0, 0
-            chunks += _split_long(para, max_words, max_chars, overlap)
-            continue
-        if current and (n_words + words > max_words or n_chars + len(para) > max_chars):
-            chunks.append("\n\n".join(current))
-            current, n_words, n_chars = [], 0, 0
-        current.append(para)
-        n_words += words
-        n_chars += len(para) + 2
-    if current:
-        chunks.append("\n\n".join(current))
+    cur: list[_Unit] = []
+    n = 0
+    for u in _units(text, max_tokens, overlap_tokens, count):
+        if cur and n + u.tokens > max_tokens:
+            chunks.append(_join(cur))
+            carry: list[_Unit] = []
+            if overlap_tokens and not u.whole_para and cur[-1].para == u.para:
+                t = 0
+                for prev in reversed(cur):
+                    if prev.para != u.para or t + prev.tokens > overlap_tokens:
+                        break
+                    carry.insert(0, prev)
+                    t += prev.tokens
+            cur = carry if sum(c.tokens for c in carry) + u.tokens <= max_tokens else []
+            n = sum(c.tokens for c in cur)
+        cur.append(u)
+        n += u.tokens
+    if cur:
+        chunks.append(_join(cur))
     return chunks
 
 
+# ----------------------------------------------------------------------------- chunkers
 def _chunk_id(source_id: str, i: int) -> str:
     return str(uuid.uuid5(_ID_NAMESPACE, f"{source_id}#{i}"))
 
@@ -100,13 +183,17 @@ def _epoch(ts: datetime | None) -> int | None:
     return int((ts if ts.tzinfo else ts.replace(tzinfo=UTC)).timestamp())
 
 
-def _make(source_id: str, header: str, body: str, base: dict[str, Any]) -> Iterator[Chunk]:
-    for i, piece in enumerate(split_text(body)):
+def _make(
+    source_id: str, header: str, body: str, base: dict[str, Any], count: TokenCounter
+) -> Iterator[Chunk]:
+    for i, piece in enumerate(split_text(body, count=count)):
         payload = {**base, "source_id": source_id, "chunk_index": i, "text": piece}
         yield Chunk(_chunk_id(source_id, i), f"{header}\n{piece}", payload)
 
 
-def review_chunks(df: pl.DataFrame, names: Mapping[int, str]) -> list[Chunk]:
+def review_chunks(
+    df: pl.DataFrame, names: Mapping[int, str], count: TokenCounter = approx_token_count
+) -> list[Chunk]:
     out: list[Chunk] = []
     for r in df.iter_rows(named=True):
         game = names.get(r["appid"], str(r["appid"]))
@@ -125,11 +212,13 @@ def review_chunks(df: pl.DataFrame, names: Mapping[int, str]) -> list[Chunk]:
             "language": r["language"],
         }
         body = _PROFILE_LINK.sub("[profile link]", r["review_text"])  # no player identities
-        out += _make(r["review_id"], f"{game} review ({verdict})", body, base)
+        out += _make(r["review_id"], f"{game} review ({verdict})", body, base, count)
     return out
 
 
-def news_chunks(df: pl.DataFrame, names: Mapping[int, str]) -> list[Chunk]:
+def news_chunks(
+    df: pl.DataFrame, names: Mapping[int, str], count: TokenCounter = approx_token_count
+) -> list[Chunk]:
     out: list[Chunk] = []
     for r in df.iter_rows(named=True):
         game = names.get(r["appid"], str(r["appid"]))
@@ -144,11 +233,15 @@ def news_chunks(df: pl.DataFrame, names: Mapping[int, str]) -> list[Chunk]:
             "created_at": _epoch(r["published_at"]),
             "language": "english",
         }
-        out += _make(r["news_id"], f"{game} {label}: {r['title']}", r["contents"] or "", base)
+        out += _make(
+            r["news_id"], f"{game} {label}: {r['title']}", r["contents"] or "", base, count
+        )
     return out
 
 
-def wiki_chunks(df: pl.DataFrame, names: Mapping[int, str]) -> list[Chunk]:
+def wiki_chunks(
+    df: pl.DataFrame, names: Mapping[int, str], count: TokenCounter = approx_token_count
+) -> list[Chunk]:
     out: list[Chunk] = []
     for r in df.iter_rows(named=True):
         appids = list(r["appids"])
@@ -164,5 +257,5 @@ def wiki_chunks(df: pl.DataFrame, names: Mapping[int, str]) -> list[Chunk]:
             "created_at": None,
             "language": "english",
         }
-        out += _make(r["section_id"], f"{game} wiki: {where}", r["text"], base)
+        out += _make(r["section_id"], f"{game} wiki: {where}", r["text"], base, count)
     return out

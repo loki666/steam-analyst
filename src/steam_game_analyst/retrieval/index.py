@@ -11,14 +11,14 @@ from rich.console import Console
 from tqdm import tqdm
 
 from steam_game_analyst.retrieval import chunking
-from steam_game_analyst.retrieval.chunking import Chunk
+from steam_game_analyst.retrieval.chunking import Chunk, TokenCounter, approx_token_count
 from steam_game_analyst.retrieval.embed import Embedder
 from steam_game_analyst.retrieval.store import ChunkStore
 
 console = Console()
 
 # source name -> (processed table, chunker)
-SOURCES: dict[str, tuple[str, Callable[[pl.DataFrame, dict[int, str]], list[Chunk]]]] = {
+SOURCES: dict[str, tuple[str, Callable[..., list[Chunk]]]] = {
     "review": ("reviews.parquet", chunking.review_chunks),
     "news": ("news.parquet", chunking.news_chunks),
     "wiki": ("wiki.parquet", chunking.wiki_chunks),
@@ -38,6 +38,7 @@ def build_index(
     sources: tuple[str, ...] = tuple(SOURCES),
     recreate: bool = False,
     encode_batch: int = 4096,
+    count: TokenCounter = approx_token_count,
 ) -> dict[str, int]:
     """Chunk, embed and upsert each source table, streaming `encode_batch` rows at a time.
     Points are tagged with this run's id; only after a source is fully written are its older
@@ -63,7 +64,7 @@ def build_index(
         n = 0
         with tqdm(total=table.height, desc=f"embed {source}", unit="row") as bar:
             for rows in table.iter_slices(encode_batch):
-                part = make_chunks(rows, names)
+                part = make_chunks(rows, names, count=count)
                 if part:
                     vectors = embedder.encode([c.text for c in part])
                     store.upsert(part, vectors, extra_payload={"run_id": run_id})

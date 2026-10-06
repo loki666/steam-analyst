@@ -117,13 +117,35 @@ def _wiki():
 
 
 # ----------------------------------------------------------------------------- chunking
-def test_split_text_packs_paragraphs_and_splits_long_ones():
-    text = "one two three\n\nfour five\n\n" + " ".join(f"w{i}" for i in range(25))
-    parts = chunking.split_text(text, max_words=10, overlap=2)
-    assert parts[0] == "one two three\n\nfour five"
-    assert all(len(p.split()) <= 10 for p in parts)
-    assert parts[1].split()[0] == "w0"
-    assert parts[2].split()[:2] == parts[1].split()[-2:]  # overlap carried over
+def _words(text):
+    """Test counter: one token per word, one per CJK character."""
+    return chunking.approx_token_count(text)
+
+
+def test_split_text_packs_paragraphs_up_to_the_token_limit():
+    text = "one two three.\n\nfour five.\n\nsix seven eight nine."
+    assert chunking.split_text(text, max_tokens=6, overlap_tokens=0, count=_words) == [
+        "one two three.\n\nfour five.",
+        "six seven eight nine.",
+    ]
+
+
+def test_long_paragraph_splits_at_sentence_ends_with_overlap():
+    sentences = [f"Sentence {i} has five words." for i in range(6)]
+    parts = chunking.split_text(" ".join(sentences), max_tokens=12, overlap_tokens=5, count=_words)
+    assert all(_words(p) <= 12 for p in parts)
+    assert all(p.endswith(".") for p in parts)  # never cut mid-sentence
+    assert parts[1].startswith(parts[0].split(". ")[-1].rstrip("."))  # last sentence carried over
+
+
+def test_sentence_split_keeps_abbreviations_and_handles_cjk():
+    assert chunking.split_sentences("Use e.g. a bow. Then run!") == ["Use e.g. a bow.", "Then run!"]
+    assert chunking.split_sentences("太难了。不推荐！") == ["太难了。", "不推荐！"]
+
+
+def test_oversized_sentence_is_cut_by_tokens():
+    parts = chunking.split_text("字" * 3000, max_tokens=1200, overlap_tokens=0, count=_words)
+    assert len(parts) == 3 and all(len(p) <= 1200 for p in parts)
 
 
 def test_review_chunks_carry_filterable_payload_and_no_author():
@@ -253,11 +275,6 @@ def test_quoted_game_name_is_not_a_text_filter_and_after_excludes_year():
     assert query.parse_question("Hades reviews since 2023", GAMES).filters.date_from == date(
         2023, 1, 1
     )
-
-
-def test_cjk_text_is_split_by_characters():
-    parts = chunking.split_text("字" * 3000, max_words=300, max_chars=1200)
-    assert len(parts) >= 3 and all(len(p) <= 1200 for p in parts)
 
 
 def test_review_chunks_scrub_profile_links():

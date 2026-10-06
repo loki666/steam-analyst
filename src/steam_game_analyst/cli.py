@@ -188,6 +188,7 @@ def index_build(
     device: str = typer.Option(None, help="Embedding device (default: SGA_INDEX_EMBED_DEVICE)"),
 ) -> None:
     """Chunk the processed tables, embed them and load them into Qdrant."""
+    from steam_game_analyst.retrieval.chunking import hf_token_counter
     from steam_game_analyst.retrieval.index import build_index
 
     s = get_settings()
@@ -197,6 +198,7 @@ def index_build(
         _embedder(device or s.index_embed_device),
         sources=tuple(source or ("review", "news", "wiki")),
         recreate=recreate,
+        count=hf_token_counter(s.embed_model, cache_dir=str(s.models_dir / "hf")),
     )
     console.print(counts)
 
@@ -303,6 +305,42 @@ def eval_synth(
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text("".join(json.dumps(i, ensure_ascii=False) + "\n" for i in items))
     console.print(f"wrote {len(items)} questions -> {out}")
+
+
+@eval_app.command("retrieval")
+def eval_retrieval(
+    split: str = typer.Option("dev", help="dev (tune on this) | test (frozen: needs --final)"),
+    final: bool = typer.Option(False, "--final", help="Allow the one-off run on the test split"),
+    label: str = typer.Option("run", help="Name for this configuration, e.g. baseline"),
+    k: int = typer.Option(20, help="Documents considered per question"),
+) -> None:
+    """Document-level recall@5/@20 and MRR@20 on the synthetic gold set."""
+    from datetime import UTC, datetime
+
+    import polars as pl
+
+    from steam_game_analyst.eval.retrieval import evaluate
+    from steam_game_analyst.retrieval.query import GameIndex
+    from steam_game_analyst.retrieval.rag import Retriever
+
+    s = get_settings()
+    gold = s.data_dir / "eval" / "synthetic_questions.jsonl"
+    items = [json.loads(line) for line in gold.read_text().splitlines() if line.strip()]
+    games = GameIndex.from_frame(pl.read_parquet(s.processed_dir / "games.parquet"))
+    retriever = Retriever(_store(), _embedder(s.query_embed_device), games)
+    try:
+        res = evaluate(items, retriever, split=split, k=k, final=final)
+    except PermissionError as e:
+        raise typer.BadParameter(str(e)) from e
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    res = {"label": label, "created": stamp, "gold_file": gold.name, **res}
+    out = s.data_dir / "eval" / "results" / f"retrieval_{split}_{label}_{stamp}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(res, indent=1))
+    console.print(res["overall"])
+    for doc_type, m in res["by_doc_type"].items():
+        console.print(f"  {doc_type:10} {m}")
+    console.print(f"-> {out}")
 
 
 @eval_app.command("all")
