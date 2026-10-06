@@ -90,10 +90,27 @@ class ReviewTrend:
         name, rel, pos, neg, ratio = rows[0]
         return {
             "name": name,
-            "release_date": rel.isoformat() if rel else None,
+            "game_released_on": rel.isoformat() if rel else None,
             "positive_votes": pos,
             "negative_votes": neg,
             "positive_ratio_all_time": round(ratio, 4) if ratio is not None else None,
+        }
+
+    def _catalog_only(self, appid: int) -> dict[str, Any]:
+        """No dated reviews: lead with what the catalog does know, then the limitation."""
+        catalog = self._catalog(appid)
+        if catalog is None:
+            return {"error": f"appid {appid} is neither in the catalog nor in the review corpus"}
+        return {
+            "game": {"appid": appid, "name": catalog["name"]},
+            "available": {
+                "all_time_catalog": catalog,
+                "what_it_shows": "Steam's all-time positive / negative vote totals from release "
+                "until the catalog dataset was compiled (that date is not recorded): overall "
+                "reception, not its direction",
+            },
+            "limitation": "the review corpus (Mendeley, dated reviews of 300 games, up to "
+            "2024-12) has no reviews for this game, so this tool cannot show a trend",
         }
 
     def run(self, args: TrendArgs) -> dict[str, Any]:
@@ -107,14 +124,7 @@ class ReviewTrend:
         ]
         names = self.db.fetch("SELECT name FROM games WHERE appid = ?", [args.appid])
         if not rows:
-            catalog = self._catalog(args.appid)
-            return {
-                "error": f"no review time series for appid {args.appid}: the review corpus "
-                "(Mendeley, 2020-2024 sample of Steam reviews) has no reviews for this game",
-                "catalog": catalog,
-                "note": "catalog vote counts are all-time totals at the snapshot date; "
-                "they cannot show a trend",
-            }
+            return self._catalog_only(args.appid)
         last = self.corpus_last_month or rows[-1][0]
         complete = [r for r in rows if r[0] <= last]
         dropped = rows[-1][0] if len(complete) < len(rows) else None

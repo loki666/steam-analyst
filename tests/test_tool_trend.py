@@ -51,11 +51,19 @@ def test_event_date_runs_a_before_after_test(trend):
     )
 
 
-def test_unknown_game_reports_catalog_facts(trend):
-    out = trend.run(TrendArgs(appid=999002))  # in the catalog, no reviews
-    assert "error" in out and out["catalog"]["name"] == "Unreleased Thing"
+def test_game_without_reviews_leads_with_its_catalog_facts(trend):
+    out = trend.run(TrendArgs(appid=1245620 + 0))  # has reviews: normal series
+    assert "series" in out
+    out = trend.run(TrendArgs(appid=999002))  # in the catalog, no dated reviews
+    assert "error" not in out  # a partial answer, not a failure
+    assert list(out)[:2] == ["game", "available"]
+    assert out["available"]["all_time_catalog"]["name"] == "Unreleased Thing"
+    assert "cannot show a trend" in out["limitation"]
+
+
+def test_appid_unknown_everywhere_is_an_error(trend):
     out = trend.run(TrendArgs(appid=123))
-    assert "error" in out and out.get("catalog") is None
+    assert "error" in out and "available" not in out
 
 
 def test_args_validate():
