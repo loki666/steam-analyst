@@ -1,0 +1,45 @@
+# Data pipeline configuration (W1). Environment variables SGA_* override the matching keys.
+
+sources:
+  catalog:
+    # FronkonGames Steam Games Dataset (MIT). HF mirror of the Kaggle dataset.
+    hf_repo: FronkonGames/steam-games-dataset
+    hf_file: games.csv            # falls back to the first .parquet/.csv in the repo if absent
+  reviews:
+    # Steam Games Metadata and Player Reviews 2020–2024, Mendeley Data v2 (Univ. of Wollongong).
+    # The dataset is a zip of games.json + one CSV per game named <AppID>_<reviewcount>.csv.
+    mendeley_id: jxy85cr3th
+    mendeley_version: 2
+  news:
+    # Steam Web API, ISteamNews/GetNewsForApp — needs STEAM_API_KEY in .env
+    count: 200                   # max news items per app
+    maxlength: 0                 # 0 = full contents
+    feeds: "steam_community_announcements"   # patch notes / announcements only; empty = all feeds
+    rate_limit_per_sec: 2
+  wiki:
+    # nyuuzyou/fandom on HF (CC BY-SA 3.0): streamed and filtered to wikis of games in the subset.
+    hf_repo: nyuuzyou/fandom
+    max_pages_per_game: 400
+
+subset:
+  n_games: 300                   # SGA_SUBSET_GAMES
+  reviews_per_game: 500          # SGA_REVIEWS_PER_GAME; stratified by (voted_up, year)
+  min_english_reviews: 500
+  release_from: "2020-01-01"
+  release_to: "2024-12-31"
+  languages: ["english"]
+  # Spread the subset across genres so it is not 300 shooters.
+  genre_quota: 40                # max games per primary genre
+  # Always include these appids (live-service / early-access titles with rich patch histories).
+  must_include: [1245620, 1091500, 892970, 1623730, 1145360, 2379780, 1086940, 1174180, 1938090, 2358720]
+
+cleaning:
+  min_review_chars: 20
+  max_review_chars: 4000
+  drop_duplicates_on: ["appid", "review_text"]
+  strip_html: true
+
+paths:
+  raw: data/raw
+  processed: data/processed
+  duckdb: data/processed/sga.duckdb

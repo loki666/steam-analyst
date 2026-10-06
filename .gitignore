@@ -1,0 +1,25 @@
+# python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+# env
+.env
+# data & models (volumes; keep the .gitkeep files)
+data/raw/*
+data/processed/*
+models/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!models/.gitkeep
+# notebooks
+.ipynb_checkpoints/
+# os / ide
+.DS_Store
+.idea/
+.vscode/

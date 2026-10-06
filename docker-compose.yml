@@ -1,0 +1,128 @@
+# Steam Game Analyst — full local stack.
+#
+#   docker compose up -d                     # ollama + qdrant + app (Streamlit on :8501)
+#   docker compose run --rm pipeline data    # one-shot: download + build tables
+#   docker compose --profile trace up -d     # adds Langfuse tracing on :3000
+#
+# Requires: Docker Engine 24+, Compose v2, NVIDIA Container Toolkit for GPU passthrough.
+
+x-app-image: &app-image
+  build:
+    context: .
+    dockerfile: docker/app.Dockerfile
+  image: steam-game-analyst:latest
+  env_file: .env
+  environment:
+    OLLAMA_HOST: http://ollama:11434
+    QDRANT_URL: http://qdrant:6333
+    SGA_DATA_DIR: /app/data
+    SGA_MODELS_DIR: /app/models
+    HF_HOME: /app/models/hf
+  volumes:
+    - ./data:/app/data
+    - ./models:/app/models
+    - ./configs:/app/configs:ro
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: sga-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    environment:
+      OLLAMA_KEEP_ALIVE: ${OLLAMA_KEEP_ALIVE:-10m}
+      OLLAMA_NUM_PARALLEL: 1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: sga-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/6333' || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  app:
+    <<: *app-image
+    container_name: sga-app
+    command: ["streamlit", "run", "src/steam_game_analyst/ui/app.py", "--server.address=0.0.0.0", "--server.port=8501"]
+    ports:
+      - "8501:8501"
+    depends_on:
+      ollama:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # One-shot jobs: `docker compose run --rm pipeline <command>` (data | index | eval | shell)
+  pipeline:
+    <<: *app-image
+    profiles: ["build"]
+    entrypoint: ["sga"]
+    command: ["--help"]
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # Optional tracing (profile: trace)
+  langfuse-db:
+    image: postgres:16-alpine
+    profiles: ["trace"]
+    environment:
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: langfuse
+      POSTGRES_DB: langfuse
+    volumes:
+      - langfuse_pg:/var/lib/postgresql/data
+
+  langfuse:
+    image: langfuse/langfuse:2
+    profiles: ["trace"]
+    depends_on:
+      - langfuse-db
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://langfuse:langfuse@langfuse-db:5432/langfuse
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: change-me-in-.env
+      SALT: change-me-too
+      TELEMETRY_ENABLED: "false"
+
+volumes:
+  ollama_models:
+  qdrant_data:
+  langfuse_pg:
