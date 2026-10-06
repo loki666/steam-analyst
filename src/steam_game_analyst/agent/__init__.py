@@ -1,1 +1,1 @@
-"""Placeholder: implemented in later weekends."""
+"""W3: LangGraph agent (router -> retrieve -> tool loop -> answer)."""

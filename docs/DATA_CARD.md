@@ -22,7 +22,8 @@ Raw data is downloaded at build time and never committed; this card describes
 | `reviews` | 417,170 for 299 games | sampled, cleaned, language-tagged |
 | `news` | 24,970 items for 295 games (11,044 flagged patch notes) | 2015-02 to 2026-10 |
 | `wiki` | 208,628 sections from 11,300 pages in 140 wikis (150 games) | ~226 M characters |
-| `review_monthly`, `game_summary` | derived | for the trend and catalog tools |
+| `review_volume` | 11,364 game-months (6.52 M cleaned reviews) | monthly review / positive counts over **every** cleaned review of each subset game (the population the sample is drawn from) |
+| `review_monthly`, `game_summary` | derived | `review_monthly` = `review_volume` + `n_sampled`; for the trend and catalog tools |
 
 Index (Qdrant `sga_chunks`, bge-m3, 448-token sentence-packed chunks): 434,149 review,
 61,737 news and 302,757 wiki chunks.
@@ -45,7 +46,11 @@ Index (Qdrant `sga_chunks`, bge-m3, 448-token sentence-packed chunks): 434,149 r
   recommended / not recommended and by year, so the sample is **balanced on purpose**:
   57.4% recommended in the sample versus a 88.9% median positive ratio in the catalog
   (games with votes).
-  Use catalog `positive` / `negative` for reception, the sample for text and trends.
+  Because the strata are per year, the sample's yearly positive share is flat by
+  construction (Cyberpunk 2077: 47.8% in every year 2020–2023, versus 62% → 85% in the full
+  files). Use catalog `positive` / `negative` for all-time reception, `review_monthly`
+  (population counts) for trends, and the sample only for text, reweighted by
+  N(game, year, rating) / n(game, year, rating) — what the `review_sentiment` tool does.
 - Dates 2015-01 to 2024-12 (91% in 2021–2024): games re-released or long in early access
   carry older reviews.
 - **Languages**: the Mendeley files have no language column, so each sampled review is

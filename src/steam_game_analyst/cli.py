@@ -1,4 +1,4 @@
-"""`sga` command line: data | index | eval | serve. W1 implements `data`; the others are stubs."""
+"""`sga` command line: data | index | train | ask | agent | eval."""
 
 from __future__ import annotations
 
@@ -17,9 +17,11 @@ app = typer.Typer(
 data_app = typer.Typer(no_args_is_help=True, help="W1: download raw sources and build the tables")
 index_app = typer.Typer(no_args_is_help=True, help="W2: chunk, embed and load into Qdrant")
 eval_app = typer.Typer(no_args_is_help=True, help="W4/W5: evaluation suite")
+train_app = typer.Typer(no_args_is_help=True, help="W3: train the tool models into models/")
 app.add_typer(data_app, name="data")
 app.add_typer(index_app, name="index")
 app.add_typer(eval_app, name="eval")
+app.add_typer(train_app, name="train")
 console = Console()
 
 
@@ -98,7 +100,7 @@ def download_wiki() -> None:
 @data_app.command("build")
 def build(
     step: str = typer.Argument(
-        "all", help="all | games | counts | subset | reviews | news | wiki | duckdb"
+        "all", help="all | games | counts | subset | reviews | volume | news | wiki | duckdb"
     ),
 ) -> None:
     """Raw -> processed Parquet -> DuckDB."""
@@ -110,6 +112,7 @@ def build(
         "counts": lambda: b.step_review_counts(s, cfg.subset.languages),
         "subset": lambda: b.step_games_subset(s, cfg),
         "reviews": lambda: b.step_reviews(s, cfg),
+        "volume": lambda: b.step_review_volume(s, cfg),
         "news": lambda: b.step_news(s),
         "wiki": lambda: b.step_wiki(s),
         "duckdb": lambda: b.step_duckdb(s),
@@ -139,6 +142,7 @@ def data_all(
     if not skip_wiki:
         download_wiki()
     b.step_reviews(s, cfg)
+    b.step_review_volume(s, cfg)
     b.step_news(s)
     b.step_wiki(s)
     b.step_duckdb(s)
@@ -159,6 +163,41 @@ def stats() -> None:
     ):
         console.print(con.execute(q).pl())
     con.close()
+
+
+# ----------------------------------------------------------------------------- train
+@train_app.command("sentiment")
+def train_sentiment(seed: int = typer.Option(13)) -> None:
+    """TF-IDF + logistic regression on English reviews (held-out games) -> models/."""
+    import polars as pl
+
+    from steam_game_analyst.ml import sentiment
+
+    s = get_settings()
+    reviews = pl.read_parquet(
+        s.processed_dir / "reviews.parquet",
+        columns=["appid", "review_text", "voted_up", "language"],
+    )
+    model, metrics = sentiment.train(reviews, seed=seed)
+    path = sentiment.save(model, metrics, s.models_dir)
+    console.print({k: metrics[k] for k in ("C", "test", "majority_baseline")})
+    console.print(f"-> {path}")
+
+
+@train_app.command("reception")
+def train_reception(seed: int = typer.Option(13)) -> None:
+    """LightGBM reception-bucket model on catalog launch metadata (time split) -> models/."""
+    import polars as pl
+
+    from steam_game_analyst.ml import reception
+
+    s = get_settings()
+    model, metrics = reception.train(pl.read_parquet(s.processed_dir / "games_all.parquet"), seed)
+    path = reception.save(model, metrics, s.models_dir)
+    for key in ("test", "majority_baseline"):
+        console.print(key, {k: v for k, v in metrics[key].items() if k != "reliability"})
+    console.print("SHAP top features:", list(metrics["shap_mean_abs_top20"])[:10])
+    console.print(f"-> {path}")
 
 
 # ----------------------------------------------------------------------------- index / ask
@@ -253,6 +292,59 @@ def ask(
         _print_retrieval(ans.retrieval)
     console.print(f"\n{ans.text}\n")
     _print_sources(ans.sources, cited=set(ans.cited))
+
+
+@app.command("agent")
+def agent_cmd(
+    question: str = typer.Argument(..., help="Analytical question about Steam games"),
+    model: str = typer.Option(None, help="Ollama model (default: SGA_LLM_MODEL, the 14B)"),
+    max_iterations: int = typer.Option(6, help="Cap on tool-calling rounds"),
+    no_retrieval: bool = typer.Option(False, "--no-retrieval", help="Tools only, no Qdrant"),
+    show_tools: bool = typer.Option(False, "--show-tools", help="Print every tool output"),
+) -> None:
+    """W3 agent: router -> retrieval -> tool loop -> cited answer (trace in data/traces/)."""
+    import time
+
+    import polars as pl
+
+    from steam_game_analyst.agent.factory import append_trace, build_agent, trace_record
+
+    s = get_settings()
+    retriever = None
+    if not no_retrieval:
+        from steam_game_analyst.retrieval import rag
+        from steam_game_analyst.retrieval.query import GameIndex
+
+        subset = GameIndex.from_frame(pl.read_parquet(s.processed_dir / "games.parquet"))
+        retriever = rag.Retriever(_store(), _embedder(s.query_embed_device), subset)
+    llm_model = model or s.llm_model
+    agent, toolbox = build_agent(s, llm_model, retriever, max_iterations)
+    start = time.perf_counter()
+    try:
+        state = agent.run(question)
+    except Exception as e:  # Ollama down, model missing: show it, do not dump a trace
+        console.print(f"[red]{type(e).__name__}: {e}[/]")
+        raise typer.Exit(1) from e
+    finally:
+        toolbox.close()
+    latency = time.perf_counter() - start
+    append_trace(s.data_dir / "traces" / "agent.jsonl", trace_record(state, latency, llm_model))
+    games = ", ".join(f"{g['name']} ({g['appid']})" for g in state.get("games", [])) or "none"
+    console.print(f"[dim]games: {games} · plan: {state.get('plan') or '-'}[/]")
+    for t in state.get("tool_results", []):
+        mark = "[green]ok[/]" if t["ok"] else "[yellow]no data[/]"
+        console.print(f"[dim][{t['id']}] {t['tool']}({t['args']}) {mark}[/]")
+        if show_tools:
+            console.print(t["content"], markup=False)
+    for note in state.get("notes", []):
+        console.print(f"[yellow]note: {note}[/]")
+    console.print(f"\n{state.get('answer', '')}\n")
+    for c in state.get("citations", []):
+        if c["kind"] == "tool":
+            console.print(f"[{c['id']}] tool {c['tool']} {c['args']}", markup=False)
+        else:
+            console.print(f"[{c['id']}] {c['label']} {c['url'] or ''}", markup=False)
+    console.print(f"[dim]{latency:.1f}s · {state.get('iterations', 0)} agent steps[/]")
 
 
 def _print_retrieval(r) -> None:

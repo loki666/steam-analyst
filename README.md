@@ -5,9 +5,10 @@ retrieval over Steam reviews, patch notes and wiki pages with data-science tools
 (SQL over the catalog, a review sentiment classifier, a reception predictor, trend tests).
 Runs on one Linux box with an NVIDIA GPU via Docker Compose. No paid API.
 
-> Status: **W2 — index + baseline RAG**. Data pipeline (W1) and dense retrieval with
-> metadata filters + a cited-answer CLI (W2) work; ML tools + LangGraph agent (W3),
-> evaluation (W4–W5) and the Streamlit UI (W5) follow. See `docs/PRD.md` for the plan.
+> Status: **W3 — ML tools + agent loop (MVP)**. Data pipeline (W1), dense retrieval with
+> metadata filters and cited answers (W2), and the LangGraph agent with four data-science
+> tools (W3) work end to end; hybrid retrieval, DistilBERT and the gold set (W4), end-to-end
+> evaluation and the Streamlit UI (W5) follow. See `docs/PRD.md` for the plan.
 
 ## Stack
 
@@ -65,6 +66,8 @@ data/processed/
                          lingua, no author ids)
   news.parquet           patch notes / announcements for the subset
   wiki.parquet           Fandom wiki sections for the subset (configs/wikis.yaml fixes bad matches)
+  review_volume.parquet  monthly review / positive counts over every cleaned review
+                         (the population behind the stratified sample)
   sga.duckdb             views over the parquet files + review_monthly + game_summary
 ```
 
@@ -88,6 +91,51 @@ the GPU (stop Ollama's models first), query-time embedding runs on the CPU.
 each assigned a frozen `dev`/`test` split from a hash of its id. Tune only on `dev`; report
 `test` once.
 
+## ML tools and agent (W3)
+
+```bash
+uv run sga train sentiment      # or run notebooks/02_sentiment.ipynb  -> models/
+uv run sga train reception      # or run notebooks/03_reception.ipynb  -> models/
+uv run sga agent "Did performance complaints drop after patch 2.0 of Cyberpunk 2077?"
+uv run sga agent --no-retrieval "Which roguelikes released in 2024 have the best review ratio among games under €20?"
+```
+
+`sga agent` runs a LangGraph state graph: **router** (JSON plan, scope check, refusal path)
+→ **retrieve** (the W2 retriever, filtered to the games named in the question) → **agent**
+(Qwen 2.5 via `ChatOllama` with the four tools bound) ⇄ **tools** (pydantic-validated calls;
+invalid arguments, refused SQL and unseen appids go back to the model on the retry edge;
+at most 6 rounds and 5 calls per round) → **answer** (cites tool results `[T1]` and documents
+`[1]`; uncited answers are rewritten once). Every run is appended to `data/traces/agent.jsonl`.
+
+| Tool | What it does |
+| --- | --- |
+| `query_catalog(sql)` | one read-only SELECT over allow-listed views (`n_votes` and a Wilson lower bound `positive_ratio_lower95` added for ranking); parser check (no table functions, no qualified names) plus a sandboxed DuckDB connection (files outside `data/processed/` blocked, config locked, 1 GB memory), 200-row and 500-char cell caps, 20 s timeout, "did you mean" tag names on empty results |
+| `review_sentiment(appid, from, to, split_date?)` | weighted positive share and aspect mentions / complaints (performance, bugs, gameplay, story, price, controls) on the English sample, reweighted to the population; before/after test per aspect |
+| `predict_reception(features)` | bucket probabilities + TreeSHAP top features for a hypothetical launch |
+| `review_trend(appid, granularity, event_date?)` | monthly / quarterly volume and positive share from population counts, WLS trend, change point or before/after test |
+
+Held-out results (`models/*.metrics.json`):
+
+| Model | Split | Metric | Model | Majority baseline |
+| --- | --- | --- | --- | --- |
+| Sentiment, TF-IDF + LR | 55 unseen games, 38.6k English reviews | F1 (positive) / macro-F1 / ROC-AUC | 0.886 / 0.873 / 0.945 | 0.702 / 0.351 / 0.5 |
+| Reception, LightGBM | released 2023+ (7,368 games, ≥ 50 votes) | accuracy [95% CI] / macro-F1 / log loss / ECE | 0.674 [0.663, 0.684] / 0.424 / 0.779 / 0.015 | 0.667 / 0.267 / 0.935 / 0.167 |
+
+The reception model gives much better probabilities than the baseline (log loss, macro-F1,
+calibration) but is **not** clearly more accurate on the top bucket (gain CI [−0.1, +1.4]
+points): very positive games rise from 50% of the training years to 67% of the test years,
+and launch metadata carries little signal. Its strongest features are the developer's and
+publisher's earlier ratings, release year and price. Catalog fields are snapshot values, not
+the exact launch state, so even these scores may be slightly optimistic (see `caveats` in the
+metrics file); W4 revisits the target and features on the validation year only.
+
+Known limits: the review corpus ends in December 2024 and has no Starfield or RDR2 reviews,
+so U7 gets an honest "no data" answer; aspects are keyword weak labels (DistilBERT and a
+hand-labelled check come in W4); aspect tests are underpowered in short windows (~1,500
+sampled reviews per game across all years); the agent sometimes searches the 300-game
+subset where the full catalog was meant; the 14B model partly spills out of 10 GB VRAM, so
+answers take 10–90 s.
+
 ## Local development (no Docker)
 
 ```bash
@@ -102,16 +150,18 @@ uv run sga --help
 ```
 src/steam_game_analyst/
   config.py        settings (env SGA_*) + configs/pipeline.yaml
-  cli.py           `sga data|index|eval`
+  cli.py           `sga data|index|train|ask|agent|eval`
   data/            W1: download, clean, transform, subset, build (DuckDB)
   retrieval/       W2: chunking, embeddings, Qdrant, hybrid + rerank
+  ml/              W3: sentiment (TF-IDF + LR), keyword aspects, reception (LightGBM + SHAP)
   tools/           W3: query_catalog, review_sentiment, predict_reception, review_trend
-  agent/           W3: LangGraph graph
+  agent/           W3: LangGraph graph (router, retrieve, agent, tools, answer)
   eval/            W4-5: gold set, retrieval + answer metrics
   ui/              W5: Streamlit app
 configs/           pipeline.yaml
 docker/            app.Dockerfile
-notebooks/         EDA and model notebooks
+notebooks/         EDA and model notebooks (they write models/)
+models/            trained models + metrics JSON (not committed)
 tests/             pytest (fixture-based)
 ```
 

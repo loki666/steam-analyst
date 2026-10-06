@@ -2,7 +2,7 @@
 COMPOSE := docker compose
 RUN     := $(COMPOSE) run --rm pipeline
 
-.PHONY: help setup lint test up down logs build data subset index eval shell pull-models clean
+.PHONY: help setup lint test up down logs build data subset index train eval shell pull-models clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
@@ -46,6 +46,10 @@ subset: ## Re-run only the subset selection + table build (no download)
 
 index: ## Chunk + embed + load into Qdrant (W2)
 	$(RUN) index build
+
+train: ## Train the sentiment and reception models into models/ (W3)
+	$(RUN) train sentiment
+	$(RUN) train reception
 
 eval: ## Run the evaluation suite (W4/W5)
 	$(RUN) eval all

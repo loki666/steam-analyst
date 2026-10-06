@@ -13,6 +13,7 @@ htmlcov/
 # data & models (volumes; keep the .gitkeep files)
 data/raw/*
 data/processed/*
+data/traces/
 models/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep

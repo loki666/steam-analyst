@@ -92,3 +92,26 @@ def test_build_all_creates_duckdb(settings):
     assert 0 < n_reviews <= 4 * 30
     assert n_months > 0
     assert summary.height == 4 and "n_patch_notes" in summary.columns
+
+
+def test_review_volume_counts_the_cleaned_population_not_the_sample(settings):
+    cfg = load_pipeline_config()
+    build.build_all(settings, cfg)
+    vol = pl.read_parquet(settings.processed_dir / "review_volume.parquet")
+    assert set(vol.columns) == {"appid", "month", "n_reviews", "n_positive"}
+    raw = transform.read_review_file(
+        settings.raw_dir / "reviews" / "1091500_120.csv", appid=1091500
+    )
+    cleaned = transform.build_reviews(raw, cfg.cleaning)
+    cp = vol.filter(pl.col("appid") == 1091500)
+    assert cp["n_reviews"].sum() == cleaned.height  # every cleaned review, not the 30 sampled
+    assert cp["n_positive"].sum() == cleaned["voted_up"].sum()
+
+    con = duckdb.connect(str(settings.duckdb_path), read_only=True)
+    monthly = con.execute(
+        "select sum(n_reviews), sum(n_sampled), sum(n_positive) from review_monthly "
+        "where appid = 1091500"
+    ).fetchone()
+    con.close()
+    assert monthly[0] == cleaned.height
+    assert monthly[1] <= 30 and monthly[2] == cleaned["voted_up"].sum()

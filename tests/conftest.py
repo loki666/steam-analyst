@@ -296,3 +296,13 @@ def settings(tmp_path: Path, raw_dataset: Path, monkeypatch: pytest.MonkeyPatch)
     (s.processed_dir).mkdir(parents=True, exist_ok=True)
     yield s
     get_settings.cache_clear()
+
+
+@pytest.fixture
+def built(settings):
+    """The fixture dataset run through the whole W1 build (parquet + sga.duckdb)."""
+    from steam_game_analyst.config import load_pipeline_config
+    from steam_game_analyst.data import build
+
+    build.build_all(settings, load_pipeline_config())
+    return settings
