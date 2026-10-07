@@ -79,6 +79,10 @@ Tune the subset with `SGA_SUBSET_GAMES` / `SGA_REVIEWS_PER_GAME` in `.env` or ed
 `sga index build` chunks reviews (one per review), patch notes/news (by paragraph) and wiki
 pages (by section), embeds them with `bge-m3` and loads one Qdrant collection whose payload
 carries the filterable fields (game, doc type, date, language, recommended, playtime).
+Each chunk also gets a BM25 sparse vector, computed on the CPU (Qdrant supplies the IDF);
+search fuses the dense and BM25 rankings with RRF, so exact names, version numbers and
+jargon ("DLSS", "2.0") are found even when the embedding misses them. Collections built
+before W4 lack these vectors: rebuild with `sga index build --recreate`.
 `sga ask` matches game names in the question, parses simple filters ("50+ hours",
 "mentioning X", "since 2023"; flags `--game`, `--doc-type`, `--min-hours`, `--language`
 override), retrieves, and answers with Qwen 2.5 14B via Ollama with numbered citations.
@@ -89,7 +93,8 @@ the GPU (stop Ollama's models first), query-time embedding runs on the CPU.
 
 `sga eval synth` starts the retrieval gold set: one LLM-written question per sampled chunk,
 each assigned a frozen `dev`/`test` split from a hash of its id. Tune only on `dev`; report
-`test` once.
+`test` once. `sga eval retrieval --mode hybrid|dense|bm25` compares the
+retrieval legs on the same questions.
 
 ## ML tools and agent (W3)
 

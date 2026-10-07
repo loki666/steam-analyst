@@ -23,6 +23,20 @@ def retriever():
     return rag.Retriever(store, FakeEmbedder(), query.GameIndex.from_names(NAMES))
 
 
+class NoEmbedder(FakeEmbedder):
+    def encode(self, texts):
+        raise AssertionError("bm25 mode must not embed")
+
+
+def test_retriever_modes(retriever):
+    bm25 = rag.Retriever(retriever.store, NoEmbedder(), retriever.games, mode="bm25")
+    assert bm25.retrieve("Valheim workbench", k=1).hits[0].payload["title"] == "Crafting"
+    dense = rag.Retriever(retriever.store, FakeEmbedder(), retriever.games, mode="dense")
+    assert dense.retrieve("Valheim workbench", k=1).hits[0].payload["title"] == "Crafting"
+    with pytest.raises(ValueError, match="unknown retrieval mode"):
+        rag.Retriever(retriever.store, FakeEmbedder(), retriever.games, mode="splade")
+
+
 class FakeLLM:
     def __init__(self, reply):
         self.reply = reply

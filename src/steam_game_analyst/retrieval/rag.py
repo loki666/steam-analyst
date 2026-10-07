@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 
 import httpx
 
@@ -32,6 +32,11 @@ _CJK = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")
 _RELAXABLE = ("text_contains", "doc_types")
 
 
+# hybrid: dense + BM25 fused with RRF; the single legs are kept for evaluation
+RetrievalMode = Literal["hybrid", "dense", "bm25"]
+RETRIEVAL_MODES: tuple[str, ...] = ("hybrid", "dense", "bm25")
+
+
 class ChatModel(Protocol):
     def chat(self, messages: list[dict[str, str]]) -> str: ...
 
@@ -53,18 +58,29 @@ class Answer:
 
 
 class Retriever:
-    def __init__(self, store: ChunkStore, embedder: Embedder, games: GameIndex) -> None:
+    def __init__(
+        self,
+        store: ChunkStore,
+        embedder: Embedder,
+        games: GameIndex,
+        mode: RetrievalMode = "hybrid",
+    ) -> None:
+        if mode not in RETRIEVAL_MODES:
+            raise ValueError(f"unknown retrieval mode {mode!r}; choose from {RETRIEVAL_MODES}")
+        store.check_layout()
         self.store = store
         self.embedder = embedder
         self.games = games
+        self.mode = mode
 
     def retrieve(
         self, question: str, k: int = 8, overrides: SearchFilters | None = None
     ) -> Retrieval:
         parsed = parse_question(question, self.games)
         filters = parsed.filters.merged(overrides) if overrides else parsed.filters
-        vector = self.embedder.encode([question])[0]
-        hits = self.store.search(vector, filters, k)
+        vector = self.embedder.encode([question])[0] if self.mode != "bm25" else None
+        text = question if self.mode != "dense" else None
+        hits = self.store.search(vector, filters, k, text=text)
         relaxed: list[str] = []
         for field in _RELAXABLE:
             if hits or not getattr(filters, field):
@@ -74,7 +90,7 @@ class Retriever:
             else:
                 filters = replace(filters, doc_types=())
             relaxed.append(field)
-            hits = self.store.search(vector, filters, k)
+            hits = self.store.search(vector, filters, k, text=text)
         return Retrieval(parsed, filters, tuple(hits), tuple(relaxed))
 
 

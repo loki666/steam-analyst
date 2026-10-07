@@ -405,6 +405,7 @@ def eval_retrieval(
     final: bool = typer.Option(False, "--final", help="Allow the one-off run on the test split"),
     label: str = typer.Option("run", help="Name for this configuration, e.g. baseline"),
     k: int = typer.Option(20, help="Documents considered per question"),
+    mode: str = typer.Option("hybrid", help="hybrid (dense + BM25, RRF) | dense | bm25"),
 ) -> None:
     """Document-level recall@5/@20 and MRR@20 on the synthetic gold set."""
     from datetime import UTC, datetime
@@ -419,13 +420,16 @@ def eval_retrieval(
     gold = s.data_dir / "eval" / "synthetic_questions.jsonl"
     items = [json.loads(line) for line in gold.read_text().splitlines() if line.strip()]
     games = GameIndex.from_frame(pl.read_parquet(s.processed_dir / "games.parquet"))
-    retriever = Retriever(_store(), _embedder(s.query_embed_device), games)
+    try:
+        retriever = Retriever(_store(), _embedder(s.query_embed_device), games, mode=mode)
+    except ValueError as e:
+        raise typer.BadParameter(str(e)) from e
     try:
         res = evaluate(items, retriever, split=split, k=k, final=final)
     except PermissionError as e:
         raise typer.BadParameter(str(e)) from e
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    res = {"label": label, "created": stamp, "gold_file": gold.name, **res}
+    res = {"label": label, "mode": mode, "created": stamp, "gold_file": gold.name, **res}
     out = s.data_dir / "eval" / "results" / f"retrieval_{split}_{label}_{stamp}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(res, indent=1))

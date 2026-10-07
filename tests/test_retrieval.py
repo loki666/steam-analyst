@@ -4,6 +4,7 @@ import numpy as np
 import polars as pl
 import pytest
 from qdrant_client import QdrantClient
+from qdrant_client import models as qm
 
 from steam_game_analyst.data.schemas import NEWS_SCHEMA, REVIEWS_SCHEMA, WIKI_SCHEMA
 from steam_game_analyst.retrieval import chunking, index, query
@@ -222,6 +223,39 @@ def test_filters_date_range_and_shared_wiki_appids(store):
     assert [h.payload["source_id"] for h in hits] == ["r1"]
     hades = _search(store, "zeus lightning", SearchFilters(appids=(1145360,)))
     assert hades and hades[0].payload["title"] == "Boons"
+
+
+def _hybrid(store, text, filters=None, k=5):
+    vector = FakeEmbedder().encode([text])[0]
+    return store.search(vector, filters or SearchFilters(), k=k, text=text)
+
+
+def test_bm25_only_search_matches_exact_terms(store):
+    hits = store.search(None, SearchFilters(), k=3, text="stutter")
+    assert hits[0].payload["source_id"] == "r2"
+
+
+def test_hybrid_search_fuses_both_legs_and_applies_filters(store):
+    assert _hybrid(store, "workbench forge")[0].payload["title"] == "Crafting"
+    hades = _hybrid(store, "zeus lightning", SearchFilters(appids=(1145360,)))
+    assert [h.payload["title"] for h in hades] == ["Boons"]
+
+
+def test_search_needs_a_vector_or_a_text(store):
+    with pytest.raises(ValueError, match="vector, a text"):
+        store.search(None, SearchFilters())
+
+
+def test_collection_without_hybrid_vectors_must_be_recreated():
+    client = QdrantClient(":memory:")
+    client.create_collection(  # the W2 layout: one unnamed dense vector
+        "old", vectors_config=qm.VectorParams(size=FakeEmbedder.dim, distance=qm.Distance.COSINE)
+    )
+    s = ChunkStore(client, collection="old")
+    with pytest.raises(RuntimeError, match="--recreate"):
+        s.ensure(dim=FakeEmbedder.dim)
+    s.ensure(dim=FakeEmbedder.dim, recreate=True)
+    s.check_layout()
 
 
 def test_empty_filters_mean_no_qdrant_filter():
