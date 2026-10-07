@@ -41,7 +41,11 @@ class Settings(BaseSettings):
     # so bulk indexing uses the GPU and query-time embedding stays on the CPU.
     index_embed_device: str = "cuda"
     query_embed_device: str = "cpu"
-    rerank_device: str = "cpu"  # same reason; set SGA_RERANK_DEVICE=cuda when no LLM is loaded
+    rerank_device: str = "cpu"
+    # review_sentiment: "distilbert" (precomputed scores, live CPU fallback) or "tfidf"
+    sentiment_model: str = (
+        "distilbert"  # same reason; set SGA_RERANK_DEVICE=cuda when no LLM is loaded
+    )
     qdrant_collection: str = "sga_chunks"
 
     subset_games: int | None = None

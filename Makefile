@@ -50,6 +50,7 @@ index: ## Chunk + embed + load into Qdrant (W2)
 train: ## Train the sentiment and reception models into models/ (W3)
 	$(RUN) train sentiment
 	$(RUN) train sentiment-bert
+	$(RUN) train sentiment-scores
 	$(RUN) train reception
 
 eval: ## Retrieval ablation on the dev split: every mode, judged, with 95% CIs (W4)

@@ -144,6 +144,10 @@ lexicon.
 DistilBERT beats TF-IDF + LR by +0.029 F1 (95% CI [+0.026, +0.033], resampling held-out
 games) and scores higher on 53 of the 55 test games; its hyperparameters were fixed in
 advance and only the epoch was picked on validation games.
+`review_sentiment` uses it (`SGA_SENTIMENT_MODEL=tfidf` switches back). Live on the CPU it
+takes 15-20 s per call, so `sga train sentiment-scores` scores every review and aspect sentence
+once on the GPU (342k texts, a few minutes) and the tool looks them up (0.1 s); text missing
+from the table is scored live.
 
 The reception model beats always predicting "very positive" by **+1.6 points** of bucket
 accuracy (95% CI [+0.6, +2.8]) on games released from January 2023 to May 2024, and gives much
@@ -184,7 +188,7 @@ src/steam_game_analyst/
   cli.py           `sga data|index|train|ask|agent|eval`
   data/            W1: download, clean, transform, subset, build (DuckDB)
   retrieval/       W2: chunking, embeddings, Qdrant, hybrid + rerank
-  ml/              W3: sentiment (TF-IDF + LR), keyword aspects, reception (LightGBM + SHAP)
+  ml/              sentiment (TF-IDF + LR, DistilBERT), keyword and DistilBERT aspects, reception (LightGBM + SHAP)
   tools/           W3: query_catalog, review_sentiment, predict_reception, review_trend
   agent/           W3: LangGraph graph (router, retrieve, agent, tools, answer)
   eval/            W4-5: gold set, retrieval + answer metrics

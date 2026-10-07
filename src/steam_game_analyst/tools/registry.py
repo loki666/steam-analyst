@@ -87,6 +87,25 @@ def _validation_message(e: ValidationError) -> str:
     return "invalid arguments: " + "; ".join(parts)
 
 
+def _load_sentiment(settings: Settings) -> tuple[Any, str]:
+    """The configured review classifier and how the tool's output names it."""
+    models_dir = settings.models_dir
+    if settings.sentiment_model == "tfidf":
+        from steam_game_analyst.ml import sentiment
+
+        return sentiment.load(models_dir), "TF-IDF+LR classifier"
+    if settings.sentiment_model != "distilbert":
+        raise ValueError(
+            f"SGA_SENTIMENT_MODEL must be distilbert or tfidf, not {settings.sentiment_model!r}"
+        )
+    from steam_game_analyst.ml import sentiment_bert, sentiment_cache
+
+    model = sentiment_cache.load(
+        models_dir, fallback=lambda: sentiment_bert.load(models_dir, "cpu")
+    )
+    return model, "fine-tuned DistilBERT classifier"
+
+
 class ToolBox:
     """Owns the data handles and models; lazily loads the trained models from models/."""
 
@@ -123,12 +142,14 @@ class ToolBox:
     @property
     def sentiment(self) -> ReviewSentiment:
         if self._sentiment is None:
+            name = "sentiment classifier"
             if self._sentiment_model is None:
-                from steam_game_analyst.ml import sentiment
-
-                self._sentiment_model = sentiment.load(self.settings.models_dir)
+                self._sentiment_model, name = _load_sentiment(self.settings)
             self._sentiment = ReviewSentiment(
-                self.db, self.settings.processed_dir / "reviews.parquet", self._sentiment_model
+                self.db,
+                self.settings.processed_dir / "reviews.parquet",
+                self._sentiment_model,
+                model_name=name,
             )
         return self._sentiment
 

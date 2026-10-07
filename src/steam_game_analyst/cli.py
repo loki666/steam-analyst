@@ -217,6 +217,25 @@ def train_sentiment_bert(
     console.print(f"-> {path}")
 
 
+@train_app.command("sentiment-scores")
+def train_sentiment_scores(
+    device: str = typer.Option("cuda", help="cuda | cpu (stop Ollama first: it needs the GPU)"),
+) -> None:
+    """Score every review and aspect sentence with DistilBERT once, for review_sentiment."""
+    import polars as pl
+
+    from steam_game_analyst.ml import sentiment, sentiment_bert, sentiment_cache
+
+    s = get_settings()
+    texts = pl.read_parquet(
+        s.processed_dir / "reviews.parquet", columns=["review_text", "language"]
+    ).filter(pl.col("language").is_in(sentiment.LANGUAGES))["review_text"]
+    model = sentiment_bert.load(s.models_dir, device=device)
+    table = sentiment_cache.build(texts, model)
+    path = sentiment_cache.save(table, s.models_dir)
+    console.print(f"{table.height} texts scored -> {path}")
+
+
 @train_app.command("aspect-labels")
 def train_aspect_labels(
     n: int = typer.Option(12000, help="Reviews from training games to label"),

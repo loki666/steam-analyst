@@ -22,6 +22,7 @@ import polars as pl
 from pydantic import BaseModel, Field, model_validator
 
 from steam_game_analyst.ml.aspects import ASPECTS, aspect_sentences
+from steam_game_analyst.ml.sentiment_cache import aspect_inputs
 from steam_game_analyst.tools import stats
 from steam_game_analyst.tools.catalog import CatalogDB
 
@@ -125,9 +126,16 @@ def _r(x: float | None) -> float | None:
 
 
 class ReviewSentiment:
-    def __init__(self, db: CatalogDB, reviews_path: Path, model: Classifier) -> None:
+    def __init__(
+        self,
+        db: CatalogDB,
+        reviews_path: Path,
+        model: Classifier,
+        model_name: str = "TF-IDF+LR classifier",
+    ) -> None:
         self.db = db
         self.model = model
+        self.model_name = model_name
         self.reviews = pl.scan_parquet(reviews_path).select(
             "review_id", "appid", "language", "review_text", "voted_up", "created_at"
         )
@@ -157,7 +165,8 @@ class ReviewSentiment:
         """Per review: aspect -> (mentioned, negative mention); plus example sentences."""
         texts = df["review_text"].to_list()
         per_review = [aspect_sentences(t) for t in texts]
-        jobs = [(i, a, " ".join(s)) for i, d in enumerate(per_review) for a, s in d.items()]
+        # the same strings the precomputed score table holds (ml/sentiment_cache.py)
+        jobs = [(i, a, x) for i, t in enumerate(texts) for a, x in aspect_inputs(t).items()]
         probs = self.model.predict_proba([j[2] for j in jobs]) if jobs else np.zeros(0)
         n = len(texts)
         mention = {a: np.zeros(n) for a in ASPECTS}
@@ -249,7 +258,7 @@ class ReviewSentiment:
         out["aspects"] = self._aspects(df, scored, w)
         out["method"] = (
             "English review sample reweighted to all reviews (year x rating strata); aspects "
-            "by keyword, aspect polarity by the TF-IDF+LR classifier on the sentences that "
+            f"by keyword, aspect polarity by the {self.model_name} on the sentences that "
             "mention the aspect"
         )
         return out
