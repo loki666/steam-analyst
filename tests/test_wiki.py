@@ -205,6 +205,33 @@ def test_build_wiki_one_row_per_section_limited_to_subset(tmp_path):
     assert df["n_chars"].to_list() == [16, 10]
 
 
+def test_build_wiki_gives_repeated_headings_distinct_ids_and_drops_exact_copies(tmp_path):
+    from steam_game_analyst.data import clean, transform
+
+    (tmp_path / "wiki_map.json").write_text(
+        json.dumps([{"slug": "loop", "sitename": "Loop Wiki", "appids": [1282730]}])
+    )
+    page = {
+        "slug": "loop",
+        "pageid": 7,
+        "title": "Sand Dunes",
+        "url": "https://loophero.fandom.com/wiki/Sand_Dunes",
+        "sections": [
+            {"heading": "Notes", "text": "8 cards per deck."},
+            {"heading": "Notes", "text": "Lowers max HP."},
+            {"heading": "Notes", "text": "8 cards per deck."},  # exact copy
+        ],
+    }
+    (tmp_path / "loop.jsonl").write_text(json.dumps(page) + "\n")
+
+    df = transform.build_wiki(tmp_path, appids=[1282730])
+
+    assert df["text"].to_list() == ["8 cards per deck.", "Lowers max HP."]
+    assert df["section_id"].n_unique() == 2
+    # the first occurrence keeps the id it had before repeats were numbered
+    assert df["section_id"][0] == clean.stable_id("loop", 7, "Notes")
+
+
 def test_resolve_treats_closed_wiki_as_missing_and_retries_rate_limit():
     calls = {"n": 0}
 

@@ -444,10 +444,20 @@ def build_wiki(wiki_dir: Path, appids: Iterable[int]) -> pl.DataFrame:
             if not line.strip():
                 continue
             page = json.loads(line)
+            # a page can repeat a heading ("Notes" under several items): number the repeats so
+            # ids stay unique (the first keeps the unnumbered id), and drop exact copies
+            occurrences: dict[str, int] = {}
+            seen: set[tuple[str, str]] = set()
             for sec in page["sections"]:
+                if (sec["heading"], sec["text"]) in seen:
+                    continue
+                seen.add((sec["heading"], sec["text"]))
+                n = occurrences.get(sec["heading"], 0)
+                occurrences[sec["heading"]] = n + 1
+                id_parts = (page["slug"], page["pageid"], sec["heading"]) + ((n,) if n else ())
                 rows.append(
                     {
-                        "section_id": clean.stable_id(page["slug"], page["pageid"], sec["heading"]),
+                        "section_id": clean.stable_id(*id_parts),
                         "slug": page["slug"],
                         "appids": ids,
                         "pageid": page["pageid"],
