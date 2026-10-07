@@ -1,0 +1,3870 @@
+{
+ "split": "dev",
+ "created": "20261007T180807Z",
+ "baseline": "hybrid",
+ "k": 10,
+ "n": 106,
+ "n_boot": 2000,
+ "rows": [
+  {
+   "mode": "hybrid",
+   "unjudged_hits": 0,
+   "metrics": {
+    "hit@5": {
+     "mean": 0.8584905660377359,
+     "lo": 0.7924528301886793,
+     "hi": 0.9245283018867925
+    },
+    "hit@10": {
+     "mean": 0.8867924528301887,
+     "lo": 0.8207547169811321,
+     "hi": 0.9433962264150944
+    },
+    "mrr@10": {
+     "mean": 0.7443770589997005,
+     "lo": 0.6739143456124588,
+     "hi": 0.8162735849056602
+    },
+    "ndcg@10": {
+     "mean": 0.5538740459413264,
+     "lo": 0.4947500656430734,
+     "hi": 0.6182845282896124
+    },
+    "p@10": {
+     "mean": 0.35660377358490564,
+     "lo": 0.30283018867924527,
+     "hi": 0.4132075471698113
+    },
+    "strict_hit@5": {
+     "mean": 0.7264150943396226,
+     "lo": 0.6415094339622641,
+     "hi": 0.8113207547169812
+    }
+   },
+   "vs_baseline": {}
+  },
+  {
+   "mode": "dense",
+   "unjudged_hits": 0,
+   "metrics": {
+    "hit@5": {
+     "mean": 0.8207547169811321,
+     "lo": 0.7452830188679245,
+     "hi": 0.8867924528301887
+    },
+    "hit@10": {
+     "mean": 0.8301886792452831,
+     "lo": 0.7547169811320755,
+     "hi": 0.8962264150943396
+    },
+    "mrr@10": {
+     "mean": 0.7278301886792452,
+     "lo": 0.6515723270440251,
+     "hi": 0.8033254716981131
+    },
+    "ndcg@10": {
+     "mean": 0.5454928746541406,
+     "lo": 0.47992444556818736,
+     "hi": 0.6104098056405294
+    },
+    "p@10": {
+     "mean": 0.36415094339622645,
+     "lo": 0.3018867924528302,
+     "hi": 0.42738207547169793
+    },
+    "strict_hit@5": {
+     "mean": 0.6509433962264151,
+     "lo": 0.5566037735849056,
+     "hi": 0.7358490566037735
+    }
+   },
+   "vs_baseline": {
+    "ndcg@10": {
+     "mean": -0.008381171287185692,
+     "lo": -0.04418632432473367,
+     "hi": 0.02734707249007517,
+     "better": 47,
+     "worse": 37
+    },
+    "mrr@10": {
+     "mean": -0.016546870320455227,
+     "lo": -0.05876123090745732,
+     "hi": 0.022678009883198527,
+     "better": 15,
+     "worse": 13
+    },
+    "hit@5": {
+     "mean": -0.03773584905660377,
+     "lo": -0.09433962264150944,
+     "hi": 0.009433962264150943,
+     "better": 2,
+     "worse": 6
+    }
+   }
+  },
+  {
+   "mode": "bm25",
+   "unjudged_hits": 0,
+   "metrics": {
+    "hit@5": {
+     "mean": 0.7641509433962265,
+     "lo": 0.6886792452830188,
+     "hi": 0.839622641509434
+    },
+    "hit@10": {
+     "mean": 0.8301886792452831,
+     "lo": 0.7547169811320755,
+     "hi": 0.8962264150943396
+    },
+    "mrr@10": {
+     "mean": 0.6621443545971848,
+     "lo": 0.5814160302485774,
+     "hi": 0.7401868074273734
+    },
+    "ndcg@10": {
+     "mean": 0.4572317326081093,
+     "lo": 0.3932231041867827,
+     "hi": 0.5234887825811025
+    },
+    "p@10": {
+     "mean": 0.29339622641509433,
+     "lo": 0.24339622641509437,
+     "hi": 0.34622641509433966
+    },
+    "strict_hit@5": {
+     "mean": 0.5849056603773585,
+     "lo": 0.49056603773584906,
+     "hi": 0.6792452830188679
+    }
+   },
+   "vs_baseline": {
+    "ndcg@10": {
+     "mean": -0.09664231333321704,
+     "lo": -0.1343918956904896,
+     "hi": -0.06039752404875847,
+     "better": 24,
+     "worse": 62
+    },
+    "mrr@10": {
+     "mean": -0.08223270440251572,
+     "lo": -0.13445998053309374,
+     "hi": -0.0317690551063193,
+     "better": 10,
+     "worse": 28
+    },
+    "hit@5": {
+     "mean": -0.09433962264150944,
+     "lo": -0.16037735849056603,
+     "hi": -0.03773584905660377,
+     "better": 1,
+     "worse": 11
+    }
+   }
+  },
+  {
+   "mode": "rerank",
+   "unjudged_hits": 4,
+   "metrics": {
+    "hit@5": {
+     "mean": 0.8867924528301887,
+     "lo": 0.8207547169811321,
+     "hi": 0.9433962264150944
+    },
+    "hit@10": {
+     "mean": 0.9056603773584906,
+     "lo": 0.8490566037735849,
+     "hi": 0.9622641509433962
+    },
+    "mrr@10": {
+     "mean": 0.809366576819407,
+     "lo": 0.7400909703504043,
+     "hi": 0.8762297843665768
+    },
+    "ndcg@10": {
+     "mean": 0.6680891158206749,
+     "lo": 0.6038509001558635,
+     "hi": 0.7287270139690917
+    },
+    "p@10": {
+     "mean": 0.43207547169811317,
+     "lo": 0.3669811320754717,
+     "hi": 0.4990801886792452
+    },
+    "strict_hit@5": {
+     "mean": 0.7358490566037735,
+     "lo": 0.6509433962264151,
+     "hi": 0.8113207547169812
+    }
+   },
+   "vs_baseline": {
+    "ndcg@10": {
+     "mean": 0.11421506987934855,
+     "lo": 0.07288345018218971,
+     "hi": 0.15713551368221923,
+     "better": 64,
+     "worse": 19
+    },
+    "mrr@10": {
+     "mean": 0.06498951781970651,
+     "lo": 0.002678197064989518,
+     "hi": 0.12637185534591192,
+     "better": 23,
+     "worse": 12
+    },
+    "hit@5": {
+     "mean": 0.02830188679245283,
+     "lo": -0.009433962264150943,
+     "hi": 0.07547169811320754,
+     "better": 4,
+     "worse": 1
+    }
+   }
+  }
+ ],
+ "runs": {
+  "hybrid": {
+   "split": "dev",
+   "k": 10,
+   "n": 106,
+   "no_relevant": 1,
+   "unjudged_hits": 0,
+   "overall": {
+    "n": 106,
+    "hit@1": 0.660377358490566,
+    "hit@5": 0.8584905660377359,
+    "hit@10": 0.8867924528301887,
+    "mrr@10": 0.7443770589997005,
+    "ndcg@10": 0.5538740459413264,
+    "p@10": 0.35660377358490564
+   },
+   "strict": {
+    "n": 106,
+    "hit@1": 0.4528301886792453,
+    "hit@5": 0.7264150943396226,
+    "hit@10": 0.7641509433962265,
+    "mrr@10": 0.5669287211740042
+   },
+   "by_doc_type": {
+    "news": {
+     "n": 30,
+     "hit@1": 0.8,
+     "hit@5": 0.9333333333333333,
+     "hit@10": 1.0,
+     "mrr@10": 0.8658730158730158,
+     "ndcg@10": 0.7228851444278195,
+     "p@10": 0.46
+    },
+    "patch_note": {
+     "n": 26,
+     "hit@1": 0.5,
+     "hit@5": 0.8461538461538461,
+     "hit@10": 0.8461538461538461,
+     "mrr@10": 0.6538461538461539,
+     "ndcg@10": 0.49638611764121165,
+     "p@10": 0.2692307692307692
+    },
+    "review": {
+     "n": 26,
+     "hit@1": 0.6923076923076923,
+     "hit@5": 0.9615384615384616,
+     "hit@10": 0.9615384615384616,
+     "mrr@10": 0.7814102564102564,
+     "ndcg@10": 0.46549502151116184,
+     "p@10": 0.46153846153846156
+    },
+    "wiki": {
+     "n": 24,
+     "hit@1": 0.625,
+     "hit@5": 0.6666666666666666,
+     "hit@10": 0.7083333333333334,
+     "mrr@10": 0.6504629629629629,
+     "ndcg@10": 0.5006327049576789,
+     "p@10": 0.20833333333333334
+    }
+   },
+   "per_question": [
+    {
+     "qid": "a1f88b15-ae5e-5308-99f6-4f7081f386e6",
+     "doc_type": "news",
+     "rank": 2,
+     "strict_rank": 3,
+     "ndcg": 0.39540925771357055,
+     "precision": 0.8
+    },
+    {
+     "qid": "df525d4e-f4da-509d-b13e-1dae8b21bc7b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.3
+    },
+    {
+     "qid": "2c50d392-c2dd-5bbf-b3f5-11e8aee4edb8",
+     "doc_type": "news",
+     "rank": 2,
+     "strict_rank": 4,
+     "ndcg": 0.3355897622204173,
+     "precision": 0.5
+    },
+    {
+     "qid": "ee442b1d-0263-51dc-8203-9b41e920f04a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9751957567060058,
+     "precision": 0.4
+    },
+    {
+     "qid": "2a0b4f3b-088c-5fef-baab-38ba568103ab",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9651911745127935,
+     "precision": 0.3
+    },
+    {
+     "qid": "2b5de585-3e49-55b9-8e28-5728f11c3b56",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.7967075809905066,
+     "precision": 0.2
+    },
+    {
+     "qid": "72c5f953-ff1d-5749-98b1-9f3f46fb543c",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.6461459647339004,
+     "precision": 0.9
+    },
+    {
+     "qid": "60963a4f-de5e-5417-b177-b26fd0559975",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "c22d0847-f541-5f6d-a3eb-e2fad14e84b9",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.8249079016665273,
+     "precision": 0.9
+    },
+    {
+     "qid": "23695a6e-b6ad-5662-8248-384c0e788841",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8644693565973486,
+     "precision": 0.8
+    },
+    {
+     "qid": "a81facfa-016f-5395-96fc-474d9f489d2b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6181093256538219,
+     "precision": 0.2
+    },
+    {
+     "qid": "9d18882d-b828-56e1-8de6-9bac2339c1d3",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7159688412324008,
+     "precision": 0.4
+    },
+    {
+     "qid": "a4f52aef-023a-56bb-aa6c-8c0bcc35d2bf",
+     "doc_type": "news",
+     "rank": 6,
+     "strict_rank": null,
+     "ndcg": 0.3562071871080222,
+     "precision": 0.1
+    },
+    {
+     "qid": "654e451a-1c8b-5c3d-82a8-a384a8880a27",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.6117167558103661,
+     "precision": 0.9
+    },
+    {
+     "qid": "9282c8c5-9749-546c-9ef9-32ab9cb4de50",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.6051906348295047,
+     "precision": 0.2
+    },
+    {
+     "qid": "bdfccde0-b8cc-51c9-9b32-33a378882e55",
+     "doc_type": "news",
+     "rank": 7,
+     "strict_rank": null,
+     "ndcg": 0.09180385079206221,
+     "precision": 0.1
+    },
+    {
+     "qid": "7a41c748-67c7-55b9-88e8-a1d7e34469bf",
+     "doc_type": "news",
+     "rank": 3,
+     "strict_rank": 3,
+     "ndcg": 0.5,
+     "precision": 0.1
+    },
+    {
+     "qid": "c2d781df-27d3-5a69-8555-624675829c56",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7312625444731048,
+     "precision": 0.7
+    },
+    {
+     "qid": "0cddbd2e-0779-5025-828c-76385a932108",
+     "doc_type": "news",
+     "rank": 3,
+     "strict_rank": 3,
+     "ndcg": 0.2900060534925462,
+     "precision": 0.2
+    },
+    {
+     "qid": "6dae65b7-261c-5b26-a871-a15c46d8828a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9871451602176229,
+     "precision": 0.3
+    },
+    {
+     "qid": "4295be8e-0dca-5dfe-8ccb-948baf24c424",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7093070553528692,
+     "precision": 0.8
+    },
+    {
+     "qid": "c52bd6e7-ae67-559c-8590-35c4b4b80090",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7853647977237099,
+     "precision": 0.8
+    },
+    {
+     "qid": "90bf9d3f-2146-5887-a117-2cd18b071a34",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "2eb2a46a-5cba-55b4-b80f-7dc91817381a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8586166979903513,
+     "precision": 0.9
+    },
+    {
+     "qid": "d76ef6ac-b8b2-56c6-b8cf-ef83398cd40b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6850432982713746,
+     "precision": 0.5
+    },
+    {
+     "qid": "89a0ff0e-7abd-5f5c-9ffb-33a361860894",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.2
+    },
+    {
+     "qid": "605c0820-8ba7-5f11-9955-c6f3261873d6",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "0b65c6e9-ab51-5f4b-a161-10b49f1171d1",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.813379843094004,
+     "precision": 0.4
+    },
+    {
+     "qid": "a4721c13-a04e-56a4-abf9-6d3b23aefbba",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9575861412006988,
+     "precision": 1.0
+    },
+    {
+     "qid": "72d832b6-3bd9-5645-b5cc-c2dd12863906",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5662293904510552,
+     "precision": 0.6
+    },
+    {
+     "qid": "2c38f414-57cc-5e27-99e7-3ea2e898db2b",
+     "doc_type": "patch_note",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.49974546512912627,
+     "precision": 0.2
+    },
+    {
+     "qid": "5928e057-4202-59a4-9c5a-90bf8dde4327",
+     "doc_type": "patch_note",
+     "rank": 3,
+     "strict_rank": null,
+     "ndcg": 0.13770577618809332,
+     "precision": 0.1
+    },
+    {
+     "qid": "43a12366-a6f5-599d-99e0-ca7c9278ae5c",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.47040038935732037,
+     "precision": 0.3
+    },
+    {
+     "qid": "8ac05eec-2e48-5317-ba64-c0cef78cc6a1",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5125217511292656,
+     "precision": 0.3
+    },
+    {
+     "qid": "9adb3f14-27f1-59f0-abc4-3d35ab16f67d",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "6737617a-ad04-583a-bc7c-5349841509db",
+     "doc_type": "patch_note",
+     "rank": 3,
+     "strict_rank": null,
+     "ndcg": 0.12103812696590094,
+     "precision": 0.1
+    },
+    {
+     "qid": "a133c74f-76d8-55f7-b0ca-89e345432fa3",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "f5103888-f9e9-59fe-8ddb-debbd74e4723",
+     "doc_type": "patch_note",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.5518472121144192,
+     "precision": 0.2
+    },
+    {
+     "qid": "c2acaa1a-3a50-5757-b252-a5536eb3afa3",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7323062196400345,
+     "precision": 0.4
+    },
+    {
+     "qid": "193ed0b2-a75a-5e62-81a9-20c1bde84383",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8081344797019143,
+     "precision": 0.4
+    },
+    {
+     "qid": "4a658554-ba5a-55be-8914-c01fb91ead00",
+     "doc_type": "patch_note",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.6309297535714574,
+     "precision": 0.1
+    },
+    {
+     "qid": "fd4bfd10-32f0-5839-beb2-fddbf29f431c",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "a8df1cf5-b550-5334-8815-3fc7e6060bdd",
+     "doc_type": "patch_note",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.5468809173154742,
+     "precision": 0.7
+    },
+    {
+     "qid": "3ef4254e-4e61-5e3f-b9b0-6e0e117db1f2",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "53e99f56-3814-53d1-87ee-2dbef03a4583",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "77043243-f59e-58d8-8c88-259b4a7034bb",
+     "doc_type": "patch_note",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.17376534287144002,
+     "precision": 0.1
+    },
+    {
+     "qid": "e32b9287-2c0a-55dc-94fb-c58afbe80189",
+     "doc_type": "patch_note",
+     "rank": 3,
+     "strict_rank": 3,
+     "ndcg": 0.382614808419833,
+     "precision": 0.4
+    },
+    {
+     "qid": "df290f34-6337-51f0-8776-9c742c53c543",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.3599537554429899,
+     "precision": 0.9
+    },
+    {
+     "qid": "19487db1-4230-5926-83cc-92a12c421663",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "54b8d0a2-18a5-55f0-835d-f5f78f404fe1",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.944847956559586,
+     "precision": 0.2
+    },
+    {
+     "qid": "00e946e7-745f-541b-8e4f-a280e0bc3fb4",
+     "doc_type": "patch_note",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.325027967813913,
+     "precision": 0.1
+    },
+    {
+     "qid": "4ba7b52e-5f2c-5593-8292-6025efcb7f08",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.8357852728898614,
+     "precision": 0.5
+    },
+    {
+     "qid": "05f49b10-7196-55b7-847b-66bc57c5b7cd",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "590bfcf7-5b47-5311-81d7-3b5651581430",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.6158076308800224,
+     "precision": 0.9
+    },
+    {
+     "qid": "699ee459-4c4f-51aa-a829-860638b0183c",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8835412061364121,
+     "precision": 0.4
+    },
+    {
+     "qid": "fe9a6b14-74a2-564f-a7ad-e15f19091490",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 4,
+     "ndcg": 0.3731850265444393,
+     "precision": 0.4
+    },
+    {
+     "qid": "17c61cc8-c2f8-5078-b18c-7fadc3c15dca",
+     "doc_type": "review",
+     "rank": 2,
+     "strict_rank": 6,
+     "ndcg": 0.2875640703192608,
+     "precision": 0.5
+    },
+    {
+     "qid": "367c3bc3-ad73-5663-8196-39b4e081a36a",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.71867199714736,
+     "precision": 0.3
+    },
+    {
+     "qid": "835ae3ef-42cb-5d12-a76a-441e4898b8f4",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "39261cb0-28f4-5829-81b6-1b574211c2b8",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 4,
+     "ndcg": 0.37060195846142413,
+     "precision": 0.6
+    },
+    {
+     "qid": "a065afd3-1a2e-593c-bbc4-1fbef3b87e7d",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.3783958119246703,
+     "precision": 0.8
+    },
+    {
+     "qid": "b951d096-0f06-5bf8-8339-c6a5164772d9",
+     "doc_type": "review",
+     "rank": 4,
+     "strict_rank": null,
+     "ndcg": 0.43067655807339306,
+     "precision": 0.1
+    },
+    {
+     "qid": "d5c2abf0-4620-509e-b78a-09212696652e",
+     "doc_type": "review",
+     "rank": 3,
+     "strict_rank": null,
+     "ndcg": 0.23463936301137822,
+     "precision": 0.1
+    },
+    {
+     "qid": "a7bca48e-0915-5ddd-82c0-265f344afe6a",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7393817438665189,
+     "precision": 0.9
+    },
+    {
+     "qid": "7c17da86-4f5b-5aed-b53a-c00ad52035ae",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 5,
+     "ndcg": 0.34789815979014543,
+     "precision": 0.2
+    },
+    {
+     "qid": "10d5b88e-0a4a-507e-8e2b-54f0a734f74c",
+     "doc_type": "review",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "018b7712-6364-5353-81d6-b2cdc0763e01",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5991899726451316,
+     "precision": 0.7
+    },
+    {
+     "qid": "9a488944-da6c-5a7f-af38-958517ffcbdd",
+     "doc_type": "review",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.38685280723454163,
+     "precision": 0.1
+    },
+    {
+     "qid": "7da4c201-bd8f-524b-9109-2fa1c46be569",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 6,
+     "ndcg": 0.2640198783641923,
+     "precision": 0.4
+    },
+    {
+     "qid": "1e3a6eb3-7fb4-58b7-a2c3-d6fcd28e233d",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7580879964075133,
+     "precision": 0.9
+    },
+    {
+     "qid": "a576d1a0-db1e-5dad-b457-c62939fd94df",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.7096835029499551,
+     "precision": 1.0
+    },
+    {
+     "qid": "6036767d-cebf-52a7-ad7d-49ca5158b1de",
+     "doc_type": "review",
+     "rank": 3,
+     "strict_rank": null,
+     "ndcg": 0.08398471153179837,
+     "precision": 0.1
+    },
+    {
+     "qid": "a2cabba7-815f-5c25-9bfd-7a9ef0119e8b",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9074250374176303,
+     "precision": 1.0
+    },
+    {
+     "qid": "d659403d-3b31-5f57-a195-c13bf795021d",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 6,
+     "ndcg": 0.22835032409102735,
+     "precision": 0.3
+    },
+    {
+     "qid": "22df8da7-537d-5f4b-b1f1-c042b61e330e",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.6280274829037116,
+     "precision": 0.6
+    },
+    {
+     "qid": "d3231de9-cbc9-5d3a-b340-63b45eb96f27",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.42007771521316706,
+     "precision": 0.7
+    },
+    {
+     "qid": "fcf3cc73-0953-51d7-beb6-2008abf53ac2",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.5660408479434486,
+     "precision": 0.3
+    },
+    {
+     "qid": "f0d67167-8ea8-56b3-83fa-788bdfbed894",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7187938170519331,
+     "precision": 0.9
+    },
+    {
+     "qid": "0cf5ab1e-346a-593c-b7dd-b8ee39b05128",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.6190453516135274,
+     "precision": 0.8
+    },
+    {
+     "qid": "7f8b957a-49e2-5e9b-b949-86c77a41a67a",
+     "doc_type": "review",
+     "rank": 5,
+     "strict_rank": 5,
+     "ndcg": 0.085143117641621,
+     "precision": 0.1
+    },
+    {
+     "qid": "fd8172c5-a850-5c13-b09d-83b248e6407f",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.44141600479794774,
+     "precision": 0.3
+    },
+    {
+     "qid": "a2bc186c-d356-563c-9653-a7beaaa82338",
+     "doc_type": "review",
+     "rank": 5,
+     "strict_rank": 9,
+     "ndcg": 0.17890232888891125,
+     "precision": 0.2
+    },
+    {
+     "qid": "a3ffdbaa-ec46-5ed7-ab14-674a35606a82",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7695707288897711,
+     "precision": 0.4
+    },
+    {
+     "qid": "7d99ce97-76c2-57a1-b60c-c9242007f561",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "9ef138db-8055-5b88-b7fa-f849808f0ba6",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.8772153153380493,
+     "precision": 0.2
+    },
+    {
+     "qid": "837b36bc-1df3-5669-bdc2-96a6167540f5",
+     "doc_type": "wiki",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.639909328045346,
+     "precision": 0.2
+    },
+    {
+     "qid": "f69656a5-830f-5586-8160-0da5c301f23d",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "9c89e1f2-ce42-586b-aff0-f7fdd1c2c97a",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "c1e6503d-5cee-57b7-b01f-b0b39ff2afce",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "d72d2153-7858-58c0-abc3-404152ed4415",
+     "doc_type": "wiki",
+     "rank": 9,
+     "strict_rank": null,
+     "ndcg": 0.053393049826489264,
+     "precision": 0.1
+    },
+    {
+     "qid": "5483b6d4-afc0-562f-a4ec-f84aa5ce9e8b",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.91311732856428,
+     "precision": 0.2
+    },
+    {
+     "qid": "a38a0dc5-0113-55f5-8efa-f64352d39d17",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6528264728720661,
+     "precision": 0.5
+    },
+    {
+     "qid": "84fdc922-abf2-5796-9aef-6e586d201e85",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "938bde93-94b0-5b29-b189-3787f30cc313",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.41968658115504276,
+     "precision": 0.2
+    },
+    {
+     "qid": "27ab2e18-160d-590f-bab6-37cfa604c808",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "9c8ec653-6d80-5da3-8c81-3e21eff44c68",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9903929125301808,
+     "precision": 0.4
+    },
+    {
+     "qid": "767f538b-52d8-51ac-b03b-3d5293bf7866",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.970285723756421,
+     "precision": 0.5
+    },
+    {
+     "qid": "83a4bc20-bce8-5730-89e6-9394b18daf7b",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "c58049da-14d0-5385-9071-2f1f56134ef0",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7022199783726597,
+     "precision": 0.5
+    },
+    {
+     "qid": "20ada20b-907d-5899-a470-c1de7f98380b",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.6461883856780656,
+     "precision": 0.4
+    },
+    {
+     "qid": "adc2d511-5047-52fd-a392-613dd0aca75a",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5032251913410369,
+     "precision": 0.2
+    },
+    {
+     "qid": "7630448e-6ac3-5811-85a7-6526cd250b8b",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "030de044-71a2-54fa-8e31-887b27e19de5",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "312c6d6c-553b-59f0-a0b2-c9e142ae0b80",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6479921916314367,
+     "precision": 0.3
+    },
+    {
+     "qid": "c311fb73-3d20-5e7b-8c51-e2168425eaf3",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5219717352849305,
+     "precision": 0.4
+    },
+    {
+     "qid": "31198d5c-18c2-5d82-a6a5-56d2bf107563",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7071899956985169,
+     "precision": 0.3
+    }
+   ]
+  },
+  "dense": {
+   "split": "dev",
+   "k": 10,
+   "n": 106,
+   "no_relevant": 1,
+   "unjudged_hits": 0,
+   "overall": {
+    "n": 106,
+    "hit@1": 0.6698113207547169,
+    "hit@5": 0.8207547169811321,
+    "hit@10": 0.8301886792452831,
+    "mrr@10": 0.7278301886792453,
+    "ndcg@10": 0.5454928746541406,
+    "p@10": 0.36415094339622645
+   },
+   "strict": {
+    "n": 106,
+    "hit@1": 0.4528301886792453,
+    "hit@5": 0.6509433962264151,
+    "hit@10": 0.6886792452830188,
+    "mrr@10": 0.5417939502845164
+   },
+   "by_doc_type": {
+    "news": {
+     "n": 30,
+     "hit@1": 0.8,
+     "hit@5": 0.9333333333333333,
+     "hit@10": 0.9333333333333333,
+     "mrr@10": 0.8555555555555556,
+     "ndcg@10": 0.6768076579395028,
+     "p@10": 0.4233333333333334
+    },
+    "patch_note": {
+     "n": 26,
+     "hit@1": 0.6153846153846154,
+     "hit@5": 0.7692307692307693,
+     "hit@10": 0.7692307692307693,
+     "mrr@10": 0.6743589743589744,
+     "ndcg@10": 0.4989591006958238,
+     "p@10": 0.28846153846153844
+    },
+    "review": {
+     "n": 26,
+     "hit@1": 0.5769230769230769,
+     "hit@5": 0.8461538461538461,
+     "hit@10": 0.8461538461538461,
+     "mrr@10": 0.6762820512820512,
+     "ndcg@10": 0.4656571845176854,
+     "p@10": 0.5038461538461538
+    },
+    "wiki": {
+     "n": 24,
+     "hit@1": 0.6666666666666666,
+     "hit@5": 0.7083333333333334,
+     "hit@10": 0.75,
+     "mrr@10": 0.6819444444444445,
+     "ndcg@10": 0.5182496483167741,
+     "p@10": 0.22083333333333333
+    }
+   },
+   "per_question": [
+    {
+     "qid": "a1f88b15-ae5e-5308-99f6-4f7081f386e6",
+     "doc_type": "news",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.6698623505528798,
+     "precision": 0.8
+    },
+    {
+     "qid": "df525d4e-f4da-509d-b13e-1dae8b21bc7b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.3
+    },
+    {
+     "qid": "2c50d392-c2dd-5bbf-b3f5-11e8aee4edb8",
+     "doc_type": "news",
+     "rank": 3,
+     "strict_rank": 5,
+     "ndcg": 0.27747597952135283,
+     "precision": 0.4
+    },
+    {
+     "qid": "ee442b1d-0263-51dc-8203-9b41e920f04a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 7,
+     "ndcg": 0.6863656220351223,
+     "precision": 0.4
+    },
+    {
+     "qid": "2a0b4f3b-088c-5fef-baab-38ba568103ab",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8962431958130916,
+     "precision": 0.3
+    },
+    {
+     "qid": "2b5de585-3e49-55b9-8e28-5728f11c3b56",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.27541155237618664,
+     "precision": 0.1
+    },
+    {
+     "qid": "72c5f953-ff1d-5749-98b1-9f3f46fb543c",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.555966478082487,
+     "precision": 0.7
+    },
+    {
+     "qid": "60963a4f-de5e-5417-b177-b26fd0559975",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "c22d0847-f541-5f6d-a3eb-e2fad14e84b9",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8455869637430257,
+     "precision": 0.8
+    },
+    {
+     "qid": "23695a6e-b6ad-5662-8248-384c0e788841",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7613521585178957,
+     "precision": 0.7
+    },
+    {
+     "qid": "a81facfa-016f-5395-96fc-474d9f489d2b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.649014791936513,
+     "precision": 0.2
+    },
+    {
+     "qid": "9d18882d-b828-56e1-8de6-9bac2339c1d3",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.5664415584195445,
+     "precision": 0.4
+    },
+    {
+     "qid": "a4f52aef-023a-56bb-aa6c-8c0bcc35d2bf",
+     "doc_type": "news",
+     "rank": 3,
+     "strict_rank": null,
+     "ndcg": 0.5,
+     "precision": 0.1
+    },
+    {
+     "qid": "654e451a-1c8b-5c3d-82a8-a384a8880a27",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.6667641569647409,
+     "precision": 1.0
+    },
+    {
+     "qid": "9282c8c5-9749-546c-9ef9-32ab9cb4de50",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.6051906348295047,
+     "precision": 0.2
+    },
+    {
+     "qid": "bdfccde0-b8cc-51c9-9b32-33a378882e55",
+     "doc_type": "news",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "7a41c748-67c7-55b9-88e8-a1d7e34469bf",
+     "doc_type": "news",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.6309297535714574,
+     "precision": 0.1
+    },
+    {
+     "qid": "c2d781df-27d3-5a69-8555-624675829c56",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6274092458891772,
+     "precision": 0.5
+    },
+    {
+     "qid": "0cddbd2e-0779-5025-828c-76385a932108",
+     "doc_type": "news",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "6dae65b7-261c-5b26-a871-a15c46d8828a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5562983930884396,
+     "precision": 0.1
+    },
+    {
+     "qid": "4295be8e-0dca-5dfe-8ccb-948baf24c424",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.6050490531352726,
+     "precision": 0.9
+    },
+    {
+     "qid": "c52bd6e7-ae67-559c-8590-35c4b4b80090",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5418142140554439,
+     "precision": 0.4
+    },
+    {
+     "qid": "90bf9d3f-2146-5887-a117-2cd18b071a34",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "2eb2a46a-5cba-55b4-b80f-7dc91817381a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9492716052225998,
+     "precision": 0.9
+    },
+    {
+     "qid": "d76ef6ac-b8b2-56c6-b8cf-ef83398cd40b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.860463664193149,
+     "precision": 0.7
+    },
+    {
+     "qid": "89a0ff0e-7abd-5f5c-9ffb-33a361860894",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9180385079206221,
+     "precision": 0.2
+    },
+    {
+     "qid": "605c0820-8ba7-5f11-9955-c6f3261873d6",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "0b65c6e9-ab51-5f4b-a161-10b49f1171d1",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.4
+    },
+    {
+     "qid": "a4721c13-a04e-56a4-abf9-6d3b23aefbba",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9477344873475498,
+     "precision": 1.0
+    },
+    {
+     "qid": "72d832b6-3bd9-5645-b5cc-c2dd12863906",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.7115453709690295,
+     "precision": 0.8
+    },
+    {
+     "qid": "2c38f414-57cc-5e27-99e7-3ea2e898db2b",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "5928e057-4202-59a4-9c5a-90bf8dde4327",
+     "doc_type": "patch_note",
+     "rank": 5,
+     "strict_rank": null,
+     "ndcg": 0.10654373218155079,
+     "precision": 0.1
+    },
+    {
+     "qid": "43a12366-a6f5-599d-99e0-ca7c9278ae5c",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5612132866556823,
+     "precision": 0.5
+    },
+    {
+     "qid": "8ac05eec-2e48-5317-ba64-c0cef78cc6a1",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6776577318584642,
+     "precision": 0.4
+    },
+    {
+     "qid": "9adb3f14-27f1-59f0-abc4-3d35ab16f67d",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "6737617a-ad04-583a-bc7c-5349841509db",
+     "doc_type": "patch_note",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.15273311123869335,
+     "precision": 0.1
+    },
+    {
+     "qid": "a133c74f-76d8-55f7-b0ca-89e345432fa3",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "f5103888-f9e9-59fe-8ddb-debbd74e4723",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8304853296300547,
+     "precision": 0.2
+    },
+    {
+     "qid": "c2acaa1a-3a50-5757-b252-a5536eb3afa3",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8342233545647812,
+     "precision": 0.5
+    },
+    {
+     "qid": "193ed0b2-a75a-5e62-81a9-20c1bde84383",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5655398147502472,
+     "precision": 0.1
+    },
+    {
+     "qid": "4a658554-ba5a-55be-8914-c01fb91ead00",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "fd4bfd10-32f0-5839-beb2-fddbf29f431c",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "a8df1cf5-b550-5334-8815-3fc7e6060bdd",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7912069838403613,
+     "precision": 0.9
+    },
+    {
+     "qid": "3ef4254e-4e61-5e3f-b9b0-6e0e117db1f2",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "53e99f56-3814-53d1-87ee-2dbef03a4583",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "77043243-f59e-58d8-8c88-259b4a7034bb",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "e32b9287-2c0a-55dc-94fb-c58afbe80189",
+     "doc_type": "patch_note",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.6615909033183295,
+     "precision": 0.8
+    },
+    {
+     "qid": "df290f34-6337-51f0-8776-9c742c53c543",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.3844102377610974,
+     "precision": 1.0
+    },
+    {
+     "qid": "19487db1-4230-5926-83cc-92a12c421663",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "54b8d0a2-18a5-55f0-835d-f5f78f404fe1",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8262346571285599,
+     "precision": 0.1
+    },
+    {
+     "qid": "00e946e7-745f-541b-8e4f-a280e0bc3fb4",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6702348924930113,
+     "precision": 0.2
+    },
+    {
+     "qid": "4ba7b52e-5f2c-5593-8292-6025efcb7f08",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.7197404739702886,
+     "precision": 0.4
+    },
+    {
+     "qid": "05f49b10-7196-55b7-847b-66bc57c5b7cd",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "590bfcf7-5b47-5311-81d7-3b5651581430",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.6005540286277394,
+     "precision": 1.0
+    },
+    {
+     "qid": "699ee459-4c4f-51aa-a829-860638b0183c",
+     "doc_type": "patch_note",
+     "rank": 3,
+     "strict_rank": null,
+     "ndcg": 0.08585952344510916,
+     "precision": 0.1
+    },
+    {
+     "qid": "fe9a6b14-74a2-564f-a7ad-e15f19091490",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.5047085566274493,
+     "precision": 0.7
+    },
+    {
+     "qid": "17c61cc8-c2f8-5078-b18c-7fadc3c15dca",
+     "doc_type": "review",
+     "rank": 3,
+     "strict_rank": 3,
+     "ndcg": 0.4817255570993242,
+     "precision": 0.7
+    },
+    {
+     "qid": "367c3bc3-ad73-5663-8196-39b4e081a36a",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7665614900517694,
+     "precision": 0.4
+    },
+    {
+     "qid": "835ae3ef-42cb-5d12-a76a-441e4898b8f4",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "39261cb0-28f4-5829-81b6-1b574211c2b8",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.5041274578787863,
+     "precision": 0.7
+    },
+    {
+     "qid": "a065afd3-1a2e-593c-bbc4-1fbef3b87e7d",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.5567760489362796,
+     "precision": 0.9
+    },
+    {
+     "qid": "b951d096-0f06-5bf8-8339-c6a5164772d9",
+     "doc_type": "review",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "d5c2abf0-4620-509e-b78a-09212696652e",
+     "doc_type": "review",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.2960819109658652,
+     "precision": 0.1
+    },
+    {
+     "qid": "a7bca48e-0915-5ddd-82c0-265f344afe6a",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.8108582970019788,
+     "precision": 1.0
+    },
+    {
+     "qid": "7c17da86-4f5b-5aed-b53a-c00ad52035ae",
+     "doc_type": "review",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "10d5b88e-0a4a-507e-8e2b-54f0a734f74c",
+     "doc_type": "review",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "018b7712-6364-5353-81d6-b2cdc0763e01",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9308177245318817,
+     "precision": 1.0
+    },
+    {
+     "qid": "9a488944-da6c-5a7f-af38-958517ffcbdd",
+     "doc_type": "review",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "7da4c201-bd8f-524b-9109-2fa1c46be569",
+     "doc_type": "review",
+     "rank": 3,
+     "strict_rank": 3,
+     "ndcg": 0.4243520122222316,
+     "precision": 0.6
+    },
+    {
+     "qid": "1e3a6eb3-7fb4-58b7-a2c3-d6fcd28e233d",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.92663607790064,
+     "precision": 1.0
+    },
+    {
+     "qid": "a576d1a0-db1e-5dad-b457-c62939fd94df",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.6031152865491827,
+     "precision": 0.9
+    },
+    {
+     "qid": "6036767d-cebf-52a7-ad7d-49ca5158b1de",
+     "doc_type": "review",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.10597690670105499,
+     "precision": 0.1
+    },
+    {
+     "qid": "a2cabba7-815f-5c25-9bfd-7a9ef0119e8b",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 1.0
+    },
+    {
+     "qid": "d659403d-3b31-5f57-a195-c13bf795021d",
+     "doc_type": "review",
+     "rank": 4,
+     "strict_rank": null,
+     "ndcg": 0.07536855852281914,
+     "precision": 0.2
+    },
+    {
+     "qid": "22df8da7-537d-5f4b-b1f1-c042b61e330e",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.5077564962535625,
+     "precision": 0.7
+    },
+    {
+     "qid": "d3231de9-cbc9-5d3a-b340-63b45eb96f27",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.18770341933473128,
+     "precision": 0.5
+    },
+    {
+     "qid": "fcf3cc73-0953-51d7-beb6-2008abf53ac2",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.5725688068278836,
+     "precision": 0.3
+    },
+    {
+     "qid": "f0d67167-8ea8-56b3-83fa-788bdfbed894",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5900447028564019,
+     "precision": 0.8
+    },
+    {
+     "qid": "0cf5ab1e-346a-593c-b7dd-b8ee39b05128",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.733620752410735,
+     "precision": 1.0
+    },
+    {
+     "qid": "7f8b957a-49e2-5e9b-b949-86c77a41a67a",
+     "doc_type": "review",
+     "rank": 3,
+     "strict_rank": 3,
+     "ndcg": 0.39486008436280445,
+     "precision": 0.5
+    },
+    {
+     "qid": "fd8172c5-a850-5c13-b09d-83b248e6407f",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.44354047972206645,
+     "precision": 0.4
+    },
+    {
+     "qid": "a2bc186c-d356-563c-9653-a7beaaa82338",
+     "doc_type": "review",
+     "rank": 3,
+     "strict_rank": 9,
+     "ndcg": 0.19459472732982147,
+     "precision": 0.2
+    },
+    {
+     "qid": "a3ffdbaa-ec46-5ed7-ab14-674a35606a82",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5899125497692038,
+     "precision": 0.3
+    },
+    {
+     "qid": "7d99ce97-76c2-57a1-b60c-c9242007f561",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "9ef138db-8055-5b88-b7fa-f849808f0ba6",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.8503449055347546,
+     "precision": 0.2
+    },
+    {
+     "qid": "837b36bc-1df3-5669-bdc2-96a6167540f5",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9639404333166532,
+     "precision": 0.2
+    },
+    {
+     "qid": "f69656a5-830f-5586-8160-0da5c301f23d",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "9c89e1f2-ce42-586b-aff0-f7fdd1c2c97a",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "c1e6503d-5cee-57b7-b01f-b0b39ff2afce",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "d72d2153-7858-58c0-abc3-404152ed4415",
+     "doc_type": "wiki",
+     "rank": 5,
+     "strict_rank": null,
+     "ndcg": 0.12773788340551243,
+     "precision": 0.2
+    },
+    {
+     "qid": "5483b6d4-afc0-562f-a4ec-f84aa5ce9e8b",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9327783893101107,
+     "precision": 0.2
+    },
+    {
+     "qid": "a38a0dc5-0113-55f5-8efa-f64352d39d17",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.738398916922836,
+     "precision": 0.5
+    },
+    {
+     "qid": "84fdc922-abf2-5796-9aef-6e586d201e85",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "938bde93-94b0-5b29-b189-3787f30cc313",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5262419374442863,
+     "precision": 0.4
+    },
+    {
+     "qid": "27ab2e18-160d-590f-bab6-37cfa604c808",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "9c8ec653-6d80-5da3-8c81-3e21eff44c68",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9595460215969996,
+     "precision": 0.4
+    },
+    {
+     "qid": "767f538b-52d8-51ac-b03b-3d5293bf7866",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8683595134906049,
+     "precision": 0.3
+    },
+    {
+     "qid": "83a4bc20-bce8-5730-89e6-9394b18daf7b",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "c58049da-14d0-5385-9071-2f1f56134ef0",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8141829732638892,
+     "precision": 0.6
+    },
+    {
+     "qid": "20ada20b-907d-5899-a470-c1de7f98380b",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8889419735757167,
+     "precision": 0.4
+    },
+    {
+     "qid": "adc2d511-5047-52fd-a392-613dd0aca75a",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6422813708518126,
+     "precision": 0.3
+    },
+    {
+     "qid": "7630448e-6ac3-5811-85a7-6526cd250b8b",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "030de044-71a2-54fa-8e31-887b27e19de5",
+     "doc_type": "wiki",
+     "rank": 6,
+     "strict_rank": null,
+     "ndcg": 0.07808810378894336,
+     "precision": 0.1
+    },
+    {
+     "qid": "312c6d6c-553b-59f0-a0b2-c9e142ae0b80",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6916165535227334,
+     "precision": 0.4
+    },
+    {
+     "qid": "c311fb73-3d20-5e7b-8c51-e2168425eaf3",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 7,
+     "ndcg": 0.28680636094692663,
+     "precision": 0.3
+    },
+    {
+     "qid": "31198d5c-18c2-5d82-a6a5-56d2bf107563",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 6,
+     "ndcg": 0.4788136728615966,
+     "precision": 0.3
+    }
+   ]
+  },
+  "bm25": {
+   "split": "dev",
+   "k": 10,
+   "n": 106,
+   "no_relevant": 1,
+   "unjudged_hits": 0,
+   "overall": {
+    "n": 106,
+    "hit@1": 0.5849056603773585,
+    "hit@5": 0.7641509433962265,
+    "hit@10": 0.8301886792452831,
+    "mrr@10": 0.6621443545971848,
+    "ndcg@10": 0.4572317326081093,
+    "p@10": 0.29339622641509433
+   },
+   "strict": {
+    "n": 106,
+    "hit@1": 0.3867924528301887,
+    "hit@5": 0.5849056603773585,
+    "hit@10": 0.660377358490566,
+    "mrr@10": 0.4743673255465708
+   },
+   "by_doc_type": {
+    "news": {
+     "n": 30,
+     "hit@1": 0.8,
+     "hit@5": 0.9333333333333333,
+     "hit@10": 0.9333333333333333,
+     "mrr@10": 0.8527777777777777,
+     "ndcg@10": 0.640327809988574,
+     "p@10": 0.39333333333333337
+    },
+    "patch_note": {
+     "n": 26,
+     "hit@1": 0.4230769230769231,
+     "hit@5": 0.6153846153846154,
+     "hit@10": 0.6923076923076923,
+     "mrr@10": 0.4990842490842491,
+     "ndcg@10": 0.37535350261787337,
+     "p@10": 0.20384615384615384
+    },
+    "review": {
+     "n": 26,
+     "hit@1": 0.6153846153846154,
+     "hit@5": 0.8461538461538461,
+     "hit@10": 0.9230769230769231,
+     "mrr@10": 0.7183760683760684,
+     "ndcg@10": 0.4156077465031336,
+     "p@10": 0.40384615384615385
+    },
+    "wiki": {
+     "n": 24,
+     "hit@1": 0.4583333333333333,
+     "hit@5": 0.625,
+     "hit@10": 0.75,
+     "mrr@10": 0.5395833333333333,
+     "ndcg@10": 0.36215570331900765,
+     "p@10": 0.14583333333333334
+    }
+   },
+   "per_question": [
+    {
+     "qid": "a1f88b15-ae5e-5308-99f6-4f7081f386e6",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 8,
+     "ndcg": 0.46620415572674534,
+     "precision": 1.0
+    },
+    {
+     "qid": "df525d4e-f4da-509d-b13e-1dae8b21bc7b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.3
+    },
+    {
+     "qid": "2c50d392-c2dd-5bbf-b3f5-11e8aee4edb8",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 5,
+     "ndcg": 0.38247195546611906,
+     "precision": 0.5
+    },
+    {
+     "qid": "ee442b1d-0263-51dc-8203-9b41e920f04a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8403472530164682,
+     "precision": 0.3
+    },
+    {
+     "qid": "2a0b4f3b-088c-5fef-baab-38ba568103ab",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.804532155482531,
+     "precision": 0.3
+    },
+    {
+     "qid": "2b5de585-3e49-55b9-8e28-5728f11c3b56",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.2
+    },
+    {
+     "qid": "72c5f953-ff1d-5749-98b1-9f3f46fb543c",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.3800893080013054,
+     "precision": 0.4
+    },
+    {
+     "qid": "60963a4f-de5e-5417-b177-b26fd0559975",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "c22d0847-f541-5f6d-a3eb-e2fad14e84b9",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.5427529001062689,
+     "precision": 0.5
+    },
+    {
+     "qid": "23695a6e-b6ad-5662-8248-384c0e788841",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 1.0
+    },
+    {
+     "qid": "a81facfa-016f-5395-96fc-474d9f489d2b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5562983930884396,
+     "precision": 0.1
+    },
+    {
+     "qid": "9d18882d-b828-56e1-8de6-9bac2339c1d3",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6354576742360869,
+     "precision": 0.2
+    },
+    {
+     "qid": "a4f52aef-023a-56bb-aa6c-8c0bcc35d2bf",
+     "doc_type": "news",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "654e451a-1c8b-5c3d-82a8-a384a8880a27",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.3879543994369557,
+     "precision": 0.6
+    },
+    {
+     "qid": "9282c8c5-9749-546c-9ef9-32ab9cb4de50",
+     "doc_type": "news",
+     "rank": 3,
+     "strict_rank": 3,
+     "ndcg": 0.4394809365170495,
+     "precision": 0.2
+    },
+    {
+     "qid": "bdfccde0-b8cc-51c9-9b32-33a378882e55",
+     "doc_type": "news",
+     "rank": 4,
+     "strict_rank": null,
+     "ndcg": 0.11861329943102608,
+     "precision": 0.1
+    },
+    {
+     "qid": "7a41c748-67c7-55b9-88e8-a1d7e34469bf",
+     "doc_type": "news",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "c2d781df-27d3-5a69-8555-624675829c56",
+     "doc_type": "news",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.6371130896657825,
+     "precision": 0.7
+    },
+    {
+     "qid": "0cddbd2e-0779-5025-828c-76385a932108",
+     "doc_type": "news",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.42074739777979014,
+     "precision": 0.3
+    },
+    {
+     "qid": "6dae65b7-261c-5b26-a871-a15c46d8828a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9514426589871553,
+     "precision": 0.3
+    },
+    {
+     "qid": "4295be8e-0dca-5dfe-8ccb-948baf24c424",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5731951569940147,
+     "precision": 0.5
+    },
+    {
+     "qid": "c52bd6e7-ae67-559c-8590-35c4b4b80090",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.7192690499625197,
+     "precision": 0.8
+    },
+    {
+     "qid": "90bf9d3f-2146-5887-a117-2cd18b071a34",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "2eb2a46a-5cba-55b4-b80f-7dc91817381a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7099009791406456,
+     "precision": 0.7
+    },
+    {
+     "qid": "d76ef6ac-b8b2-56c6-b8cf-ef83398cd40b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6261052392475377,
+     "precision": 0.5
+    },
+    {
+     "qid": "89a0ff0e-7abd-5f5c-9ffb-33a361860894",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.2
+    },
+    {
+     "qid": "605c0820-8ba7-5f11-9955-c6f3261873d6",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "0b65c6e9-ab51-5f4b-a161-10b49f1171d1",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.611421643116806,
+     "precision": 0.3
+    },
+    {
+     "qid": "a4721c13-a04e-56a4-abf9-6d3b23aefbba",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9363792118010482,
+     "precision": 0.9
+    },
+    {
+     "qid": "72d832b6-3bd9-5645-b5cc-c2dd12863906",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.4700574424529238,
+     "precision": 0.6
+    },
+    {
+     "qid": "2c38f414-57cc-5e27-99e7-3ea2e898db2b",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8364301117011402,
+     "precision": 0.3
+    },
+    {
+     "qid": "5928e057-4202-59a4-9c5a-90bf8dde4327",
+     "doc_type": "patch_note",
+     "rank": 4,
+     "strict_rank": null,
+     "ndcg": 0.11861329943102608,
+     "precision": 0.1
+    },
+    {
+     "qid": "43a12366-a6f5-599d-99e0-ca7c9278ae5c",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.4766158247664995,
+     "precision": 0.3
+    },
+    {
+     "qid": "8ac05eec-2e48-5317-ba64-c0cef78cc6a1",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "9adb3f14-27f1-59f0-abc4-3d35ab16f67d",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "6737617a-ad04-583a-bc7c-5349841509db",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "a133c74f-76d8-55f7-b0ca-89e345432fa3",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "f5103888-f9e9-59fe-8ddb-debbd74e4723",
+     "doc_type": "patch_note",
+     "rank": 4,
+     "strict_rank": 4,
+     "ndcg": 0.39346178814788135,
+     "precision": 0.2
+    },
+    {
+     "qid": "c2acaa1a-3a50-5757-b252-a5536eb3afa3",
+     "doc_type": "patch_note",
+     "rank": 6,
+     "strict_rank": 6,
+     "ndcg": 0.2868973853469297,
+     "precision": 0.2
+    },
+    {
+     "qid": "193ed0b2-a75a-5e62-81a9-20c1bde84383",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9144158855926058,
+     "precision": 0.5
+    },
+    {
+     "qid": "4a658554-ba5a-55be-8914-c01fb91ead00",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "fd4bfd10-32f0-5839-beb2-fddbf29f431c",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "a8df1cf5-b550-5334-8815-3fc7e6060bdd",
+     "doc_type": "patch_note",
+     "rank": 3,
+     "strict_rank": 4,
+     "ndcg": 0.24136989334749734,
+     "precision": 0.3
+    },
+    {
+     "qid": "3ef4254e-4e61-5e3f-b9b0-6e0e117db1f2",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "53e99f56-3814-53d1-87ee-2dbef03a4583",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "77043243-f59e-58d8-8c88-259b4a7034bb",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.27541155237618664,
+     "precision": 0.1
+    },
+    {
+     "qid": "e32b9287-2c0a-55dc-94fb-c58afbe80189",
+     "doc_type": "patch_note",
+     "rank": 7,
+     "strict_rank": 7,
+     "ndcg": 0.15285263761471948,
+     "precision": 0.2
+    },
+    {
+     "qid": "df290f34-6337-51f0-8776-9c742c53c543",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 9,
+     "ndcg": 0.384201286491787,
+     "precision": 0.8
+    },
+    {
+     "qid": "19487db1-4230-5926-83cc-92a12c421663",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "54b8d0a2-18a5-55f0-835d-f5f78f404fe1",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9639404333166532,
+     "precision": 0.2
+    },
+    {
+     "qid": "00e946e7-745f-541b-8e4f-a280e0bc3fb4",
+     "doc_type": "patch_note",
+     "rank": 3,
+     "strict_rank": 3,
+     "ndcg": 0.2575785703353275,
+     "precision": 0.1
+    },
+    {
+     "qid": "4ba7b52e-5f2c-5593-8292-6025efcb7f08",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9218235822624828,
+     "precision": 0.4
+    },
+    {
+     "qid": "05f49b10-7196-55b7-847b-66bc57c5b7cd",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "590bfcf7-5b47-5311-81d7-3b5651581430",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.37211643370744885,
+     "precision": 0.8
+    },
+    {
+     "qid": "699ee459-4c4f-51aa-a829-860638b0183c",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9066151038296889,
+     "precision": 0.3
+    },
+    {
+     "qid": "fe9a6b14-74a2-564f-a7ad-e15f19091490",
+     "doc_type": "patch_note",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.25684727979683236,
+     "precision": 0.3
+    },
+    {
+     "qid": "17c61cc8-c2f8-5078-b18c-7fadc3c15dca",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 6,
+     "ndcg": 0.23968234215812886,
+     "precision": 0.4
+    },
+    {
+     "qid": "367c3bc3-ad73-5663-8196-39b4e081a36a",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5473259692178515,
+     "precision": 0.2
+    },
+    {
+     "qid": "835ae3ef-42cb-5d12-a76a-441e4898b8f4",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "39261cb0-28f4-5829-81b6-1b574211c2b8",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.1949768104538487,
+     "precision": 0.4
+    },
+    {
+     "qid": "a065afd3-1a2e-593c-bbc4-1fbef3b87e7d",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 6,
+     "ndcg": 0.3687316143456563,
+     "precision": 0.7
+    },
+    {
+     "qid": "b951d096-0f06-5bf8-8339-c6a5164772d9",
+     "doc_type": "review",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.6309297535714575,
+     "precision": 0.1
+    },
+    {
+     "qid": "d5c2abf0-4620-509e-b78a-09212696652e",
+     "doc_type": "review",
+     "rank": 9,
+     "strict_rank": null,
+     "ndcg": 0.14126697285982898,
+     "precision": 0.1
+    },
+    {
+     "qid": "a7bca48e-0915-5ddd-82c0-265f344afe6a",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5417318025797915,
+     "precision": 0.7
+    },
+    {
+     "qid": "7c17da86-4f5b-5aed-b53a-c00ad52035ae",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.402555834981569,
+     "precision": 0.2
+    },
+    {
+     "qid": "10d5b88e-0a4a-507e-8e2b-54f0a734f74c",
+     "doc_type": "review",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "018b7712-6364-5353-81d6-b2cdc0763e01",
+     "doc_type": "review",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.13569384384388336,
+     "precision": 0.4
+    },
+    {
+     "qid": "9a488944-da6c-5a7f-af38-958517ffcbdd",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.6131471927654584,
+     "precision": 0.1
+    },
+    {
+     "qid": "7da4c201-bd8f-524b-9109-2fa1c46be569",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.10565568495478181,
+     "precision": 0.2
+    },
+    {
+     "qid": "1e3a6eb3-7fb4-58b7-a2c3-d6fcd28e233d",
+     "doc_type": "review",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.6644504781364357,
+     "precision": 0.9
+    },
+    {
+     "qid": "a576d1a0-db1e-5dad-b457-c62939fd94df",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7784307041742285,
+     "precision": 0.9
+    },
+    {
+     "qid": "6036767d-cebf-52a7-ad7d-49ca5158b1de",
+     "doc_type": "review",
+     "rank": 6,
+     "strict_rank": null,
+     "ndcg": 0.11582172339750672,
+     "precision": 0.2
+    },
+    {
+     "qid": "a2cabba7-815f-5c25-9bfd-7a9ef0119e8b",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.762815192207169,
+     "precision": 1.0
+    },
+    {
+     "qid": "d659403d-3b31-5f57-a195-c13bf795021d",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.32595156325651325,
+     "precision": 0.3
+    },
+    {
+     "qid": "22df8da7-537d-5f4b-b1f1-c042b61e330e",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.4965182219577099,
+     "precision": 0.3
+    },
+    {
+     "qid": "d3231de9-cbc9-5d3a-b340-63b45eb96f27",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.71146484690439,
+     "precision": 0.8
+    },
+    {
+     "qid": "fcf3cc73-0953-51d7-beb6-2008abf53ac2",
+     "doc_type": "review",
+     "rank": 5,
+     "strict_rank": 7,
+     "ndcg": 0.3522429815965197,
+     "precision": 0.3
+    },
+    {
+     "qid": "f0d67167-8ea8-56b3-83fa-788bdfbed894",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6629048238356322,
+     "precision": 1.0
+    },
+    {
+     "qid": "0cf5ab1e-346a-593c-b7dd-b8ee39b05128",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6977953144898948,
+     "precision": 0.8
+    },
+    {
+     "qid": "7f8b957a-49e2-5e9b-b949-86c77a41a67a",
+     "doc_type": "review",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "fd8172c5-a850-5c13-b09d-83b248e6407f",
+     "doc_type": "review",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.15474974345448578,
+     "precision": 0.3
+    },
+    {
+     "qid": "a2bc186c-d356-563c-9653-a7beaaa82338",
+     "doc_type": "review",
+     "rank": 5,
+     "strict_rank": 5,
+     "ndcg": 0.160957993938732,
+     "precision": 0.1
+    },
+    {
+     "qid": "a3ffdbaa-ec46-5ed7-ab14-674a35606a82",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.840345458280474,
+     "precision": 0.5
+    },
+    {
+     "qid": "7d99ce97-76c2-57a1-b60c-c9242007f561",
+     "doc_type": "wiki",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.6309297535714574,
+     "precision": 0.1
+    },
+    {
+     "qid": "9ef138db-8055-5b88-b7fa-f849808f0ba6",
+     "doc_type": "wiki",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.6509209298071326,
+     "precision": 0.2
+    },
+    {
+     "qid": "837b36bc-1df3-5669-bdc2-96a6167540f5",
+     "doc_type": "wiki",
+     "rank": 6,
+     "strict_rank": null,
+     "ndcg": 0.09810357436897517,
+     "precision": 0.1
+    },
+    {
+     "qid": "f69656a5-830f-5586-8160-0da5c301f23d",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "9c89e1f2-ce42-586b-aff0-f7fdd1c2c97a",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "c1e6503d-5cee-57b7-b01f-b0b39ff2afce",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "d72d2153-7858-58c0-abc3-404152ed4415",
+     "doc_type": "wiki",
+     "rank": 10,
+     "strict_rank": null,
+     "ndcg": 0.051270813197979145,
+     "precision": 0.1
+    },
+    {
+     "qid": "5483b6d4-afc0-562f-a4ec-f84aa5ce9e8b",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8262346571285599,
+     "precision": 0.1
+    },
+    {
+     "qid": "a38a0dc5-0113-55f5-8efa-f64352d39d17",
+     "doc_type": "wiki",
+     "rank": 3,
+     "strict_rank": 9,
+     "ndcg": 0.2541336057864098,
+     "precision": 0.4
+    },
+    {
+     "qid": "84fdc922-abf2-5796-9aef-6e586d201e85",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "938bde93-94b0-5b29-b189-3787f30cc313",
+     "doc_type": "wiki",
+     "rank": 4,
+     "strict_rank": 4,
+     "ndcg": 0.1635509760700671,
+     "precision": 0.1
+    },
+    {
+     "qid": "27ab2e18-160d-590f-bab6-37cfa604c808",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "9c8ec653-6d80-5da3-8c81-3e21eff44c68",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8593452200998579,
+     "precision": 0.3
+    },
+    {
+     "qid": "767f538b-52d8-51ac-b03b-3d5293bf7866",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6258701109067025,
+     "precision": 0.3
+    },
+    {
+     "qid": "83a4bc20-bce8-5730-89e6-9394b18daf7b",
+     "doc_type": "wiki",
+     "rank": 10,
+     "strict_rank": null,
+     "ndcg": 0.06997573029848124,
+     "precision": 0.1
+    },
+    {
+     "qid": "c58049da-14d0-5385-9071-2f1f56134ef0",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5390031312763821,
+     "precision": 0.3
+    },
+    {
+     "qid": "20ada20b-907d-5899-a470-c1de7f98380b",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.13869012617430843,
+     "precision": 0.1
+    },
+    {
+     "qid": "adc2d511-5047-52fd-a392-613dd0aca75a",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.3903800499921017,
+     "precision": 0.1
+    },
+    {
+     "qid": "7630448e-6ac3-5811-85a7-6526cd250b8b",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "030de044-71a2-54fa-8e31-887b27e19de5",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "312c6d6c-553b-59f0-a0b2-c9e142ae0b80",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5477568489404663,
+     "precision": 0.2
+    },
+    {
+     "qid": "c311fb73-3d20-5e7b-8c51-e2168425eaf3",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.47312227688582176,
+     "precision": 0.3
+    },
+    {
+     "qid": "31198d5c-18c2-5d82-a6a5-56d2bf107563",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5321036168710065,
+     "precision": 0.1
+    }
+   ]
+  },
+  "rerank": {
+   "split": "dev",
+   "k": 10,
+   "n": 106,
+   "no_relevant": 1,
+   "unjudged_hits": 4,
+   "overall": {
+    "n": 106,
+    "hit@1": 0.7547169811320755,
+    "hit@5": 0.8867924528301887,
+    "hit@10": 0.9056603773584906,
+    "mrr@10": 0.809366576819407,
+    "ndcg@10": 0.6680891158206749,
+    "p@10": 0.43207547169811317
+   },
+   "strict": {
+    "n": 106,
+    "hit@1": 0.5754716981132075,
+    "hit@5": 0.7358490566037735,
+    "hit@10": 0.7830188679245284,
+    "mrr@10": 0.647914794848757
+   },
+   "by_doc_type": {
+    "news": {
+     "n": 30,
+     "hit@1": 0.8666666666666667,
+     "hit@5": 0.9666666666666667,
+     "hit@10": 0.9666666666666667,
+     "mrr@10": 0.8972222222222223,
+     "ndcg@10": 0.7797502526654089,
+     "p@10": 0.48666666666666664
+    },
+    "patch_note": {
+     "n": 26,
+     "hit@1": 0.6923076923076923,
+     "hit@5": 0.8461538461538461,
+     "hit@10": 0.8846153846153846,
+     "mrr@10": 0.761904761904762,
+     "ndcg@10": 0.6488772022460702,
+     "p@10": 0.3423076923076923
+    },
+    "review": {
+     "n": 26,
+     "hit@1": 0.7692307692307693,
+     "hit@5": 0.9230769230769231,
+     "hit@10": 0.9615384615384616,
+     "mrr@10": 0.841025641025641,
+     "ndcg@10": 0.656490671802514,
+     "p@10": 0.6153846153846154
+    },
+    "wiki": {
+     "n": 24,
+     "hit@1": 0.6666666666666666,
+     "hit@5": 0.7916666666666666,
+     "hit@10": 0.7916666666666666,
+     "mrr@10": 0.7166666666666667,
+     "ndcg@10": 0.56189058215692,
+     "p@10": 0.2625
+    }
+   },
+   "per_question": [
+    {
+     "qid": "a1f88b15-ae5e-5308-99f6-4f7081f386e6",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8899541168509599,
+     "precision": 0.9
+    },
+    {
+     "qid": "df525d4e-f4da-509d-b13e-1dae8b21bc7b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.3
+    },
+    {
+     "qid": "2c50d392-c2dd-5bbf-b3f5-11e8aee4edb8",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.6505142428963071,
+     "precision": 0.8
+    },
+    {
+     "qid": "ee442b1d-0263-51dc-8203-9b41e920f04a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.828576998918179,
+     "precision": 0.4
+    },
+    {
+     "qid": "2a0b4f3b-088c-5fef-baab-38ba568103ab",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.3
+    },
+    {
+     "qid": "2b5de585-3e49-55b9-8e28-5728f11c3b56",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9639404333166532,
+     "precision": 0.2
+    },
+    {
+     "qid": "72c5f953-ff1d-5749-98b1-9f3f46fb543c",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 9,
+     "ndcg": 0.7421885020327832,
+     "precision": 0.9
+    },
+    {
+     "qid": "60963a4f-de5e-5417-b177-b26fd0559975",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "c22d0847-f541-5f6d-a3eb-e2fad14e84b9",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.8033854638336738,
+     "precision": 1.0
+    },
+    {
+     "qid": "23695a6e-b6ad-5662-8248-384c0e788841",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 1.0
+    },
+    {
+     "qid": "a81facfa-016f-5395-96fc-474d9f489d2b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6181093256538219,
+     "precision": 0.2
+    },
+    {
+     "qid": "9d18882d-b828-56e1-8de6-9bac2339c1d3",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.48306700197788277,
+     "precision": 0.1
+    },
+    {
+     "qid": "a4f52aef-023a-56bb-aa6c-8c0bcc35d2bf",
+     "doc_type": "news",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "654e451a-1c8b-5c3d-82a8-a384a8880a27",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8290039182451362,
+     "precision": 1.0
+    },
+    {
+     "qid": "9282c8c5-9749-546c-9ef9-32ab9cb4de50",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9651911745127935,
+     "precision": 0.3
+    },
+    {
+     "qid": "bdfccde0-b8cc-51c9-9b32-33a378882e55",
+     "doc_type": "news",
+     "rank": 3,
+     "strict_rank": null,
+     "ndcg": 0.13770577618809332,
+     "precision": 0.1
+    },
+    {
+     "qid": "7a41c748-67c7-55b9-88e8-a1d7e34469bf",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "c2d781df-27d3-5a69-8555-624675829c56",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8685694010671942,
+     "precision": 0.9
+    },
+    {
+     "qid": "0cddbd2e-0779-5025-828c-76385a932108",
+     "doc_type": "news",
+     "rank": 4,
+     "strict_rank": 4,
+     "ndcg": 0.4522787721812677,
+     "precision": 0.3
+    },
+    {
+     "qid": "6dae65b7-261c-5b26-a871-a15c46d8828a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.8145672023038535,
+     "precision": 0.3
+    },
+    {
+     "qid": "4295be8e-0dca-5dfe-8ccb-948baf24c424",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8331826455647809,
+     "precision": 1.0
+    },
+    {
+     "qid": "c52bd6e7-ae67-559c-8590-35c4b4b80090",
+     "doc_type": "news",
+     "rank": 3,
+     "strict_rank": 3,
+     "ndcg": 0.2951104945300426,
+     "precision": 0.3
+    },
+    {
+     "qid": "90bf9d3f-2146-5887-a117-2cd18b071a34",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "2eb2a46a-5cba-55b4-b80f-7dc91817381a",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8227544581986527,
+     "precision": 0.8
+    },
+    {
+     "qid": "d76ef6ac-b8b2-56c6-b8cf-ef83398cd40b",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9235335977390402,
+     "precision": 0.8
+    },
+    {
+     "qid": "89a0ff0e-7abd-5f5c-9ffb-33a361860894",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.2
+    },
+    {
+     "qid": "605c0820-8ba7-5f11-9955-c6f3261873d6",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "0b65c6e9-ab51-5f4b-a161-10b49f1171d1",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7959761332981399,
+     "precision": 0.2
+    },
+    {
+     "qid": "a4721c13-a04e-56a4-abf9-6d3b23aefbba",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9575861412006988,
+     "precision": 1.0
+    },
+    {
+     "qid": "72d832b6-3bd9-5645-b5cc-c2dd12863906",
+     "doc_type": "news",
+     "rank": 1,
+     "strict_rank": 3,
+     "ndcg": 0.7173117794523115,
+     "precision": 0.9
+    },
+    {
+     "qid": "2c38f414-57cc-5e27-99e7-3ea2e898db2b",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9689557313628755,
+     "precision": 0.4
+    },
+    {
+     "qid": "5928e057-4202-59a4-9c5a-90bf8dde4327",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.27541155237618664,
+     "precision": 0.1
+    },
+    {
+     "qid": "43a12366-a6f5-599d-99e0-ca7c9278ae5c",
+     "doc_type": "patch_note",
+     "rank": 2,
+     "strict_rank": 5,
+     "ndcg": 0.541758157372041,
+     "precision": 0.7
+    },
+    {
+     "qid": "8ac05eec-2e48-5317-ba64-c0cef78cc6a1",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.7282827391442037,
+     "precision": 0.6
+    },
+    {
+     "qid": "9adb3f14-27f1-59f0-abc4-3d35ab16f67d",
+     "doc_type": "patch_note",
+     "rank": 7,
+     "strict_rank": null,
+     "ndcg": 0.15066781494241518,
+     "precision": 0.2
+    },
+    {
+     "qid": "6737617a-ad04-583a-bc7c-5349841509db",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8069208464393397,
+     "precision": 0.2
+    },
+    {
+     "qid": "a133c74f-76d8-55f7-b0ca-89e345432fa3",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "f5103888-f9e9-59fe-8ddb-debbd74e4723",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9515234565959557,
+     "precision": 0.3
+    },
+    {
+     "qid": "c2acaa1a-3a50-5757-b252-a5536eb3afa3",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8866167491742403,
+     "precision": 0.3
+    },
+    {
+     "qid": "193ed0b2-a75a-5e62-81a9-20c1bde84383",
+     "doc_type": "patch_note",
+     "rank": 3,
+     "strict_rank": 3,
+     "ndcg": 0.39401061281135896,
+     "precision": 0.3
+    },
+    {
+     "qid": "4a658554-ba5a-55be-8914-c01fb91ead00",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "fd4bfd10-32f0-5839-beb2-fddbf29f431c",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "a8df1cf5-b550-5334-8815-3fc7e6060bdd",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7940523834007388,
+     "precision": 0.8
+    },
+    {
+     "qid": "3ef4254e-4e61-5e3f-b9b0-6e0e117db1f2",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "53e99f56-3814-53d1-87ee-2dbef03a4583",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "77043243-f59e-58d8-8c88-259b4a7034bb",
+     "doc_type": "patch_note",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.17376534287144002,
+     "precision": 0.1
+    },
+    {
+     "qid": "e32b9287-2c0a-55dc-94fb-c58afbe80189",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9329482890238375,
+     "precision": 0.8
+    },
+    {
+     "qid": "df290f34-6337-51f0-8776-9c742c53c543",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7965545545299018,
+     "precision": 1.0
+    },
+    {
+     "qid": "19487db1-4230-5926-83cc-92a12c421663",
+     "doc_type": "patch_note",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "54b8d0a2-18a5-55f0-835d-f5f78f404fe1",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.91311732856428,
+     "precision": 0.2
+    },
+    {
+     "qid": "00e946e7-745f-541b-8e4f-a280e0bc3fb4",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8796133297675163,
+     "precision": 0.4
+    },
+    {
+     "qid": "4ba7b52e-5f2c-5593-8292-6025efcb7f08",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7714582001381546,
+     "precision": 0.3
+    },
+    {
+     "qid": "05f49b10-7196-55b7-847b-66bc57c5b7cd",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "590bfcf7-5b47-5311-81d7-3b5651581430",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.7993250132025491,
+     "precision": 1.0
+    },
+    {
+     "qid": "699ee459-4c4f-51aa-a829-860638b0183c",
+     "doc_type": "patch_note",
+     "rank": 3,
+     "strict_rank": 3,
+     "ndcg": 0.479444674546296,
+     "precision": 0.2
+    },
+    {
+     "qid": "fe9a6b14-74a2-564f-a7ad-e15f19091490",
+     "doc_type": "patch_note",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6263804821344938,
+     "precision": 0.6
+    },
+    {
+     "qid": "17c61cc8-c2f8-5078-b18c-7fadc3c15dca",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.580091847462687,
+     "precision": 0.7
+    },
+    {
+     "qid": "367c3bc3-ad73-5663-8196-39b4e081a36a",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8961338821725531,
+     "precision": 0.4
+    },
+    {
+     "qid": "835ae3ef-42cb-5d12-a76a-441e4898b8f4",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "39261cb0-28f4-5829-81b6-1b574211c2b8",
+     "doc_type": "review",
+     "rank": 2,
+     "strict_rank": 2,
+     "ndcg": 0.5620538558673216,
+     "precision": 0.6
+    },
+    {
+     "qid": "a065afd3-1a2e-593c-bbc4-1fbef3b87e7d",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7998803978033233,
+     "precision": 1.0
+    },
+    {
+     "qid": "b951d096-0f06-5bf8-8339-c6a5164772d9",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "d5c2abf0-4620-509e-b78a-09212696652e",
+     "doc_type": "review",
+     "rank": 5,
+     "strict_rank": null,
+     "ndcg": 0.3295827480202853,
+     "precision": 0.2
+    },
+    {
+     "qid": "a7bca48e-0915-5ddd-82c0-265f344afe6a",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8516646394453452,
+     "precision": 0.9
+    },
+    {
+     "qid": "7c17da86-4f5b-5aed-b53a-c00ad52035ae",
+     "doc_type": "review",
+     "rank": 2,
+     "strict_rank": 4,
+     "ndcg": 0.4292886698217253,
+     "precision": 0.4
+    },
+    {
+     "qid": "10d5b88e-0a4a-507e-8e2b-54f0a734f74c",
+     "doc_type": "review",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "018b7712-6364-5353-81d6-b2cdc0763e01",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6822968237184402,
+     "precision": 0.9
+    },
+    {
+     "qid": "9a488944-da6c-5a7f-af38-958517ffcbdd",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.6131471927654584,
+     "precision": 0.1
+    },
+    {
+     "qid": "7da4c201-bd8f-524b-9109-2fa1c46be569",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.5424237423784837,
+     "precision": 0.5
+    },
+    {
+     "qid": "1e3a6eb3-7fb4-58b7-a2c3-d6fcd28e233d",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8913319177463098,
+     "precision": 0.9
+    },
+    {
+     "qid": "a576d1a0-db1e-5dad-b457-c62939fd94df",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8922097294981223,
+     "precision": 0.9
+    },
+    {
+     "qid": "6036767d-cebf-52a7-ad7d-49ca5158b1de",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.36477450365556374,
+     "precision": 0.4
+    },
+    {
+     "qid": "a2cabba7-815f-5c25-9bfd-7a9ef0119e8b",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.8532721558012799,
+     "precision": 1.0
+    },
+    {
+     "qid": "d659403d-3b31-5f57-a195-c13bf795021d",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6427853308021588,
+     "precision": 0.7
+    },
+    {
+     "qid": "22df8da7-537d-5f4b-b1f1-c042b61e330e",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 6,
+     "ndcg": 0.8032285550939751,
+     "precision": 1.0
+    },
+    {
+     "qid": "d3231de9-cbc9-5d3a-b340-63b45eb96f27",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8566545804700255,
+     "precision": 1.0
+    },
+    {
+     "qid": "fcf3cc73-0953-51d7-beb6-2008abf53ac2",
+     "doc_type": "review",
+     "rank": 6,
+     "strict_rank": 10,
+     "ndcg": 0.3080618885805575,
+     "precision": 0.3
+    },
+    {
+     "qid": "f0d67167-8ea8-56b3-83fa-788bdfbed894",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.850662958989883,
+     "precision": 1.0
+    },
+    {
+     "qid": "0cf5ab1e-346a-593c-b7dd-b8ee39b05128",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8161018972187558,
+     "precision": 1.0
+    },
+    {
+     "qid": "7f8b957a-49e2-5e9b-b949-86c77a41a67a",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 2,
+     "ndcg": 0.8532721558012799,
+     "precision": 1.0
+    },
+    {
+     "qid": "fd8172c5-a850-5c13-b09d-83b248e6407f",
+     "doc_type": "review",
+     "rank": 1,
+     "strict_rank": 8,
+     "ndcg": 0.5623342666218795,
+     "precision": 0.8
+    },
+    {
+     "qid": "a2bc186c-d356-563c-9653-a7beaaa82338",
+     "doc_type": "review",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.08750372712995078,
+     "precision": 0.1
+    },
+    {
+     "qid": "a3ffdbaa-ec46-5ed7-ab14-674a35606a82",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9577346577831564,
+     "precision": 0.5
+    },
+    {
+     "qid": "7d99ce97-76c2-57a1-b60c-c9242007f561",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "9ef138db-8055-5b88-b7fa-f849808f0ba6",
+     "doc_type": "wiki",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.38685280723454163,
+     "precision": 0.1
+    },
+    {
+     "qid": "837b36bc-1df3-5669-bdc2-96a6167540f5",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8262346571285599,
+     "precision": 0.1
+    },
+    {
+     "qid": "f69656a5-830f-5586-8160-0da5c301f23d",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "9c89e1f2-ce42-586b-aff0-f7fdd1c2c97a",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.1
+    },
+    {
+     "qid": "c1e6503d-5cee-57b7-b01f-b0b39ff2afce",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "d72d2153-7858-58c0-abc3-404152ed4415",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.2972539447970486,
+     "precision": 0.3
+    },
+    {
+     "qid": "5483b6d4-afc0-562f-a4ec-f84aa5ce9e8b",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.2
+    },
+    {
+     "qid": "a38a0dc5-0113-55f5-8efa-f64352d39d17",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8548891664165825,
+     "precision": 0.7
+    },
+    {
+     "qid": "84fdc922-abf2-5796-9aef-6e586d201e85",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "938bde93-94b0-5b29-b189-3787f30cc313",
+     "doc_type": "wiki",
+     "rank": 5,
+     "strict_rank": 7,
+     "ndcg": 0.2136598604614484,
+     "precision": 0.3
+    },
+    {
+     "qid": "27ab2e18-160d-590f-bab6-37cfa604c808",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "9c8ec653-6d80-5da3-8c81-3e21eff44c68",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7357511713670489,
+     "precision": 0.2
+    },
+    {
+     "qid": "767f538b-52d8-51ac-b03b-3d5293bf7866",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8356319269507825,
+     "precision": 0.4
+    },
+    {
+     "qid": "83a4bc20-bce8-5730-89e6-9394b18daf7b",
+     "doc_type": "wiki",
+     "rank": 2,
+     "strict_rank": null,
+     "ndcg": 0.25698967907334247,
+     "precision": 0.2
+    },
+    {
+     "qid": "c58049da-14d0-5385-9071-2f1f56134ef0",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.8954707052463013,
+     "precision": 0.7
+    },
+    {
+     "qid": "20ada20b-907d-5899-a470-c1de7f98380b",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 1.0,
+     "precision": 0.5
+    },
+    {
+     "qid": "adc2d511-5047-52fd-a392-613dd0aca75a",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.5078961547485289,
+     "precision": 0.2
+    },
+    {
+     "qid": "7630448e-6ac3-5811-85a7-6526cd250b8b",
+     "doc_type": "wiki",
+     "rank": null,
+     "strict_rank": null,
+     "ndcg": 0.0,
+     "precision": 0.0
+    },
+    {
+     "qid": "030de044-71a2-54fa-8e31-887b27e19de5",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": null,
+     "ndcg": 0.35753408824606947,
+     "precision": 0.2
+    },
+    {
+     "qid": "312c6d6c-553b-59f0-a0b2-c9e142ae0b80",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.7483864110446129,
+     "precision": 0.4
+    },
+    {
+     "qid": "c311fb73-3d20-5e7b-8c51-e2168425eaf3",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.6799980264102214,
+     "precision": 0.5
+    },
+    {
+     "qid": "31198d5c-18c2-5d82-a6a5-56d2bf107563",
+     "doc_type": "wiki",
+     "rank": 1,
+     "strict_rank": 1,
+     "ndcg": 0.9310907148578355,
+     "precision": 0.6
+    }
+   ]
+  }
+ }
+}
