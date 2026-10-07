@@ -225,6 +225,15 @@ def _embedder(device: str):
     return SentenceEmbedder(s.embed_model, device=device, cache_dir=str(s.models_dir / "hf"))
 
 
+def _reranker():
+    from steam_game_analyst.retrieval.rerank import CrossEncoderReranker
+
+    s = get_settings()
+    return CrossEncoderReranker(
+        s.rerank_model, device=s.rerank_device, cache_dir=str(s.models_dir / "hf")
+    )
+
+
 def _token_counter():
     """The embedding model's tokenizer: chunk boundaries (and so chunk ids) must be the same
     wherever chunks are made, or gold-set chunk ids point at different text in the index."""
@@ -431,7 +440,11 @@ def _retriever(mode: str, store=None, embedder=None):
     games = GameIndex.from_frame(pl.read_parquet(s.processed_dir / "games.parquet"))
     try:
         return Retriever(
-            store or _store(), embedder or _embedder(s.query_embed_device), games, mode=mode
+            store or _store(),
+            embedder or _embedder(s.query_embed_device),
+            games,
+            mode=mode,
+            reranker=_reranker() if mode == "rerank" else None,
         )
     except ValueError as e:
         raise typer.BadParameter(str(e)) from e
@@ -473,7 +486,9 @@ def eval_retrieval(
     final: bool = typer.Option(False, "--final", help="Allow the one-off run on the test split"),
     label: str = typer.Option("run", help="Name for this configuration, e.g. baseline"),
     k: int = typer.Option(None, help="Cut-off (default 20 documents; 10 chunks with --judged)"),
-    mode: str = typer.Option("hybrid", help="hybrid (dense + BM25, RRF) | dense | bm25"),
+    mode: str = typer.Option(
+        "hybrid", help="hybrid (dense + BM25, RRF) | dense | bm25 | rerank (hybrid + cross-encoder)"
+    ),
     judged: bool = typer.Option(
         False, "--judged", help="Score against data/eval/judgments.jsonl (any relevant chunk)"
     ),

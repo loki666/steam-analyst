@@ -36,11 +36,12 @@ class Settings(BaseSettings):
     llm_model: str = "qwen2.5:14b-instruct-q4_K_M"
     llm_dev_model: str = "qwen2.5:7b-instruct-q4_K_M"
     embed_model: str = "BAAI/bge-m3"
-    rerank_model: str = "BAAI/bge-reranker-base"
+    rerank_model: str = "BAAI/bge-reranker-v2-m3"  # multilingual, pairs with bge-m3
     # The 3080 has 10 GB: bge-m3 (~1.2 GB fp16) and the 14B LLM (~9 GB) do not fit together,
     # so bulk indexing uses the GPU and query-time embedding stays on the CPU.
     index_embed_device: str = "cuda"
     query_embed_device: str = "cpu"
+    rerank_device: str = "cpu"  # same reason; set SGA_RERANK_DEVICE=cuda when no LLM is loaded
     qdrant_collection: str = "sga_chunks"
 
     subset_games: int | None = None

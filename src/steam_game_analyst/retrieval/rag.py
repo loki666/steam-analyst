@@ -12,6 +12,7 @@ import httpx
 from steam_game_analyst.retrieval.embed import Embedder
 from steam_game_analyst.retrieval.filters import SearchFilters
 from steam_game_analyst.retrieval.query import GameIndex, ParsedQuery, parse_question
+from steam_game_analyst.retrieval.rerank import Reranker
 from steam_game_analyst.retrieval.store import ChunkStore, Hit
 
 SYSTEM_PROMPT = """You are a video-game market analyst. Answer the question using only the \
@@ -32,9 +33,12 @@ _CJK = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")
 _RELAXABLE = ("text_contains", "doc_types")
 
 
-# hybrid: dense + BM25 fused with RRF; the single legs are kept for evaluation
-RetrievalMode = Literal["hybrid", "dense", "bm25"]
-RETRIEVAL_MODES: tuple[str, ...] = ("hybrid", "dense", "bm25")
+# hybrid: dense + BM25 fused with RRF; the single legs are kept for evaluation.
+# rerank: hybrid's top `rerank_depth` chunks re-sorted by a cross-encoder.
+RetrievalMode = Literal["hybrid", "dense", "bm25", "rerank"]
+RETRIEVAL_MODES: tuple[str, ...] = ("hybrid", "dense", "bm25", "rerank")
+# fixed before any evaluation (the hybrid prefetch depth), not tuned on the gold set
+RERANK_DEPTH = 50
 
 
 class ChatModel(Protocol):
@@ -64,14 +68,20 @@ class Retriever:
         embedder: Embedder,
         games: GameIndex,
         mode: RetrievalMode = "hybrid",
+        reranker: Reranker | None = None,
+        rerank_depth: int = RERANK_DEPTH,
     ) -> None:
         if mode not in RETRIEVAL_MODES:
             raise ValueError(f"unknown retrieval mode {mode!r}; choose from {RETRIEVAL_MODES}")
+        if mode == "rerank" and reranker is None:
+            raise ValueError("retrieval mode 'rerank' needs a reranker")
         store.check_layout()
         self.store = store
         self.embedder = embedder
         self.games = games
         self.mode = mode
+        self.reranker = reranker
+        self.rerank_depth = rerank_depth
 
     def retrieve(
         self, question: str, k: int = 8, overrides: SearchFilters | None = None
@@ -80,7 +90,8 @@ class Retriever:
         filters = parsed.filters.merged(overrides) if overrides else parsed.filters
         vector = self.embedder.encode([question])[0] if self.mode != "bm25" else None
         text = question if self.mode != "dense" else None
-        hits = self.store.search(vector, filters, k, text=text)
+        depth = max(k, self.rerank_depth) if self.mode == "rerank" else k
+        hits = self.store.search(vector, filters, depth, text=text)
         relaxed: list[str] = []
         for field in _RELAXABLE:
             if hits or not getattr(filters, field):
@@ -90,8 +101,19 @@ class Retriever:
             else:
                 filters = replace(filters, doc_types=())
             relaxed.append(field)
-            hits = self.store.search(vector, filters, k, text=text)
-        return Retrieval(parsed, filters, tuple(hits), tuple(relaxed))
+            hits = self.store.search(vector, filters, depth, text=text)
+        if self.mode == "rerank":
+            hits = self._rerank(question, hits)
+        return Retrieval(parsed, filters, tuple(hits[:k]), tuple(relaxed))
+
+    def _rerank(self, question: str, hits: list[Hit]) -> list[Hit]:
+        """Re-sort by cross-encoder score; the source label goes first so the model sees the
+        game. Ties keep the hybrid order (sorted() is stable)."""
+        assert self.reranker is not None
+        passages = [f"{describe(h)}\n{h.payload.get('text', '')}" for h in hits]
+        scores = self.reranker.score(question, passages)
+        ranked = sorted(zip(hits, scores, strict=True), key=lambda hs: -hs[1])
+        return [Hit(h.id, s, h.payload) for h, s in ranked]
 
 
 def _date(epoch: int | None) -> str:
