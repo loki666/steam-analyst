@@ -21,12 +21,12 @@ Raw data is downloaded at build time and never committed; this card describes
 | `games` | 300 | the project subset (below) |
 | `reviews` | 417,170 for 299 games | sampled, cleaned, language-tagged |
 | `news` | 24,970 items for 295 games (11,044 flagged patch notes) | 2015-02 to 2026-10 |
-| `wiki` | 208,628 sections from 11,300 pages in 140 wikis (150 games) | ~226 M characters |
+| `wiki` | 156,356 sections from 10,077 pages in 133 wikis (136 games) | ~152 M characters |
 | `review_volume` | 11,364 game-months (6.52 M cleaned reviews) | monthly review / positive counts over **every** cleaned review of each subset game (the population the sample is drawn from) |
 | `review_monthly`, `game_summary` | derived | `review_monthly` = `review_volume` + `n_sampled`; for the trend and catalog tools |
 
-Index (Qdrant `sga_chunks`, bge-m3, 448-token sentence-packed chunks): 434,149 review,
-61,737 news and 302,757 wiki chunks.
+Index (Qdrant `sga_chunks`, bge-m3 dense + BM25 sparse vectors, 448-token sentence-packed
+chunks): 434,297 review, 61,737 news and 217,046 wiki chunks (2026-10-07).
 
 ## Subset selection (`configs/pipeline.yaml`)
 
@@ -70,8 +70,17 @@ Index (Qdrant `sga_chunks`, bge-m3, 448-token sentence-packed chunks): 434,149 r
 - 12 wrong matches (TV series, real-world or story wikis sharing a generic word, film
   franchise wikis) were found by sampling page titles and are pinned to "no wiki" in
   `configs/wikis.yaml`. Single-word game names remain the weakest point of the matching.
-- Some wikis cover a franchise (Hades + Hades II, Total War, Football Manager): wiki chunks
-  carry every subset appid that maps to the wiki.
+- Franchise wikis (Borderlands, XCOM, Resident Evil, Total War, Hades, ...) also document
+  games outside the subset. Taking their largest pages filed Borderlands 4, XCOM 2 or RE6
+  pages under Borderlands 3, Chimera Squad or RE3 (2026-10-07: 7 wikis, hundreds of pages).
+  Their games now take only pages from their own categories (`configs/wiki_categories.yaml`:
+  category-name prefixes plus direct subcategories; `exclude` drops a sibling's pages), and
+  each page carries the games whose categories hold it. Games on a franchise wiki with no
+  per-game category (Football Manager, MotoGP, Frostpunk 2, Jurassic World Evolution 2,
+  Blood Bowl 3, Crusader Kings III, Uncharted, Total War: WARHAMMER III) get no wiki pages.
+- Trade-off: some games now have few pages (Baldur's Gate III 8, Total War: ROME REMASTERED
+  18, Age of Wonders 4 18) and pages a wiki files only in generic categories are missed.
+  Shared categories still leak a little (Hades II update notes under Hades).
 
 ## Known gaps and biases
 
@@ -81,7 +90,7 @@ Index (Qdrant `sga_chunks`, bge-m3, 448-token sentence-packed chunks): 434,149 r
   reception.
 - Starfield and Red Dead Redemption 2 have **no Mendeley reviews**; PRD use case U7
   (Starfield) cannot be answered from this data as is.
-- 150 of 300 games have a wiki; wiki coverage favours popular titles.
+- 136 of 300 games have a wiki; wiki coverage favours popular titles.
 - 5 games have no Steam news (one app answered HTTP 403).
 - The subset over-represents well-reviewed, popular games (most reviews first per genre).
 - The catalog's `genres` order decides the primary genre ("Indie", "Free To Play" can win
