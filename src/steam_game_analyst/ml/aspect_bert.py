@@ -83,6 +83,7 @@ def train(
     model_name: str = MODEL_NAME,
     cache_dir: str | None = None,
     model_factory: bert.ModelFactory | None = None,
+    train_labels: str = "silver labels",
 ) -> tuple[AspectModel, dict[str, Any]]:
     """silver: review_id, appid, text, aspects (list). gold: dicts with appid, text, aspects."""
     shared = set(silver["appid"].to_list()) & {g["appid"] for g in gold}
@@ -105,7 +106,7 @@ def train(
     metrics = {
         "model": f"{model_name} fine-tuned, multi-label",
         "labels": list(ASPECTS),
-        "train_labels": "silver: local LLM with the gold rubric, reviews of training games",
+        "train_labels": f"{train_labels}: the gold rubric applied to reviews of training games",
         "gold_labels": "300 reviews of held-out games, two Claude labellers + adjudication",
         "hyperparameters": {
             "epochs": epochs,

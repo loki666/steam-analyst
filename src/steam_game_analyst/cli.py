@@ -257,6 +257,12 @@ def train_aspect_labels(
 @train_app.command("aspects")
 def train_aspects(
     seed: int = typer.Option(13),
+    labels: str = typer.Option(
+        "aspect_silver.jsonl",
+        help="Training labels in data/processed/: aspect_silver.jsonl (local LLM) or "
+        "aspect_claude.jsonl (Claude labellers)",
+    ),
+    epochs: int = typer.Option(3, help="Upper bound; the best epoch on validation games is kept"),
     device: str = typer.Option("cuda", help="cuda | cpu (stop Ollama first: it needs the GPU)"),
 ) -> None:
     """Multi-label DistilBERT on silver aspect labels, scored on the gold set -> models/."""
@@ -265,7 +271,7 @@ def train_aspects(
     from steam_game_analyst.ml import aspect_bert
 
     s = get_settings()
-    silver_file = s.processed_dir / "aspect_silver.jsonl"
+    silver_file = s.processed_dir / labels
     gold_file = s.data_dir / "eval" / "aspects_gold.jsonl"
     for f, how in ((silver_file, "sga train aspect-labels"), (gold_file, "the gold labelling")):
         if not f.exists():
@@ -280,7 +286,13 @@ def train_aspects(
     silver = labels.join(reviews, on="review_id").rename({"review_text": "text"})
     gold = [json.loads(line) for line in gold_file.read_text().splitlines() if line.strip()]
     model, metrics = aspect_bert.train(
-        silver, gold, seed=seed, device=device, cache_dir=str(s.models_dir / "hf")
+        silver,
+        gold,
+        seed=seed,
+        device=device,
+        cache_dir=str(s.models_dir / "hf"),
+        train_labels=labels,
+        epochs=epochs,
     )
     path = aspect_bert.save(model, metrics, s.models_dir)
     for name, m in metrics["gold"].items():

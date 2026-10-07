@@ -127,6 +127,7 @@ Held-out results (`models/*.metrics.json`):
 | Sentiment, DistilBERT (fine-tuned, 2 epochs) | same 55 games, same reviews | F1 (positive) / macro-F1 / ROC-AUC | 0.913 [0.904, 0.923] / 0.905 / 0.968 | 0.700 / 0.350 / 0.5 |
 | Aspects, keyword lexicon | 300 reviews of held-out games, gold labels | macro-F1 | 0.730 [0.667, 0.781] | — |
 | Aspects, DistilBERT (qwen2.5 14B silver labels, 12k reviews) | same 300 reviews | macro-F1 | 0.736 [0.681, 0.780] | — |
+| Aspects, DistilBERT (Claude labels, 3k reviews, 10 epochs) | same 300 reviews | macro-F1 | 0.707 [0.652, 0.751] | — |
 | Reception, LightGBM | released 2023+ (7,368 games, ≥ 50 votes) | accuracy [95% CI] / macro-F1 / log loss / ECE | 0.674 [0.663, 0.684] / 0.424 / 0.779 / 0.015 | 0.667 / 0.267 / 0.935 / 0.167 |
 
 The aspect model ties the lexicon (+0.006 macro-F1, 95% CI [−0.057, +0.068]): it finds far more
@@ -134,6 +135,11 @@ gameplay talk (F1 0.82 vs 0.57) but is worse on performance and story. Its teach
 qwen2.5 14B silver labels themselves score 0.743 against the gold set, over-tagging controls,
 story and performance. A blind human check of 35 gold reviews agreed with the gold labels at
 macro-F1 0.79, which is about as close as two careful readers get.
+Retraining on 3,000 Claude-labelled reviews (cleaner: qwen's controls and performance tags
+agree with Claude's only 45-48% of the time) scored lower, 0.707: a quarter of the data left
+about 150 examples each for performance and controls. Three configurations have now been
+scored on the gold set, so no more are tried against it; the review_sentiment tool keeps the
+lexicon.
 
 DistilBERT beats TF-IDF + LR by +0.029 F1 (95% CI [+0.026, +0.033], resampling held-out
 games) and scores higher on 53 of the 55 test games; its hyperparameters were fixed in
