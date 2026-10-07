@@ -217,6 +217,77 @@ def train_sentiment_bert(
     console.print(f"-> {path}")
 
 
+@train_app.command("aspect-labels")
+def train_aspect_labels(
+    n: int = typer.Option(12000, help="Reviews from training games to label"),
+    model: str = typer.Option(None, help="Ollama model (default: SGA_LLM_MODEL)"),
+    seed: int = typer.Option(13),
+) -> None:
+    """Silver aspect labels from a local LLM for reviews of training games (resumable)."""
+    import polars as pl
+
+    from steam_game_analyst.ml import sentiment
+    from steam_game_analyst.ml.aspect_labels import label_to_file
+    from steam_game_analyst.retrieval.rag import OllamaChat
+
+    s = get_settings()
+    reviews = pl.read_parquet(
+        s.processed_dir / "reviews.parquet",
+        columns=["review_id", "appid", "review_text", "voted_up", "language"],
+    ).filter(
+        pl.col("language").is_in(sentiment.LANGUAGES)
+        & pl.col("voted_up").is_not_null()
+        & pl.col("review_text").is_not_null()
+    )
+    train_df, _ = sentiment.split_by_game(reviews, 0.2, seed)  # never the held-out games
+    names = pl.read_parquet(s.processed_dir / "games.parquet", columns=["appid", "name"])
+    picked = train_df.sample(min(n, train_df.height), seed=seed).join(names, on="appid", how="left")
+    rows = [
+        {"review_id": r["review_id"], "game": r["name"], "text": r["review_text"]}
+        for r in picked.iter_rows(named=True)
+    ]
+    llm = OllamaChat(
+        s.ollama_host, model or s.llm_model, options={"temperature": 0, "num_ctx": 2048}
+    )
+    out = s.processed_dir / "aspect_silver.jsonl"
+    added = label_to_file(rows, llm, out, progress=True)
+    console.print(f"labelled {added} new reviews -> {out}")
+
+
+@train_app.command("aspects")
+def train_aspects(
+    seed: int = typer.Option(13),
+    device: str = typer.Option("cuda", help="cuda | cpu (stop Ollama first: it needs the GPU)"),
+) -> None:
+    """Multi-label DistilBERT on silver aspect labels, scored on the gold set -> models/."""
+    import polars as pl
+
+    from steam_game_analyst.ml import aspect_bert
+
+    s = get_settings()
+    silver_file = s.processed_dir / "aspect_silver.jsonl"
+    gold_file = s.data_dir / "eval" / "aspects_gold.jsonl"
+    for f, how in ((silver_file, "sga train aspect-labels"), (gold_file, "the gold labelling")):
+        if not f.exists():
+            raise typer.BadParameter(f"{f} not found: run {how} first")
+    labels = pl.read_ndjson(
+        silver_file, schema={"review_id": pl.String, "aspects": pl.List(pl.String)}
+    )
+    reviews = pl.read_parquet(
+        s.processed_dir / "reviews.parquet", columns=["review_id", "appid", "review_text"]
+    )
+    silver = labels.join(reviews, on="review_id").rename({"review_text": "text"})
+    gold = [json.loads(line) for line in gold_file.read_text().splitlines() if line.strip()]
+    model, metrics = aspect_bert.train(
+        silver, gold, seed=seed, device=device, cache_dir=str(s.models_dir / "hf")
+    )
+    path = aspect_bert.save(model, metrics, s.models_dir)
+    for name, m in metrics["gold"].items():
+        f1 = {a: round(v["f1"], 3) for a, v in m["per_aspect"].items()}
+        console.print(f"{name}: macro-F1 {m['macro_f1']:.3f} {m['macro_f1_ci95']} {f1}")
+    console.print(f"-> {path}")
+
+
 @train_app.command("reception")
 def train_reception(seed: int = typer.Option(13)) -> None:
     """LightGBM reception-bucket model on catalog launch metadata (time split) -> models/."""
