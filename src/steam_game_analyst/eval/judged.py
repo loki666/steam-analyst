@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 import math
 from collections import defaultdict
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -52,10 +52,12 @@ def build_pool(
     split: str = "dev",
     depth: int = 10,
     final: bool = False,
+    skip: Collection[tuple[str, str]] = (),
 ) -> list[dict[str, Any]]:
     """Per question: the union of every retriever's top `depth` chunks and the generating
     chunk, sorted by chunk id so the judge cannot tell which system (or the generator)
-    supplied a passage."""
+    supplied a passage. (qid, chunk_id) pairs in `skip` (already judged) are left out, and
+    so are questions left with nothing to judge."""
     pool = []
     for item in tqdm(_chosen(items, split, final), desc=f"pool {split}"):
         found: dict[str, Any] = {}
@@ -65,6 +67,9 @@ def build_pool(
         if item["chunk_id"] not in found:
             for h in store.fetch([item["chunk_id"]]):
                 found[h.id] = h
+        found = {c: h for c, h in found.items() if (item["qid"], c) not in skip}
+        if not found:
+            continue
         pool.append(
             {
                 "qid": item["qid"],

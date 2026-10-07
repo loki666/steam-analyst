@@ -30,9 +30,9 @@ class NoEmbedder(FakeEmbedder):
 
 def test_retriever_modes(retriever):
     bm25 = rag.Retriever(retriever.store, NoEmbedder(), retriever.games, mode="bm25")
-    assert bm25.retrieve("Valheim workbench", k=1).hits[0].payload["title"] == "Crafting"
+    assert bm25.retrieve("crafting workbench forge", k=1).hits[0].payload["title"] == "Crafting"
     dense = rag.Retriever(retriever.store, FakeEmbedder(), retriever.games, mode="dense")
-    assert dense.retrieve("Valheim workbench", k=1).hits[0].payload["title"] == "Crafting"
+    assert dense.retrieve("crafting workbench forge", k=1).hits[0].payload["title"] == "Crafting"
     with pytest.raises(ValueError, match="unknown retrieval mode"):
         rag.Retriever(retriever.store, FakeEmbedder(), retriever.games, mode="splade")
 

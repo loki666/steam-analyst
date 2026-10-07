@@ -442,19 +442,26 @@ def eval_pool(
     split: str = typer.Option("dev", help="dev | test (frozen: needs --final)"),
     final: bool = typer.Option(False, "--final", help="Allow pooling the test split"),
     depth: int = typer.Option(10, help="Chunks taken from each retrieval mode"),
+    new_only: bool = typer.Option(
+        False, "--new-only", help="Leave out pairs already in data/eval/judgments.jsonl"
+    ),
 ) -> None:
     """Pool every mode's top chunks per question (plus the generating chunk) for judging."""
-    from steam_game_analyst.eval.judged import build_pool
+    from steam_game_analyst.eval.judged import build_pool, load_judgments
     from steam_game_analyst.retrieval.rag import RETRIEVAL_MODES
 
     s = get_settings()
     store, embedder = _store(), _embedder(s.query_embed_device)
     retrievers = {m: _retriever(m, store, embedder) for m in RETRIEVAL_MODES}
+    judgments_file = s.data_dir / "eval" / "judgments.jsonl"
+    skip = set(load_judgments(judgments_file)) if new_only and judgments_file.exists() else set()
     try:
-        pool = build_pool(_gold_items(), retrievers, store, split=split, depth=depth, final=final)
+        pool = build_pool(
+            _gold_items(), retrievers, store, split=split, depth=depth, final=final, skip=skip
+        )
     except PermissionError as e:
         raise typer.BadParameter(str(e)) from e
-    out = s.data_dir / "eval" / f"pool_{split}.jsonl"
+    out = s.data_dir / "eval" / f"pool_{split}{'_new' if new_only else ''}.jsonl"
     out.write_text("".join(json.dumps(p, ensure_ascii=False) + "\n" for p in pool))
     n = sum(len(p["candidates"]) for p in pool)
     console.print(f"pool: {len(pool)} questions, {n} chunks to judge -> {out}")

@@ -1,3 +1,4 @@
+import zlib
 from datetime import UTC, date, datetime
 
 import numpy as np
@@ -23,7 +24,8 @@ class FakeEmbedder:
         out = np.zeros((len(texts), self.dim), dtype=np.float32)
         for i, t in enumerate(texts):
             for w in t.lower().split():
-                out[i, hash(w.strip(".,!?")) % self.dim] += 1.0
+                # crc32, not hash(): str hashes change per process (PYTHONHASHSEED)
+                out[i, zlib.crc32(w.strip(".,!?").encode()) % self.dim] += 1.0
         norms = np.linalg.norm(out, axis=1, keepdims=True)
         return out / np.where(norms == 0, 1, norms)
 

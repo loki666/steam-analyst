@@ -143,3 +143,10 @@ def test_load_judgments_rejects_grades_outside_the_scale(tmp_path):
     path.write_text('{"qid": "a", "chunk_id": "x", "grade": 3}\n')
     with pytest.raises(ValueError, match="grade"):
         ev.load_judgments(path)
+
+
+def test_pool_can_leave_out_pairs_already_judged():
+    retrievers = {"dense": FakeRetriever({"qa": ["c1", "c2"], "qb": ["c9"]})}
+    judged = {("a", "c1"), ("a", "gen-a"), ("b", "c9"), ("b", "gen-b")}
+    pool = ev.build_pool(ITEMS, retrievers, FakeStore(), split="dev", skip=judged)
+    assert [(p["qid"], [c["chunk_id"] for c in p["candidates"]]) for p in pool] == [("a", ["c2"])]
