@@ -10,7 +10,8 @@ as "Great Soundtrack" that players add after release) and the developer's / publ
 record on games released strictly earlier. Excluded as post-launch: owners, CCU, playtime,
 recommendations, Metacritic, DLC count, achievements, tag counts, Trading Cards.
 
-Split by release date (train < 2022 <= validation < 2023 <= test): the share of very positive
+Split by release date (train < 2022 <= validation < 2023 <= test < 2024-06, so every test
+game had a year of reviews before the catalog snapshot): the share of very positive
 games rises every year, so a random split would overstate accuracy. SHAP values are LightGBM's
 TreeSHAP contributions (`pred_contrib`), in log-odds of the predicted bucket."""
 
@@ -35,6 +36,13 @@ MIN_VOTES = 50
 TRAIN_FROM = date(2014, 1, 1)
 VALID_FROM = date(2022, 1, 1)
 TEST_FROM = date(2023, 1, 1)
+# The FronkonGames catalog has no snapshot date; vote counts collapse for games released after
+# May 2025, so it was taken around 2025-06-01. A rating needs time to settle (early reviews
+# run high), so only games with at least MATURITY_MONTHS of reviews before the snapshot are
+# tested. Train and validation games are all older than that.
+CATALOG_SNAPSHOT = date(2025, 6, 1)
+MATURITY_MONTHS = 12
+TEST_TO = date(CATALOG_SNAPSHOT.year - MATURITY_MONTHS // 12, CATALOG_SNAPSHOT.month, 1)
 MIN_TAG_GAMES = 200  # tag / category kept as a feature when this many training games carry it
 MODEL_FILE = "reception_lgbm.txt"
 SPEC_FILE = "reception_lgbm.spec.json"
@@ -404,7 +412,7 @@ def split(labelled: pl.DataFrame) -> tuple[pl.DataFrame, pl.DataFrame, pl.DataFr
     return (
         labelled.filter((d >= TRAIN_FROM) & (d < VALID_FROM)),
         labelled.filter((d >= VALID_FROM) & (d < TEST_FROM)),
-        labelled.filter(d >= TEST_FROM),
+        labelled.filter((d >= TEST_FROM) & (d < TEST_TO)),
     )
 
 
@@ -437,7 +445,8 @@ def train(games_all: pl.DataFrame, seed: int = 13) -> tuple[ReceptionModel, dict
         "split": {
             "train": f"{TRAIN_FROM} .. {VALID_FROM}",
             "valid": f"{VALID_FROM} .. {TEST_FROM} (early stopping)",
-            "test": f">= {TEST_FROM}",
+            "test": f"{TEST_FROM} .. {TEST_TO} (>= {MATURITY_MONTHS} months of reviews "
+            f"before the ~{CATALOG_SNAPSHOT} catalog snapshot)",
         },
         "n": {k: int(len(v)) for k, v in ys.items()},
         "class_share": {

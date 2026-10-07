@@ -128,7 +128,7 @@ Held-out results (`models/*.metrics.json`):
 | Aspects, keyword lexicon | 300 reviews of held-out games, gold labels | macro-F1 | 0.730 [0.667, 0.781] | — |
 | Aspects, DistilBERT (qwen2.5 14B silver labels, 12k reviews) | same 300 reviews | macro-F1 | 0.736 [0.681, 0.780] | — |
 | Aspects, DistilBERT (Claude labels, 3k reviews, 10 epochs) | same 300 reviews | macro-F1 | 0.707 [0.652, 0.751] | — |
-| Reception, LightGBM | released 2023+ (7,368 games, ≥ 50 votes) | accuracy [95% CI] / macro-F1 / log loss / ECE | 0.674 [0.663, 0.684] / 0.424 / 0.779 / 0.015 | 0.667 / 0.267 / 0.935 / 0.167 |
+| Reception, LightGBM | released 2023-01 to 2024-05, ≥ 12 months of reviews (3,951 games, ≥ 50 votes) | accuracy [95% CI] / macro-F1 / log loss / ECE | 0.661 [0.647, 0.674] / 0.428 / 0.791 / 0.007 | 0.645 / 0.261 / 0.950 / 0.145 |
 
 The aspect model ties the lexicon (+0.006 macro-F1, 95% CI [−0.057, +0.068]): it finds far more
 gameplay talk (F1 0.82 vs 0.57) but is worse on performance and story. Its teacher caps it: the
@@ -145,13 +145,20 @@ DistilBERT beats TF-IDF + LR by +0.029 F1 (95% CI [+0.026, +0.033], resampling h
 games) and scores higher on 53 of the 55 test games; its hyperparameters were fixed in
 advance and only the epoch was picked on validation games.
 
-The reception model gives much better probabilities than the baseline (log loss, macro-F1,
-calibration) but is **not** clearly more accurate on the top bucket (gain CI [−0.1, +1.4]
-points): very positive games rise from 50% of the training years to 67% of the test years,
-and launch metadata carries little signal. Its strongest features are the developer's and
-publisher's earlier ratings, release year and price. Catalog fields are snapshot values, not
-the exact launch state, so even these scores may be slightly optimistic (see `caveats` in the
-metrics file); W4 revisits the target and features on the validation year only.
+The reception model beats always predicting "very positive" by **+1.6 points** of bucket
+accuracy (95% CI [+0.6, +2.8]) on games released from January 2023 to May 2024, and gives much
+better probabilities (log loss 0.79 vs 0.95, calibration error 0.007 vs 0.145). The test is
+limited to games with at least a year of reviews before the catalog snapshot (about June 2025:
+vote counts collapse for later releases), because early ratings run high: very positive games
+are 67% of all 2023+ games but 64.5% of the mature ones. On the previous definition (every
+2023+ game) the gain was +0.7 [−0.1, +1.4]. The maturity rule was adopted after that result,
+so this test number is not fully blind. Before it, five variants were compared on the 2022
+validation year only (recency weighting, rescaling to the latest year's class mix, dropping
+release-date features, developer/publisher track-record shape); none beat the existing model
+(+3.7 points there), so the model itself is unchanged. Its strongest features are the
+developer's and publisher's earlier ratings, release year and price. Catalog fields are
+snapshot values, not the exact launch state, so scores may be slightly optimistic (see
+`caveats` in the metrics file).
 
 Known limits: the review corpus ends in December 2024 and has no Starfield or RDR2 reviews,
 so U7 gets an honest "no data" answer; aspects are keyword weak labels (DistilBERT and a

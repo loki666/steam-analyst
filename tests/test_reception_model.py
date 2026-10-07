@@ -82,6 +82,14 @@ def test_split_is_by_release_date():
     assert va["release_date"].max() < rc.TEST_FROM <= te["release_date"].min()
 
 
+def test_test_games_had_a_year_of_reviews_before_the_snapshot():
+    data = rc.labelled_games(catalog())
+    assert data["release_date"].max() >= rc.TEST_TO  # the fixture has younger games
+    _, _, te = rc.split(data)
+    assert te["release_date"].max() < rc.TEST_TO
+    assert rc.TEST_TO == date(2024, 6, 1)  # CATALOG_SNAPSHOT 2025-06-01 minus 12 months
+
+
 def test_spec_drops_evaluative_tags_and_post_launch_categories(trained):
     model, _ = trained
     assert "Great Soundtrack" not in model.spec.tags
