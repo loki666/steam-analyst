@@ -408,43 +408,98 @@ def eval_synth(
     console.print(f"wrote {len(items)} questions -> {out}")
 
 
+def _gold_items() -> list[dict]:
+    gold = get_settings().data_dir / "eval" / "synthetic_questions.jsonl"
+    return [json.loads(line) for line in gold.read_text().splitlines() if line.strip()]
+
+
+def _retriever(mode: str, store=None, embedder=None):
+    import polars as pl
+
+    from steam_game_analyst.retrieval.query import GameIndex
+    from steam_game_analyst.retrieval.rag import Retriever
+
+    s = get_settings()
+    games = GameIndex.from_frame(pl.read_parquet(s.processed_dir / "games.parquet"))
+    try:
+        return Retriever(
+            store or _store(), embedder or _embedder(s.query_embed_device), games, mode=mode
+        )
+    except ValueError as e:
+        raise typer.BadParameter(str(e)) from e
+
+
+@eval_app.command("pool")
+def eval_pool(
+    split: str = typer.Option("dev", help="dev | test (frozen: needs --final)"),
+    final: bool = typer.Option(False, "--final", help="Allow pooling the test split"),
+    depth: int = typer.Option(10, help="Chunks taken from each retrieval mode"),
+) -> None:
+    """Pool every mode's top chunks per question (plus the generating chunk) for judging."""
+    from steam_game_analyst.eval.judged import build_pool
+    from steam_game_analyst.retrieval.rag import RETRIEVAL_MODES
+
+    s = get_settings()
+    store, embedder = _store(), _embedder(s.query_embed_device)
+    retrievers = {m: _retriever(m, store, embedder) for m in RETRIEVAL_MODES}
+    try:
+        pool = build_pool(_gold_items(), retrievers, store, split=split, depth=depth, final=final)
+    except PermissionError as e:
+        raise typer.BadParameter(str(e)) from e
+    out = s.data_dir / "eval" / f"pool_{split}.jsonl"
+    out.write_text("".join(json.dumps(p, ensure_ascii=False) + "\n" for p in pool))
+    n = sum(len(p["candidates"]) for p in pool)
+    console.print(f"pool: {len(pool)} questions, {n} chunks to judge -> {out}")
+
+
 @eval_app.command("retrieval")
 def eval_retrieval(
     split: str = typer.Option("dev", help="dev (tune on this) | test (frozen: needs --final)"),
     final: bool = typer.Option(False, "--final", help="Allow the one-off run on the test split"),
     label: str = typer.Option("run", help="Name for this configuration, e.g. baseline"),
-    k: int = typer.Option(20, help="Documents considered per question"),
+    k: int = typer.Option(None, help="Cut-off (default 20 documents; 10 chunks with --judged)"),
     mode: str = typer.Option("hybrid", help="hybrid (dense + BM25, RRF) | dense | bm25"),
+    judged: bool = typer.Option(
+        False, "--judged", help="Score against data/eval/judgments.jsonl (any relevant chunk)"
+    ),
 ) -> None:
-    """Document-level recall@5/@20 and MRR@20 on the synthetic gold set."""
+    """Retrieval metrics on the synthetic gold set: by default whether each question's own
+    source document comes back; with --judged, hit/MRR/nDCG against judged relevance."""
     from datetime import UTC, datetime
 
-    import polars as pl
-
+    from steam_game_analyst.eval.judged import evaluate_judged, load_judgments
     from steam_game_analyst.eval.retrieval import evaluate
-    from steam_game_analyst.retrieval.query import GameIndex
-    from steam_game_analyst.retrieval.rag import Retriever
 
     s = get_settings()
-    gold = s.data_dir / "eval" / "synthetic_questions.jsonl"
-    items = [json.loads(line) for line in gold.read_text().splitlines() if line.strip()]
-    games = GameIndex.from_frame(pl.read_parquet(s.processed_dir / "games.parquet"))
+    items = _gold_items()
+    retriever = _retriever(mode)
+    judgments_file = s.data_dir / "eval" / "judgments.jsonl"
     try:
-        retriever = Retriever(_store(), _embedder(s.query_embed_device), games, mode=mode)
-    except ValueError as e:
-        raise typer.BadParameter(str(e)) from e
-    try:
-        res = evaluate(items, retriever, split=split, k=k, final=final)
+        if judged:
+            if not judgments_file.exists():
+                raise typer.BadParameter(
+                    f"{judgments_file} not found: run `sga eval pool` and judge it"
+                )
+            judgments = load_judgments(judgments_file)
+            res = evaluate_judged(items, retriever, judgments, split=split, k=k or 10, final=final)
+        else:
+            res = evaluate(items, retriever, split=split, k=k or 20, final=final)
     except PermissionError as e:
         raise typer.BadParameter(str(e)) from e
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    res = {"label": label, "mode": mode, "created": stamp, "gold_file": gold.name, **res}
-    out = s.data_dir / "eval" / "results" / f"retrieval_{split}_{label}_{stamp}.json"
+    kind = "judged" if judged else "source"
+    res = {"label": label, "mode": mode, "scoring": kind, "created": stamp, **res}
+    out = s.data_dir / "eval" / "results" / f"retrieval_{kind}_{split}_{label}_{stamp}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(res, indent=1))
     console.print(res["overall"])
     for doc_type, m in res["by_doc_type"].items():
         console.print(f"  {doc_type:10} {m}")
+    if judged and res["unjudged_hits"]:
+        console.print(
+            f"[yellow]{res['unjudged_hits']} retrieved chunks are unjudged and scored as "
+            "irrelevant: pool and judge this configuration before comparing it[/]"
+        )
     console.print(f"-> {out}")
 
 

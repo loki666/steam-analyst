@@ -146,6 +146,11 @@ class ChunkStore:
             )
         return [Hit(str(p.id), float(p.score), dict(p.payload or {})) for p in res.points]
 
+    def fetch(self, ids: Sequence[str]) -> list[Hit]:
+        """Chunks by id (missing ids are skipped), score 0."""
+        points = self.client.retrieve(self.collection, ids=list(ids), with_payload=True)
+        return [Hit(str(p.id), 0.0, dict(p.payload or {})) for p in points]
+
     def delete_stale(self, doc_types: Sequence[str], run_id: str) -> None:
         """After a successful re-index: drop chunks of these types not written by `run_id`."""
         selector = qm.FilterSelector(

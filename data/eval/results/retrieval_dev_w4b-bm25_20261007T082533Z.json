@@ -1,0 +1,474 @@
+{
+ "label": "w4b-bm25",
+ "mode": "bm25",
+ "created": "20261007T082533Z",
+ "gold_file": "synthetic_questions.jsonl",
+ "split": "dev",
+ "k": 20,
+ "n": 86,
+ "excluded_broad": 21,
+ "overall": {
+  "n": 86,
+  "recall@5": 0.5348837209302325,
+  "recall@20": 0.6162790697674418,
+  "mrr@20": 0.4511697120708749
+ },
+ "by_doc_type": {
+  "news": {
+   "n": 27,
+   "recall@5": 0.7407407407407407,
+   "recall@20": 0.7407407407407407,
+   "mrr@20": 0.5555555555555556
+  },
+  "patch_note": {
+   "n": 21,
+   "recall@5": 0.47619047619047616,
+   "recall@20": 0.5714285714285714,
+   "mrr@20": 0.39841269841269844
+  },
+  "review": {
+   "n": 15,
+   "recall@5": 0.2,
+   "recall@20": 0.26666666666666666,
+   "mrr@20": 0.20833333333333334
+  },
+  "wiki": {
+   "n": 23,
+   "recall@5": 0.5652173913043478,
+   "recall@20": 0.7391304347826086,
+   "mrr@20": 0.5351708074534162
+  }
+ },
+ "per_question": [
+  {
+   "qid": "a1f88b15-ae5e-5308-99f6-4f7081f386e6",
+   "doc_type": "news",
+   "rank": null
+  },
+  {
+   "qid": "df525d4e-f4da-509d-b13e-1dae8b21bc7b",
+   "doc_type": "news",
+   "rank": 2
+  },
+  {
+   "qid": "2c50d392-c2dd-5bbf-b3f5-11e8aee4edb8",
+   "doc_type": "news",
+   "rank": null
+  },
+  {
+   "qid": "ee442b1d-0263-51dc-8203-9b41e920f04a",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "2a0b4f3b-088c-5fef-baab-38ba568103ab",
+   "doc_type": "news",
+   "rank": 2
+  },
+  {
+   "qid": "2b5de585-3e49-55b9-8e28-5728f11c3b56",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "60963a4f-de5e-5417-b177-b26fd0559975",
+   "doc_type": "news",
+   "rank": 2
+  },
+  {
+   "qid": "c22d0847-f541-5f6d-a3eb-e2fad14e84b9",
+   "doc_type": "news",
+   "rank": null
+  },
+  {
+   "qid": "23695a6e-b6ad-5662-8248-384c0e788841",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "a81facfa-016f-5395-96fc-474d9f489d2b",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "9d18882d-b828-56e1-8de6-9bac2339c1d3",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "a4f52aef-023a-56bb-aa6c-8c0bcc35d2bf",
+   "doc_type": "news",
+   "rank": null
+  },
+  {
+   "qid": "9282c8c5-9749-546c-9ef9-32ab9cb4de50",
+   "doc_type": "news",
+   "rank": 3
+  },
+  {
+   "qid": "bdfccde0-b8cc-51c9-9b32-33a378882e55",
+   "doc_type": "news",
+   "rank": null
+  },
+  {
+   "qid": "7a41c748-67c7-55b9-88e8-a1d7e34469bf",
+   "doc_type": "news",
+   "rank": null
+  },
+  {
+   "qid": "c2d781df-27d3-5a69-8555-624675829c56",
+   "doc_type": "news",
+   "rank": null
+  },
+  {
+   "qid": "6dae65b7-261c-5b26-a871-a15c46d8828a",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "4295be8e-0dca-5dfe-8ccb-948baf24c424",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "c52bd6e7-ae67-559c-8590-35c4b4b80090",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "90bf9d3f-2146-5887-a117-2cd18b071a34",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "2eb2a46a-5cba-55b4-b80f-7dc91817381a",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "d76ef6ac-b8b2-56c6-b8cf-ef83398cd40b",
+   "doc_type": "news",
+   "rank": 3
+  },
+  {
+   "qid": "89a0ff0e-7abd-5f5c-9ffb-33a361860894",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "605c0820-8ba7-5f11-9955-c6f3261873d6",
+   "doc_type": "news",
+   "rank": 1
+  },
+  {
+   "qid": "0b65c6e9-ab51-5f4b-a161-10b49f1171d1",
+   "doc_type": "news",
+   "rank": 3
+  },
+  {
+   "qid": "a4721c13-a04e-56a4-abf9-6d3b23aefbba",
+   "doc_type": "news",
+   "rank": 4
+  },
+  {
+   "qid": "72d832b6-3bd9-5645-b5cc-c2dd12863906",
+   "doc_type": "news",
+   "rank": 4
+  },
+  {
+   "qid": "2c38f414-57cc-5e27-99e7-3ea2e898db2b",
+   "doc_type": "patch_note",
+   "rank": 1
+  },
+  {
+   "qid": "5928e057-4202-59a4-9c5a-90bf8dde4327",
+   "doc_type": "patch_note",
+   "rank": null
+  },
+  {
+   "qid": "43a12366-a6f5-599d-99e0-ca7c9278ae5c",
+   "doc_type": "patch_note",
+   "rank": 6
+  },
+  {
+   "qid": "8ac05eec-2e48-5317-ba64-c0cef78cc6a1",
+   "doc_type": "patch_note",
+   "rank": null
+  },
+  {
+   "qid": "6737617a-ad04-583a-bc7c-5349841509db",
+   "doc_type": "patch_note",
+   "rank": null
+  },
+  {
+   "qid": "a133c74f-76d8-55f7-b0ca-89e345432fa3",
+   "doc_type": "patch_note",
+   "rank": null
+  },
+  {
+   "qid": "c2acaa1a-3a50-5757-b252-a5536eb3afa3",
+   "doc_type": "patch_note",
+   "rank": 6
+  },
+  {
+   "qid": "193ed0b2-a75a-5e62-81a9-20c1bde84383",
+   "doc_type": "patch_note",
+   "rank": 1
+  },
+  {
+   "qid": "4a658554-ba5a-55be-8914-c01fb91ead00",
+   "doc_type": "patch_note",
+   "rank": null
+  },
+  {
+   "qid": "fd4bfd10-32f0-5839-beb2-fddbf29f431c",
+   "doc_type": "patch_note",
+   "rank": null
+  },
+  {
+   "qid": "a8df1cf5-b550-5334-8815-3fc7e6060bdd",
+   "doc_type": "patch_note",
+   "rank": 5
+  },
+  {
+   "qid": "3ef4254e-4e61-5e3f-b9b0-6e0e117db1f2",
+   "doc_type": "patch_note",
+   "rank": 1
+  },
+  {
+   "qid": "53e99f56-3814-53d1-87ee-2dbef03a4583",
+   "doc_type": "patch_note",
+   "rank": null
+  },
+  {
+   "qid": "77043243-f59e-58d8-8c88-259b4a7034bb",
+   "doc_type": "patch_note",
+   "rank": null
+  },
+  {
+   "qid": "19487db1-4230-5926-83cc-92a12c421663",
+   "doc_type": "patch_note",
+   "rank": null
+  },
+  {
+   "qid": "54b8d0a2-18a5-55f0-835d-f5f78f404fe1",
+   "doc_type": "patch_note",
+   "rank": 1
+  },
+  {
+   "qid": "00e946e7-745f-541b-8e4f-a280e0bc3fb4",
+   "doc_type": "patch_note",
+   "rank": 3
+  },
+  {
+   "qid": "4ba7b52e-5f2c-5593-8292-6025efcb7f08",
+   "doc_type": "patch_note",
+   "rank": 1
+  },
+  {
+   "qid": "05f49b10-7196-55b7-847b-66bc57c5b7cd",
+   "doc_type": "patch_note",
+   "rank": 1
+  },
+  {
+   "qid": "699ee459-4c4f-51aa-a829-860638b0183c",
+   "doc_type": "patch_note",
+   "rank": 1
+  },
+  {
+   "qid": "fe9a6b14-74a2-564f-a7ad-e15f19091490",
+   "doc_type": "patch_note",
+   "rank": 2
+  },
+  {
+   "qid": "17c61cc8-c2f8-5078-b18c-7fadc3c15dca",
+   "doc_type": "review",
+   "rank": null
+  },
+  {
+   "qid": "367c3bc3-ad73-5663-8196-39b4e081a36a",
+   "doc_type": "review",
+   "rank": 1
+  },
+  {
+   "qid": "835ae3ef-42cb-5d12-a76a-441e4898b8f4",
+   "doc_type": "review",
+   "rank": 1
+  },
+  {
+   "qid": "39261cb0-28f4-5829-81b6-1b574211c2b8",
+   "doc_type": "review",
+   "rank": null
+  },
+  {
+   "qid": "b951d096-0f06-5bf8-8339-c6a5164772d9",
+   "doc_type": "review",
+   "rank": null
+  },
+  {
+   "qid": "d5c2abf0-4620-509e-b78a-09212696652e",
+   "doc_type": "review",
+   "rank": null
+  },
+  {
+   "qid": "7c17da86-4f5b-5aed-b53a-c00ad52035ae",
+   "doc_type": "review",
+   "rank": null
+  },
+  {
+   "qid": "9a488944-da6c-5a7f-af38-958517ffcbdd",
+   "doc_type": "review",
+   "rank": 1
+  },
+  {
+   "qid": "1e3a6eb3-7fb4-58b7-a2c3-d6fcd28e233d",
+   "doc_type": "review",
+   "rank": null
+  },
+  {
+   "qid": "6036767d-cebf-52a7-ad7d-49ca5158b1de",
+   "doc_type": "review",
+   "rank": null
+  },
+  {
+   "qid": "d659403d-3b31-5f57-a195-c13bf795021d",
+   "doc_type": "review",
+   "rank": null
+  },
+  {
+   "qid": "d3231de9-cbc9-5d3a-b340-63b45eb96f27",
+   "doc_type": "review",
+   "rank": null
+  },
+  {
+   "qid": "fcf3cc73-0953-51d7-beb6-2008abf53ac2",
+   "doc_type": "review",
+   "rank": 8
+  },
+  {
+   "qid": "fd8172c5-a850-5c13-b09d-83b248e6407f",
+   "doc_type": "review",
+   "rank": null
+  },
+  {
+   "qid": "a2bc186c-d356-563c-9653-a7beaaa82338",
+   "doc_type": "review",
+   "rank": null
+  },
+  {
+   "qid": "a3ffdbaa-ec46-5ed7-ab14-674a35606a82",
+   "doc_type": "wiki",
+   "rank": 2
+  },
+  {
+   "qid": "7d99ce97-76c2-57a1-b60c-c9242007f561",
+   "doc_type": "wiki",
+   "rank": 2
+  },
+  {
+   "qid": "9ef138db-8055-5b88-b7fa-f849808f0ba6",
+   "doc_type": "wiki",
+   "rank": 1
+  },
+  {
+   "qid": "837b36bc-1df3-5669-bdc2-96a6167540f5",
+   "doc_type": "wiki",
+   "rank": 14
+  },
+  {
+   "qid": "f69656a5-830f-5586-8160-0da5c301f23d",
+   "doc_type": "wiki",
+   "rank": null
+  },
+  {
+   "qid": "9c89e1f2-ce42-586b-aff0-f7fdd1c2c97a",
+   "doc_type": "wiki",
+   "rank": 1
+  },
+  {
+   "qid": "c1e6503d-5cee-57b7-b01f-b0b39ff2afce",
+   "doc_type": "wiki",
+   "rank": null
+  },
+  {
+   "qid": "9b7077db-d204-5e36-9c22-55fc7e758e7d",
+   "doc_type": "wiki",
+   "rank": 1
+  },
+  {
+   "qid": "5483b6d4-afc0-562f-a4ec-f84aa5ce9e8b",
+   "doc_type": "wiki",
+   "rank": 1
+  },
+  {
+   "qid": "a38a0dc5-0113-55f5-8efa-f64352d39d17",
+   "doc_type": "wiki",
+   "rank": 16
+  },
+  {
+   "qid": "84fdc922-abf2-5796-9aef-6e586d201e85",
+   "doc_type": "wiki",
+   "rank": 1
+  },
+  {
+   "qid": "938bde93-94b0-5b29-b189-3787f30cc313",
+   "doc_type": "wiki",
+   "rank": null
+  },
+  {
+   "qid": "27ab2e18-160d-590f-bab6-37cfa604c808",
+   "doc_type": "wiki",
+   "rank": 8
+  },
+  {
+   "qid": "9c8ec653-6d80-5da3-8c81-3e21eff44c68",
+   "doc_type": "wiki",
+   "rank": 1
+  },
+  {
+   "qid": "767f538b-52d8-51ac-b03b-3d5293bf7866",
+   "doc_type": "wiki",
+   "rank": 1
+  },
+  {
+   "qid": "83a4bc20-bce8-5730-89e6-9394b18daf7b",
+   "doc_type": "wiki",
+   "rank": 20
+  },
+  {
+   "qid": "20ada20b-907d-5899-a470-c1de7f98380b",
+   "doc_type": "wiki",
+   "rank": 1
+  },
+  {
+   "qid": "adc2d511-5047-52fd-a392-613dd0aca75a",
+   "doc_type": "wiki",
+   "rank": 1
+  },
+  {
+   "qid": "7630448e-6ac3-5811-85a7-6526cd250b8b",
+   "doc_type": "wiki",
+   "rank": null
+  },
+  {
+   "qid": "030de044-71a2-54fa-8e31-887b27e19de5",
+   "doc_type": "wiki",
+   "rank": null
+  },
+  {
+   "qid": "312c6d6c-553b-59f0-a0b2-c9e142ae0b80",
+   "doc_type": "wiki",
+   "rank": 1
+  },
+  {
+   "qid": "c311fb73-3d20-5e7b-8c51-e2168425eaf3",
+   "doc_type": "wiki",
+   "rank": null
+  },
+  {
+   "qid": "31198d5c-18c2-5d82-a6a5-56d2bf107563",
+   "doc_type": "wiki",
+   "rank": 1
+  }
+ ]
+}

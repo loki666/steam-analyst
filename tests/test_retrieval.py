@@ -241,6 +241,14 @@ def test_hybrid_search_fuses_both_legs_and_applies_filters(store):
     assert [h.payload["title"] for h in hades] == ["Boons"]
 
 
+def test_fetch_returns_chunks_by_id_and_skips_unknown_ids(store):
+    first = _search(store, "crafting workbench forge", k=1)[0]
+    unknown = "00000000-0000-0000-0000-000000000000"
+    hits = store.fetch([first.id, unknown])
+    assert [h.id for h in hits] == [first.id]
+    assert hits[0].payload["title"] == "Crafting"
+
+
 def test_search_needs_a_vector_or_a_text(store):
     with pytest.raises(ValueError, match="vector, a text"):
         store.search(None, SearchFilters())
