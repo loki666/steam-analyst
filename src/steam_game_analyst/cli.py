@@ -192,6 +192,31 @@ def train_sentiment(seed: int = typer.Option(13)) -> None:
     console.print(f"-> {path}")
 
 
+@train_app.command("sentiment-bert")
+def train_sentiment_bert(
+    seed: int = typer.Option(13),
+    device: str = typer.Option("cuda", help="cuda | cpu (stop Ollama first: it needs the GPU)"),
+) -> None:
+    """Fine-tune DistilBERT on the same reviews and held-out games as the baseline -> models/."""
+    import polars as pl
+
+    from steam_game_analyst.ml import sentiment_bert
+
+    s = get_settings()
+    reviews = pl.read_parquet(
+        s.processed_dir / "reviews.parquet",
+        columns=["appid", "review_text", "voted_up", "language"],
+    )
+    model, metrics = sentiment_bert.train(
+        reviews, seed=seed, device=device, cache_dir=str(s.models_dir / "hf")
+    )
+    path = sentiment_bert.save(model, metrics, s.models_dir)
+    console.print(
+        {k: metrics[k] for k in ("validation_roc_auc_by_epoch", "test", "majority_baseline")}
+    )
+    console.print(f"-> {path}")
+
+
 @train_app.command("reception")
 def train_reception(seed: int = typer.Option(13)) -> None:
     """LightGBM reception-bucket model on catalog launch metadata (time split) -> models/."""

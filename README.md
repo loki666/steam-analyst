@@ -124,7 +124,12 @@ Held-out results (`models/*.metrics.json`):
 | Model | Split | Metric | Model | Majority baseline |
 | --- | --- | --- | --- | --- |
 | Sentiment, TF-IDF + LR | 55 unseen games, 38.4k English reviews | F1 (positive) / macro-F1 / ROC-AUC | 0.884 / 0.872 / 0.944 | 0.700 / 0.350 / 0.5 |
+| Sentiment, DistilBERT (fine-tuned, 2 epochs) | same 55 games, same reviews | F1 (positive) / macro-F1 / ROC-AUC | 0.913 [0.904, 0.923] / 0.905 / 0.968 | 0.700 / 0.350 / 0.5 |
 | Reception, LightGBM | released 2023+ (7,368 games, ≥ 50 votes) | accuracy [95% CI] / macro-F1 / log loss / ECE | 0.674 [0.663, 0.684] / 0.424 / 0.779 / 0.015 | 0.667 / 0.267 / 0.935 / 0.167 |
+
+DistilBERT beats TF-IDF + LR by +0.029 F1 (95% CI [+0.026, +0.033], resampling held-out
+games) and scores higher on 53 of the 55 test games; its hyperparameters were fixed in
+advance and only the epoch was picked on validation games.
 
 The reception model gives much better probabilities than the baseline (log loss, macro-F1,
 calibration) but is **not** clearly more accurate on the top bucket (gain CI [−0.1, +1.4]
