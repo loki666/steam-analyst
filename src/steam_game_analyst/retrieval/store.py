@@ -45,6 +45,12 @@ class Hit:
     payload: dict[str, Any]
 
 
+def settle(hits: Sequence[Hit], k: int) -> list[Hit]:
+    """Best `k` by score, ties broken by chunk id. RRF gives equal scores to chunks with
+    mirrored ranks in the two legs, and Qdrant orders those ties differently between runs."""
+    return sorted(hits, key=lambda h: (-round(h.score, 9), h.id))[:k]
+
+
 class ChunkStore:
     def __init__(self, client: QdrantClient, collection: str = DEFAULT_COLLECTION) -> None:
         self.client = client
@@ -134,16 +140,16 @@ class ChunkStore:
                 with_payload=True,
             )
         else:
+            depth = max(k, MIN_PREFETCH)
             res = self.client.query_points(
                 self.collection,
-                prefetch=[
-                    qm.Prefetch(query=q, using=u, filter=flt, limit=max(k, MIN_PREFETCH))
-                    for q, u in legs
-                ],
+                prefetch=[qm.Prefetch(query=q, using=u, filter=flt, limit=depth) for q, u in legs],
                 query=qm.FusionQuery(fusion=qm.Fusion.RRF),
-                limit=k,
+                limit=depth * len(legs),  # the whole fused set, so the cut is ours
                 with_payload=True,
             )
+            hits = [Hit(str(p.id), float(p.score), dict(p.payload or {})) for p in res.points]
+            return settle(hits, k)
         return [Hit(str(p.id), float(p.score), dict(p.payload or {})) for p in res.points]
 
     def fetch(self, ids: Sequence[str]) -> list[Hit]:

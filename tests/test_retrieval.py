@@ -407,3 +407,21 @@ def test_build_index_streams_in_small_batches(tmp_path):
         tmp_path, s, FakeEmbedder(), sources=("review",), recreate=True, encode_batch=2
     )
     assert counts == {"review": 3} and s.count() == 3
+
+
+def test_fused_ties_are_broken_by_chunk_id_before_the_cut():
+    from steam_game_analyst.retrieval.store import Hit, settle
+
+    hits = [Hit("c", 0.5, {}), Hit("a", 0.6, {}), Hit("b", 0.5 + 1e-15, {}), Hit("d", 0.5, {})]
+    assert [h.id for h in settle(hits, 3)] == ["a", "b", "c"]
+    assert [h.id for h in settle(list(reversed(hits)), 3)] == ["a", "b", "c"]
+
+
+def test_hybrid_search_returns_the_same_order_every_time(store):
+    vec = np.zeros(FakeEmbedder.dim, dtype=np.float32)
+    vec[0] = 1.0
+    runs = [
+        [h.id for h in store.search(vec, SearchFilters(), k=3, text="crafting patch")]
+        for _ in range(5)
+    ]
+    assert all(r == runs[0] for r in runs)

@@ -2664,3 +2664,5 @@
 {"qid": "312c6d6c-553b-59f0-a0b2-c9e142ae0b80", "chunk_id": "29929e1e-e623-5fde-b2a4-62e06a6d489e", "grade": 0, "reason": "Raptidon Pens location; no uses or products", "judge": "claude-subagent", "rubric": "v1"}
 {"qid": "312c6d6c-553b-59f0-a0b2-c9e142ae0b80", "chunk_id": "3d0d4fcb-0953-5738-90cf-bc6d9275624e", "grade": 2, "reason": "Raptidon musk extracted, used for N-Raptured aphrodisiac", "judge": "claude-subagent", "rubric": "v1"}
 {"qid": "9282c8c5-9749-546c-9ef9-32ab9cb4de50", "chunk_id": "6d1967d4-1073-50c9-b24e-4e7a24433fed", "grade": 1, "reason": "Lost Ark art contest loading screen winners; Echidna, not Valkyrie", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "6dae65b7-261c-5b26-a871-a15c46d8828a", "chunk_id": "c78f2339-3a65-54b2-ab82-9d86e14303a8", "grade": 0, "reason": "KARDS daily free gifts event; never mentions the Lasher card.", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5928e057-4202-59a4-9c5a-90bf8dde4327", "chunk_id": "4d8814a6-053f-5719-baa0-92aede5b794f", "grade": 0, "reason": "Generic complaint about broken features; nothing on Heroism or Second Wind fix.", "judge": "claude-subagent", "rubric": "v1"}

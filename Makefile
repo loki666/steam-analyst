@@ -51,7 +51,7 @@ train: ## Train the sentiment and reception models into models/ (W3)
 	$(RUN) train sentiment
 	$(RUN) train reception
 
-eval: ## Run the evaluation suite (W4/W5)
+eval: ## Retrieval ablation on the dev split: every mode, judged, with 95% CIs (W4)
 	$(RUN) eval all
 
 shell: ## Shell inside the pipeline container

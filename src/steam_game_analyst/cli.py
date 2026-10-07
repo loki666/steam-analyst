@@ -534,9 +534,47 @@ def eval_retrieval(
 
 
 @eval_app.command("all")
-def eval_all() -> None:
-    """W4/W5: not implemented yet."""
-    console.print("[yellow]eval: coming in W4[/]")
+def eval_all(
+    split: str = typer.Option("dev", help="dev | test (frozen: needs --final)"),
+    final: bool = typer.Option(False, "--final", help="Allow the one-off run on the test split"),
+    k: int = typer.Option(10, help="Chunks scored per question"),
+    baseline: str = typer.Option("hybrid", help="Mode the others are compared with"),
+) -> None:
+    """Retrieval ablation: every mode scored against judged relevance, with bootstrap 95% CIs
+    and paired differences from the baseline. Writes JSON and a Markdown table."""
+    from datetime import UTC, datetime
+
+    from steam_game_analyst.eval.ablation import ablation, to_markdown
+    from steam_game_analyst.eval.judged import evaluate_judged, load_judgments
+    from steam_game_analyst.retrieval.rag import RETRIEVAL_MODES
+
+    s = get_settings()
+    judgments_file = s.data_dir / "eval" / "judgments.jsonl"
+    if not judgments_file.exists():
+        raise typer.BadParameter(f"{judgments_file} not found: run `sga eval pool` and judge it")
+    judgments = load_judgments(judgments_file)
+    items = _gold_items()
+    store, embedder = _store(), _embedder(s.query_embed_device)
+    results = {}
+    try:
+        for mode in RETRIEVAL_MODES:
+            retriever = _retriever(mode, store, embedder)
+            results[mode] = evaluate_judged(
+                items, retriever, judgments, split=split, k=k, final=final
+            )
+        table = ablation(results, baseline=baseline)
+    except (PermissionError, ValueError) as e:
+        raise typer.BadParameter(str(e)) from e
+    md = to_markdown(table, split=split)
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    out = s.data_dir / "eval" / "results" / f"ablation_{split}_{stamp}"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.with_suffix(".json").write_text(
+        json.dumps({"split": split, "created": stamp, **table, "runs": results}, indent=1)
+    )
+    out.with_suffix(".md").write_text(md)
+    console.print(md)
+    console.print(f"-> {out}.json, {out}.md")
 
 
 if __name__ == "__main__":
