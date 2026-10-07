@@ -78,7 +78,8 @@ def label_to_file(
     rows: Sequence[Mapping[str, Any]], llm: ChatModel, out: Path, progress: bool = False
 ) -> int:
     """Label each {review_id, game, text} row, appending {review_id, aspects} lines to `out`.
-    Rows already in `out` are skipped, so an interrupted run resumes. Returns rows labelled."""
+    Rows already in `out` are skipped, so an interrupted run resumes; a review the model cannot
+    label is written with aspects null. Returns the number of rows processed."""
     done: set[str] = set()
     if out.exists():
         done = {json.loads(line)["review_id"] for line in out.read_text().splitlines() if line}
@@ -86,7 +87,10 @@ def label_to_file(
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("a") as f:
         for r in tqdm(todo, desc="aspect labels", disable=not progress):
-            aspects = label_review(r["text"], llm, game=r.get("game"))
+            try:
+                aspects: list[str] | None = label_review(r["text"], llm, game=r.get("game"))
+            except ValueError:  # unparseable twice: recorded as unlabelled, left out of training
+                aspects = None
             f.write(json.dumps({"review_id": r["review_id"], "aspects": aspects}) + "\n")
             f.flush()
     return len(todo)

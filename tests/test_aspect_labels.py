@@ -60,3 +60,16 @@ def test_label_file_resumes_where_it_stopped(tmp_path):
         ("r1", ["bugs"]),
         ("r2", ["price"]),
     ]
+
+
+def test_a_review_the_model_cannot_label_is_recorded_and_skipped(tmp_path):
+    out = tmp_path / "silver.jsonl"
+    rows = [{"review_id": "bad", "text": "x"}, {"review_id": "ok", "text": "y"}]
+    llm = FakeLLM(["nope", "nope", '{"aspects": ["bugs"]}'])
+    assert al.label_to_file(rows, llm, out) == 2
+    lines = [__import__("json").loads(x) for x in out.read_text().splitlines()]
+    assert lines == [
+        {"review_id": "bad", "aspects": None},
+        {"review_id": "ok", "aspects": ["bugs"]},
+    ]
+    assert al.label_to_file(rows, FakeLLM([]), out) == 0  # failures are not retried

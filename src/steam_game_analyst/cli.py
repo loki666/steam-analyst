@@ -276,6 +276,7 @@ def train_aspects(
     reviews = pl.read_parquet(
         s.processed_dir / "reviews.parquet", columns=["review_id", "appid", "review_text"]
     )
+    labels = labels.filter(pl.col("aspects").is_not_null())  # the LLM could not label these
     silver = labels.join(reviews, on="review_id").rename({"review_text": "text"})
     gold = [json.loads(line) for line in gold_file.read_text().splitlines() if line.strip()]
     model, metrics = aspect_bert.train(
