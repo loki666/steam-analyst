@@ -1,0 +1,36 @@
+# Franchise wikis: which of a wiki's pages belong to each subset game (`sga data download-wiki`).
+# A franchise wiki also covers games outside the subset (Borderlands 2 and 4 on the Borderlands
+# wiki), so a game listed here takes only pages in categories named by its prefixes (whole
+# words: "Battlefield 1" takes "Battlefield 1: Turning Tides", not "Battlefield 1942").
+# Every game on a wiki with an entry here needs one too, or it gets no pages from that wiki.
+# Games on a franchise wiki with no per-game category are pinned to null in wikis.yaml.
+# Category names were looked up with the wikis' allcategories API on 2026-10-07.
+#
+# appid: [prefix, ...]   or   appid: {prefixes: [...], exclude: [...]}
+
+1669000: ["Age of Wonders 4"]
+1086940: ["Baldur's Gate III"]
+1238840: ["Battlefield 1"]
+397540: ["Borderlands 3"]
+1091500: ["Cyberpunk 2077"]                       # not the Cyberpunk 2020 / RED tabletop pages
+1940340: ["Darkest Dungeon II"]
+610370: ["Desperados III"]
+2195250: ["EA Sports FC 24"]
+2669320: ["EA Sports FC 25"]
+1145360: {prefixes: ["Hades"], exclude: ["Hades II"]}
+1145350: ["Hades II"]
+546560: ["Half-Life: Alyx"]
+553850: ["Helldivers 2"]
+860510: ["Little Nightmares II"]
+1446780: ["Monster Hunter Rise", "MHRise", "MHRS"]  # MHRS = Sunbreak, Rise's expansion
+1971650: ["Octopath Traveler II"]
+1072040: ["Panzer Corps 2"]
+1174180: ["Red Dead Redemption II"]
+952060: ["Resident Evil 3 remake", "Resident Evil 3 (2020)"]  # Steam sells the 2020 remake
+2050650: ["Resident Evil 4 remake", "Resident Evil 4 (2023)", "Resident Evil 4 (2023 game)"]
+848450: ["Subnautica: Below Zero"]
+898750: ["Super Robot Wars 30"]
+578650: {prefixes: ["The Outer Worlds"], exclude: ["The Outer Worlds 2"]}
+885970: ["Total War: Rome Remastered"]
+719040: ["Wasteland 3"]
+882100: ["XCOM: Chimera Squad"]

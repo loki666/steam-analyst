@@ -369,3 +369,167 @@ def test_build_wiki_survives_unicode_line_separators(tmp_path):
     }
     (tmp_path / "w.jsonl").write_text(json.dumps(page, ensure_ascii=False) + "\n", encoding="utf-8")
     assert transform.build_wiki(tmp_path, appids=[1])["text"].to_list() == ["a b"]
+
+
+# ----------------------------------------------------------------------------- per-game categories
+@pytest.mark.parametrize(
+    "category, spec, ok",
+    [
+        ("Battlefield 1", wiki.CategorySpec(("Battlefield 1",)), True),
+        ("Battlefield 1: Turning Tides", wiki.CategorySpec(("Battlefield 1",)), True),
+        ("Battlefield 1942", wiki.CategorySpec(("Battlefield 1",)), False),
+        ("Little Nightmares III", wiki.CategorySpec(("Little Nightmares II",)), False),
+        ("Wasteland 3 weapons", wiki.CategorySpec(("Wasteland 3",)), True),
+        ("Hades II Boons", wiki.CategorySpec(("Hades",), exclude=("Hades II",)), False),
+        ("Hades I Boons", wiki.CategorySpec(("Hades",), exclude=("Hades II",)), True),
+        ("Hades Wiki", wiki.CategorySpec(("Hades",), exclude=("Hades II",)), False),
+    ],
+)
+def test_category_matches_whole_words_and_skips_excluded_and_meta(category, spec, ok):
+    assert wiki.category_matches(category, spec) is ok
+
+
+def _hades_wiki(params):
+    """Mock franchise wiki: Hades and Hades II pages, one page in both games' categories."""
+    if params.get("meta") == "siteinfo":
+        return _siteinfo("Hades Wiki")(params)
+    if params.get("list") == "allcategories":
+        names = ["Hades", "Hades I Boons", "Hades II", "Hades II Boons", "Hades Wiki"]
+        cats = [{"category": n} for n in names if n.startswith(params["acprefix"])]
+        return httpx.Response(200, json={"query": {"allcategories": cats}})
+    if params.get("list") == "categorymembers":  # subcategories
+        subs = {"Category:Hades": ["Category:Characters", "Category:Hades II"]}
+        found = [{"title": t} for t in subs.get(params["cmtitle"], [])]
+        return httpx.Response(200, json={"query": {"categorymembers": found}})
+    if params.get("generator") == "allpages":
+        pages = [{"pageid": 99, "title": "Wiki rules", "length": 9999}]
+        return httpx.Response(200, json={"query": {"pages": pages}})
+    if params.get("generator") == "categorymembers":
+        members = {
+            "Category:Hades": [(1, "Zagreus", 9000), (3, "Nyx", 5000)],
+            "Category:Hades I Boons": [(2, "Zeus (Hades)", 7000)],
+            "Category:Characters": [
+                (4, "Hypnos", 6000),
+                (13, "Hecate", 6500),
+                (14, "Boons/Hades II", 9500),
+            ],
+            "Category:Hades II": [(10, "Melinoë", 8000), (3, "Nyx", 5000), (13, "Hecate", 6500)],
+            "Category:Hades II Boons": [(11, "Zeus (Hades II)", 6000), (12, "Stub", 100)],
+            "Category:Hades Wiki": [(99, "Wiki rules", 9999)],
+        }[params["gcmtitle"]]
+        pages = [{"pageid": i, "title": t, "length": n} for i, t, n in members]
+        return httpx.Response(200, json={"query": {"pages": pages}})
+    titles = params["titles"].split("|")
+    pages = [
+        {"pageid": 0, "title": t, "revisions": [{"slots": {"main": {"content": f"About {t}."}}}]}
+        for t in titles
+    ]
+    return httpx.Response(200, json={"query": {"pages": pages}})
+
+
+HADES_SPECS = {
+    1145360: wiki.CategorySpec(("Hades",), exclude=("Hades II",)),
+    1145350: wiki.CategorySpec(("Hades II",)),
+}
+
+
+def test_franchise_wiki_pages_are_tagged_with_the_games_whose_categories_hold_them(tmp_path):
+    """Hades takes its prefixed categories plus their direct subcategories ("Characters"),
+    minus every page filed under the excluded "Hades II" (Hecate, and Nyx, who is in both) or
+    titled after it ("Boons/Hades II")."""
+    fc = wiki.FandomClient(_api({"hades": _hades_wiki}), rate_per_sec=0, backoff_s=0)
+    games = [(1145360, "Hades"), (1145350, "Hades II")]
+
+    out = wiki.download_wikis(
+        tmp_path, games, fc, max_pages=10, min_length=500, categories=HADES_SPECS
+    )
+
+    rows = {r["title"]: r for r in map(json.loads, (out / "hades.jsonl").read_text().splitlines())}
+    assert set(rows) == {
+        "Zagreus",
+        "Zeus (Hades)",
+        "Nyx",
+        "Hypnos",
+        "Hecate",
+        "Melinoë",
+        "Zeus (Hades II)",
+    }
+    assert rows["Zagreus"]["appids"] == [1145360]
+    assert rows["Hypnos"]["appids"] == [1145360]
+    assert rows["Melinoë"]["appids"] == [1145350]
+    assert rows["Nyx"]["appids"] == [1145350]
+    assert rows["Hecate"]["appids"] == [1145350]
+    assert "Boons/Hades II" not in rows
+    mapping = json.loads((out / "wiki_map.json").read_text())
+    assert mapping == [{"slug": "hades", "sitename": "Hades Wiki", "appids": [1145350, 1145360]}]
+
+
+def test_game_without_a_category_on_a_franchise_wiki_gets_no_pages(tmp_path):
+    fc = wiki.FandomClient(_api({"hades": _hades_wiki}), rate_per_sec=0, backoff_s=0)
+    games = [(1145360, "Hades"), (1145350, "Hades II")]
+    specs = {1145350: HADES_SPECS[1145350]}
+
+    out = wiki.download_wikis(tmp_path, games, fc, max_pages=10, min_length=500, categories=specs)
+
+    rows = [json.loads(line) for line in (out / "hades.jsonl").read_text().splitlines()]
+    assert all(r["appids"] == [1145350] for r in rows)
+    mapping = json.loads((out / "wiki_map.json").read_text())
+    assert mapping[0]["appids"] == [1145350]
+
+
+def test_changed_page_selection_refetches_an_existing_wiki_file(tmp_path):
+    fc = wiki.FandomClient(_api({"hades": _hades_wiki}), rate_per_sec=0, backoff_s=0)
+    games = [(1145360, "Hades"), (1145350, "Hades II")]
+    wiki.download_wikis(tmp_path, games, fc, max_pages=10, min_length=500)  # old: largest pages
+    stale = (tmp_path / "wiki" / "hades.jsonl").read_text()
+
+    wiki.download_wikis(tmp_path, games, fc, max_pages=10, min_length=500, categories=HADES_SPECS)
+
+    fresh = (tmp_path / "wiki" / "hades.jsonl").read_text()
+    assert fresh != stale and '"appids"' in fresh
+
+
+def test_build_wiki_uses_page_level_appids_when_present(tmp_path):
+    from steam_game_analyst.data import transform
+
+    (tmp_path / "wiki_map.json").write_text(
+        json.dumps([{"slug": "hades", "sitename": "Hades Wiki", "appids": [1145350, 1145360]}])
+    )
+    pages = [
+        {
+            "slug": "hades",
+            "pageid": 1,
+            "title": "Zagreus",
+            "url": "u1",
+            "appids": [1145360],
+            "sections": [{"heading": "", "text": "Prince of the Underworld."}],
+        },
+        {
+            "slug": "hades",
+            "pageid": 10,
+            "title": "Melinoë",
+            "url": "u2",
+            "appids": [1145350],
+            "sections": [{"heading": "", "text": "Princess of the Underworld."}],
+        },
+    ]
+    (tmp_path / "hades.jsonl").write_text("".join(json.dumps(p) + "\n" for p in pages))
+
+    df = transform.build_wiki(tmp_path, appids=[1145360])
+
+    assert df["title"].to_list() == ["Zagreus"]
+    assert df["appids"].to_list() == [[1145360]]
+
+
+def test_load_category_specs_accepts_lists_and_mappings_and_rejects_empty():
+    specs = wiki.load_category_specs(
+        {"397540": ["Borderlands 3"], 1145360: {"prefixes": ["Hades"], "exclude": ["Hades II"]}}
+    )
+    assert specs == {
+        397540: wiki.CategorySpec(("Borderlands 3",)),
+        1145360: wiki.CategorySpec(("Hades",), ("Hades II",)),
+    }
+    with pytest.raises(ValueError):
+        wiki.load_category_specs({1: []})
+    with pytest.raises(ValueError):
+        wiki.load_category_specs({1: {"prefixes": "Hades"}})

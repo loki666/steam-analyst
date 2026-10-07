@@ -103,6 +103,9 @@ class WikiConfig(BaseModel):
     min_page_bytes: int = 1500  # skip stubs
     rate_per_sec: float = 2.0
     overrides_file: str = "wikis.yaml"  # in configs/: appid -> slug, or null to skip
+    categories_file: str = (
+        "wiki_categories.yaml"  # in configs/: franchise wikis, appid -> categories
+    )
 
 
 class PipelineConfig(BaseModel):

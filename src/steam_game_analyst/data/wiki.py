@@ -2,13 +2,21 @@
 
 The nyuuzyou/fandom HF dump has no wiki identifier per page, so pages are pulled per wiki:
 resolve game -> <slug>.fandom.com (guessed from the name, validated against the wiki's
-site name; `configs/wikis.yaml` overrides), list main-namespace pages, keep the largest,
-fetch their wikitext in batches and convert it to plain-text sections.
+site name; `configs/wikis.yaml` overrides), pick pages, fetch their wikitext in batches and
+convert it to plain-text sections.
+
+Page selection: a wiki about one game keeps its largest main-namespace pages. A franchise wiki
+(Borderlands, XCOM, Resident Evil, ...) covers games outside the subset too, so each of its
+games takes only the pages in its own categories (`configs/wiki_categories.yaml`), and each
+page is tagged with the games whose categories hold it. On such a wiki a game without a
+category spec gets no pages: none beats another game's.
 
 Output (data/raw/wiki/):
-  <slug>.jsonl     one page per line: slug, pageid, title, url, sections[{heading, text}]
-  wiki_map.json    [{slug, sitename, appids}]  (several games can share a wiki: Hades, Hades II)
-  resolved.json    appid -> wiki info | null  (cache, so reruns skip the slug probing)
+  <slug>.jsonl            one page per line: slug, pageid, title, url, sections[{heading, text}]
+                          (+ appids on franchise wikis)
+  <slug>.selection.json   how the pages were chosen; a change triggers a refetch
+  wiki_map.json           [{slug, sitename, appids}]  (several games can share a wiki)
+  resolved.json           appid -> wiki info | null  (cache, so reruns skip the slug probing)
 """
 
 from __future__ import annotations
@@ -17,7 +25,7 @@ import json
 import random
 import re
 import time
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -63,6 +71,49 @@ def sitename_matches(sitename: str, game_name: str) -> bool:
     """A wiki belongs to a game when its name words (minus "Wiki") all appear in the game name."""
     site = set(_tokens(sitename)) - _SITE_STOPWORDS
     return bool(site) and site <= set(_tokens(game_name))
+
+
+@dataclass(frozen=True)
+class CategorySpec:
+    """A game's pages on a franchise wiki: categories named by one of `prefixes`, whole words
+    only ("Battlefield 1" takes "Battlefield 1: Turning Tides", not "Battlefield 1942"), minus
+    those named by `exclude` and the wiki's own "<X> Wiki" maintenance categories. Pages
+    filed in an `exclude` category, or titled after it ("Boons/Hades II"), are dropped too,
+    even when a shared category also holds them."""
+
+    prefixes: tuple[str, ...]
+    exclude: tuple[str, ...] = ()
+
+
+def _named_by(name: str, prefix: str) -> bool:
+    return name == prefix or (name.startswith(prefix) and name[len(prefix)] in " :")
+
+
+def _names(title: str, phrase: str) -> bool:
+    """`phrase` appears in `title` as whole words ("Boons/Hades II" names "Hades II")."""
+    return re.search(rf"(?<!\w){re.escape(phrase)}(?!\w)", title) is not None
+
+
+def category_matches(name: str, spec: CategorySpec) -> bool:
+    if name.endswith(" Wiki"):
+        return False
+    return any(_named_by(name, p) for p in spec.prefixes) and not any(
+        _named_by(name, e) for e in spec.exclude
+    )
+
+
+def load_category_specs(raw: Mapping[Any, Any]) -> dict[int, CategorySpec]:
+    """configs/wiki_categories.yaml: appid -> [prefix, ...] or {prefixes: [...], exclude: [...]}."""
+    specs: dict[int, CategorySpec] = {}
+    for appid, value in raw.items():
+        if isinstance(value, Mapping):
+            prefixes, exclude = value.get("prefixes") or [], value.get("exclude") or []
+        else:
+            prefixes, exclude = value or [], []
+        if isinstance(prefixes, str) or isinstance(exclude, str) or not prefixes:
+            raise ValueError(f"wiki categories for {appid}: give a non-empty list of prefixes")
+        specs[int(appid)] = CategorySpec(tuple(prefixes), tuple(exclude))
+    return specs
 
 
 # ----------------------------------------------------------------------------- wikitext
@@ -217,31 +268,100 @@ class FandomClient:
                 return info
         return None
 
-    def largest_pages(self, slug: str, n: int, min_length: int = 1500) -> list[dict[str, Any]]:
-        """The `n` longest main-namespace articles (byte length as a cheap proxy for substance)."""
-        pages: list[dict[str, Any]] = []
-        params: dict[str, Any] = {
-            "action": "query",
-            "generator": "allpages",
-            "gapnamespace": 0,
-            "gapfilterredir": "nonredirects",
-            "gaplimit": 500,
-            "prop": "info",
-            "formatversion": 2,
-        }
+    def _query_all(self, slug: str, params: dict[str, Any], key: str) -> list[Any]:
+        """Every item under query[key], following `continue` across result pages."""
+        items: list[Any] = []
+        params = {"action": "query", "formatversion": 2, **params}
         while True:
             r = self._get(slug, params)
             body = self._json(r) if r is not None else None
             if body is None:
                 break
-            raw = body.get("query", {}).get("pages", [])
-            pages += raw.values() if isinstance(raw, dict) else raw
+            raw = body.get("query", {}).get(key, [])
+            items += raw.values() if isinstance(raw, dict) else raw
             cont = body.get("continue")
             if not cont:
                 break
             params = {**params, **cont}
+        return items
+
+    @staticmethod
+    def _longest(pages: Iterable[dict[str, Any]], n: int, min_length: int) -> list[dict[str, Any]]:
         keep = [p for p in pages if int(p.get("length", 0)) >= min_length]
         return sorted(keep, key=lambda p: -int(p["length"]))[:n]
+
+    def largest_pages(self, slug: str, n: int, min_length: int = 1500) -> list[dict[str, Any]]:
+        """The `n` longest main-namespace articles (byte length as a cheap proxy for substance)."""
+        pages = self._query_all(
+            slug,
+            {
+                "generator": "allpages",
+                "gapnamespace": 0,
+                "gapfilterredir": "nonredirects",
+                "gaplimit": 500,
+                "prop": "info",
+            },
+            "pages",
+        )
+        return self._longest(pages, n, min_length)
+
+    def categories(self, slug: str, prefix: str) -> list[str]:
+        cats = self._query_all(
+            slug, {"list": "allcategories", "acprefix": prefix, "aclimit": 500}, "allcategories"
+        )
+        return [c.get("category", c.get("*", "")) for c in cats]
+
+    def subcategories(self, slug: str, category: str) -> list[str]:
+        subs = self._query_all(
+            slug,
+            {
+                "list": "categorymembers",
+                "cmtitle": f"Category:{category}",
+                "cmtype": "subcat",
+                "cmlimit": 500,
+            },
+            "categorymembers",
+        )
+        return [s["title"].split(":", 1)[1] for s in subs if ":" in s["title"]]
+
+    def game_pages(
+        self, slug: str, spec: CategorySpec, n: int, min_length: int = 1500
+    ) -> list[dict[str, Any]]:
+        """The `n` longest main-namespace articles in the categories `spec` names and their
+        direct subcategories (a game's root category holds game-specific subcategories whose
+        names need not repeat the game's: Hades > "Characters")."""
+        names = dict.fromkeys(
+            c for p in spec.prefixes for c in self.categories(slug, p) if category_matches(c, spec)
+        )
+        for name in list(names):
+            for sub in self.subcategories(slug, name):
+                excluded = any(_named_by(sub, e) for e in spec.exclude)
+                if not excluded and not sub.endswith(" Wiki"):
+                    names.setdefault(sub, None)
+        pages: dict[int, dict[str, Any]] = {}
+        for name in names:
+            for p in self._members(slug, name):
+                if not any(_names(p["title"], e) for e in spec.exclude):
+                    pages.setdefault(int(p["pageid"]), p)
+        for e in spec.exclude:
+            for name in self.categories(slug, e):
+                if _named_by(name, e):
+                    for p in self._members(slug, name):
+                        pages.pop(int(p["pageid"]), None)
+        return self._longest(pages.values(), n, min_length)
+
+    def _members(self, slug: str, category: str) -> list[dict[str, Any]]:
+        return self._query_all(
+            slug,
+            {
+                "generator": "categorymembers",
+                "gcmtitle": f"Category:{category}",
+                "gcmnamespace": 0,
+                "gcmlimit": 500,
+                "prop": "info",
+            },
+            "pages",
+        )
 
     def fetch_wikitext(self, slug: str, titles: list[str]) -> dict[str, str]:
         out: dict[str, str] = {}
@@ -302,8 +422,25 @@ def _resolve_all(
     return wikis
 
 
-def _page_rows(slug: str, fc: FandomClient, max_pages: int, min_length: int) -> list[dict]:
-    pages = fc.largest_pages(slug, n=max_pages, min_length=min_length)
+def _page_rows(
+    slug: str,
+    fc: FandomClient,
+    max_pages: int,
+    min_length: int,
+    specs: Mapping[int, CategorySpec] | None = None,
+) -> list[dict]:
+    """Largest pages of a single-game wiki; with `specs`, each game's pages from its own
+    categories, every page tagged with the games that selected it."""
+    appids_by_page: dict[int, set[int]] = {}
+    if specs:
+        found: dict[int, dict[str, Any]] = {}
+        for appid, spec in specs.items():
+            for p in fc.game_pages(slug, spec, n=max_pages, min_length=min_length):
+                found.setdefault(int(p["pageid"]), p)
+                appids_by_page.setdefault(int(p["pageid"]), set()).add(appid)
+        pages = sorted(found.values(), key=lambda p: -int(p["length"]))
+    else:
+        pages = fc.largest_pages(slug, n=max_pages, min_length=min_length)
     texts = fc.fetch_wikitext(slug, [p["title"] for p in pages])
     rows = []
     for p in pages:
@@ -313,15 +450,16 @@ def _page_rows(slug: str, fc: FandomClient, max_pages: int, min_length: int) -> 
             console.print(f"[yellow]wiki {slug}: skipped {p['title']!r}: {type(e).__name__}[/]")
             continue
         if sections:
-            rows.append(
-                {
-                    "slug": slug,
-                    "pageid": p["pageid"],
-                    "title": p["title"],
-                    "url": PAGE_URL.format(slug=slug, title=quote(p["title"].replace(" ", "_"))),
-                    "sections": [s.__dict__ for s in sections],
-                }
-            )
+            row = {
+                "slug": slug,
+                "pageid": p["pageid"],
+                "title": p["title"],
+                "url": PAGE_URL.format(slug=slug, title=quote(p["title"].replace(" ", "_"))),
+                "sections": [s.__dict__ for s in sections],
+            }
+            if specs:
+                row["appids"] = sorted(appids_by_page[int(p["pageid"])])
+            rows.append(row)
     return rows
 
 
@@ -332,27 +470,59 @@ def download_wikis(
     max_pages: int = 300,
     min_length: int = 1500,
     overrides: dict[int, str | None] | None = None,
+    categories: Mapping[int, CategorySpec] | None = None,
 ) -> Path:
-    """Resolve each game's wiki and save its largest pages under raw_dir/wiki. Idempotent per wiki."""
+    """Resolve each game's wiki and save its pages under raw_dir/wiki. Idempotent per wiki:
+    a wiki is fetched again only when its page selection (mode, limits, categories) changed."""
     out_dir = raw_dir / "wiki"
     out_dir.mkdir(parents=True, exist_ok=True)
     wikis = _resolve_all(out_dir, games, fc, overrides or {})
+    categories = categories or {}
+    plans: dict[str, tuple[str, list[int], dict[int, CategorySpec]]] = {}
+    for slug, (sitename, appids) in sorted(wikis.items()):
+        specs = {a: categories[a] for a in sorted(appids) if a in categories}
+        if specs:
+            for a in sorted(set(appids) - set(specs)):
+                console.print(
+                    f"[yellow]wiki {slug}: no categories for app {a}; it gets no pages[/]"
+                )
+        plans[slug] = (sitename, sorted(specs) if specs else sorted(appids), specs)
     mapping = [
-        {"slug": slug, "sitename": sitename, "appids": sorted(appids)}
-        for slug, (sitename, appids) in sorted(wikis.items())
+        {"slug": slug, "sitename": sitename, "appids": appids}
+        for slug, (sitename, appids, _) in plans.items()
     ]
     (out_dir / "wiki_map.json").write_text(json.dumps(mapping, indent=1))
     console.print(f"wiki: {len(mapping)} wikis for {sum(len(m['appids']) for m in mapping)} games")
-    for slug in tqdm(sorted(wikis), desc="wiki pages"):
+    for slug, (_, _, specs) in tqdm(plans.items(), desc="wiki pages"):
         dest = out_dir / f"{slug}.jsonl"
-        if dest.exists() and dest.stat().st_size > 0:
+        meta = out_dir / f"{slug}.selection.json"
+        selection = _selection(max_pages, min_length, specs)
+        if dest.exists() and dest.stat().st_size > 0 and _stored_selection(meta) == selection:
             continue
         try:
-            rows = _page_rows(slug, fc, max_pages, min_length)
+            rows = _page_rows(slug, fc, max_pages, min_length, specs)
         except RuntimeError as e:
             console.print(f"[yellow]wiki {slug}: {e}[/]")
             continue
         tmp = dest.with_suffix(".jsonl.part")
         tmp.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
         tmp.rename(dest)
+        meta.write_text(json.dumps(selection, indent=1))
     return out_dir
+
+
+def _selection(max_pages: int, min_length: int, specs: Mapping[int, CategorySpec]) -> dict:
+    if not specs:
+        return {"mode": "largest", "max_pages": max_pages, "min_length": min_length}
+    games = {
+        str(a): {"prefixes": list(s.prefixes), "exclude": list(s.exclude)} for a, s in specs.items()
+    }
+    return {"mode": "categories", "max_pages": max_pages, "min_length": min_length, "games": games}
+
+
+def _stored_selection(meta: Path) -> dict | None:
+    """The selection a wiki file was fetched with; files from before selections were recorded
+    were all largest-pages fetches with the defaults."""
+    if meta.exists():
+        return json.loads(meta.read_text())
+    return {"mode": "largest", "max_pages": 300, "min_length": 1500}

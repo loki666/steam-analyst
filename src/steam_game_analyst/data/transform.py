@@ -444,6 +444,12 @@ def build_wiki(wiki_dir: Path, appids: Iterable[int]) -> pl.DataFrame:
             if not line.strip():
                 continue
             page = json.loads(line)
+            # franchise wikis tag each page with the games it belongs to
+            page_ids = (
+                sorted(a for a in page["appids"] if a in subset_ids) if "appids" in page else ids
+            )
+            if not page_ids:
+                continue
             # a page can repeat a heading ("Notes" under several items): number the repeats so
             # ids stay unique (the first keeps the unnumbered id), and drop exact copies
             occurrences: dict[str, int] = {}
@@ -459,7 +465,7 @@ def build_wiki(wiki_dir: Path, appids: Iterable[int]) -> pl.DataFrame:
                     {
                         "section_id": clean.stable_id(*id_parts),
                         "slug": page["slug"],
-                        "appids": ids,
+                        "appids": page_ids,
                         "pageid": page["pageid"],
                         "title": page["title"],
                         "heading": sec["heading"],

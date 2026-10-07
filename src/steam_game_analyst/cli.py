@@ -73,7 +73,7 @@ def download_wiki() -> None:
     import polars as pl
     import yaml
 
-    from steam_game_analyst.data.wiki import FandomClient, download_wikis
+    from steam_game_analyst.data.wiki import FandomClient, download_wikis, load_category_specs
 
     s, cfg = get_settings(), load_pipeline_config()
     games_file = s.processed_dir / "games.parquet"
@@ -85,6 +85,13 @@ def download_wiki() -> None:
     overrides = (
         (yaml.safe_load(overrides_path.read_text()) or {}) if overrides_path.exists() else {}
     )
+    categories_path = s.configs_dir / wcfg.categories_file
+    try:
+        categories = load_category_specs(
+            (yaml.safe_load(categories_path.read_text()) or {}) if categories_path.exists() else {}
+        )
+    except ValueError as e:
+        raise typer.BadParameter(f"{categories_path}: {e}") from e
     with httpx.Client(timeout=30, headers={"User-Agent": s.http_user_agent}) as client:
         fc = FandomClient(client, rate_per_sec=wcfg.rate_per_sec)
         download_wikis(
@@ -94,6 +101,7 @@ def download_wiki() -> None:
             max_pages=wcfg.max_pages_per_wiki,
             min_length=wcfg.min_page_bytes,
             overrides={int(k): v for k, v in overrides.items()},
+            categories=categories,
         )
 
 

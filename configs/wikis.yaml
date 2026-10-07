@@ -19,3 +19,20 @@
 # film/franchise wikis with little about the game itself
 1202130: null   # Starship Troopers: Terran Command
 1839950: null   # Terminator: Dark Fate - Defiance
+
+# franchise wikis with no per-game category (see wiki_categories.yaml): their pages are about
+# the whole series, mostly other entries, so the game gets none (checked 2026-10-07)
+1016950: null   # Blood Bowl 3 -> blood-bowl wiki has no Blood Bowl 3 category
+1158310: null   # Crusader Kings III -> crusaderkings has one CK3-categorised page
+1263850: null   # Football Manager 2021 -> footballmanager has no per-edition categories
+1569040: null   # Football Manager 2022 -> same
+1904540: null   # Football Manager 2023 -> same
+2252570: null   # Football Manager 2024 -> same
+1601580: null   # Frostpunk 2 -> frostpunk wiki is about Frostpunk 1, no Frostpunk 2 category
+1244460: null   # Jurassic World Evolution 2 -> no JWE2 category
+1161490: null   # MotoGP20 -> motogp wiki covers real seasons, no per-game categories
+1447000: null   # MotoGP21 -> same
+1710580: null   # MotoGP22 -> same
+2100160: null   # MotoGP23 -> same
+1659420: null   # UNCHARTED: Legacy of Thieves Collection -> no Uncharted 4 / Lost Legacy category
+1142710: null   # Total War: WARHAMMER III -> totalwar wiki has no Warhammer III category
