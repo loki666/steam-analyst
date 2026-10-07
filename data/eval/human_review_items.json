@@ -1,0 +1,452 @@
+[
+{
+"n": 1,
+"qid": "a8df1cf5-b550-5334-8815-3fc7e6060bdd",
+"chunk_id": "bc4582a3-a832-50fc-8294-d6d6b8dd3b21",
+"kind": "disagree",
+"judge_a": {
+"grade": 1,
+"reason": "Volcanic Update follow-up patch, fixes elsewhere"
+},
+"judge_b": {
+"grade": 0,
+"reason": "Volcanic patch fixes Space hole and editor, not Volcano"
+},
+"a_is_first": true
+},
+{
+"n": 2,
+"qid": "72c5f953-ff1d-5749-98b1-9f3f46fb543c",
+"chunk_id": "05441e55-4431-5f3a-8d68-d1cc761b2174",
+"kind": "disagree",
+"judge_a": {
+"grade": 1,
+"reason": "Campaign: victory points via battle and claimed territory"
+},
+"judge_b": {
+"grade": 2,
+"reason": "Victory points via battle and claimed territory"
+},
+"a_is_first": true
+},
+{
+"n": 3,
+"qid": "654e451a-1c8b-5c3d-82a8-a384a8880a27",
+"chunk_id": "d55fa61d-a589-5147-8b8a-7fde6d152ec7",
+"kind": "disagree",
+"judge_a": {
+"grade": 2,
+"reason": "Announces Secret Missions game mode"
+},
+"judge_b": {
+"grade": 1,
+"reason": "New Secret Missions game mode"
+},
+"a_is_first": false
+},
+{
+"n": 4,
+"qid": "d72d2153-7858-58c0-abc3-404152ed4415",
+"chunk_id": "a6f73471-f1d8-5b18-a5c9-00f1e8a41f1e",
+"kind": "disagree",
+"judge_a": {
+"grade": 1,
+"reason": "Video timestamps include common mistakes; few specifics"
+},
+"judge_b": {
+"grade": 2,
+"reason": "Guide covering common mistakes and companion etiquette"
+},
+"a_is_first": false
+},
+{
+"n": 5,
+"qid": "c58049da-14d0-5385-9071-2f1f56134ef0",
+"chunk_id": "85f53c03-7528-5708-8c43-35d4929cfed8",
+"kind": "disagree",
+"judge_a": {
+"grade": 2,
+"reason": "Alpha, mutant hyena boss in Utopia"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Names Alpha hyena boss and Olof in Utopia"
+},
+"a_is_first": true
+},
+{
+"n": 6,
+"qid": "6dae65b7-261c-5b26-a871-a15c46d8828a",
+"chunk_id": "a88bb2ff-9b54-5749-9026-8a9f9b4de1f1",
+"kind": "disagree",
+"judge_a": {
+"grade": 2,
+"reason": "Explains Lasher earned free via High Voltage missions"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Lasher free via High Voltage missions; no end date"
+},
+"a_is_first": false
+},
+{
+"n": 7,
+"qid": "2c38f414-57cc-5e27-99e7-3ea2e898db2b",
+"chunk_id": "6c19436a-d823-57d3-8ad5-e9a5cf274855",
+"kind": "disagree",
+"judge_a": {
+"grade": 2,
+"reason": "Gives Feral Frenzy multipliers vs transformation-trait enemies"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Later Feral Frenzy 2nd-stage damage adjustment, no transformation info"
+},
+"a_is_first": false
+},
+{
+"n": 8,
+"qid": "df290f34-6337-51f0-8776-9c742c53c543",
+"chunk_id": "96517728-121f-54e2-8fe7-f7674d4b2355",
+"kind": "disagree",
+"judge_a": {
+"grade": 1,
+"reason": "Fix list from older 0.8.4013"
+},
+"judge_b": {
+"grade": 2,
+"reason": "Lists fixed problems in 0.8.4013 update"
+},
+"a_is_first": true
+},
+{
+"n": 9,
+"qid": "654e451a-1c8b-5c3d-82a8-a384a8880a27",
+"chunk_id": "f982faf4-6b0b-511e-aabb-2143c84c4201",
+"kind": "disagree",
+"judge_a": {
+"grade": 1,
+"reason": "Two new modes: Secret Missions, Secret Assassin"
+},
+"judge_b": {
+"grade": 2,
+"reason": "Lists Secret Missions and Secret Assassin modes"
+},
+"a_is_first": true
+},
+{
+"n": 10,
+"qid": "a2cabba7-815f-5c25-9bfd-7a9ef0119e8b",
+"chunk_id": "d4138592-b33f-5d96-ba88-bace96b12800",
+"kind": "disagree",
+"judge_a": {
+"grade": 0,
+"reason": "No specific issues given"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Agrees issues exist but names none"
+},
+"a_is_first": false
+},
+{
+"n": 11,
+"qid": "c22d0847-f541-5f6d-a3eb-e2fad14e84b9",
+"chunk_id": "db16fceb-10e0-597d-a1d7-9d6e813e312c",
+"kind": "disagree",
+"judge_a": {
+"grade": 2,
+"reason": "Next week update plus three additional languages announced"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Announces 3 new languages, no dates given"
+},
+"a_is_first": true
+},
+{
+"n": 12,
+"qid": "7d99ce97-76c2-57a1-b60c-c9242007f561",
+"chunk_id": "905b1bfa-e1f1-56c5-ba06-0ded169a16de",
+"kind": "disagree",
+"judge_a": {
+"grade": 0,
+"reason": "Trivia"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Mentions Jack-O' Dailin skin, no rarities"
+},
+"a_is_first": true
+},
+{
+"n": 13,
+"qid": "9c8ec653-6d80-5da3-8c81-3e21eff44c68",
+"chunk_id": "2f0de9df-aa9e-58f2-a82a-2f13bfead9b0",
+"kind": "control",
+"judge_a": {
+"grade": 0,
+"reason": "Other Library of Ruina content, not this deck"
+},
+"judge_b": {
+"grade": 0,
+"reason": "Black Silence passives; unrelated"
+},
+"a_is_first": true
+},
+{
+"n": 14,
+"qid": "7da4c201-bd8f-524b-9109-2fa1c46be569",
+"chunk_id": "07b58822-f9b2-5361-8885-d9be39579f82",
+"kind": "control",
+"judge_a": {
+"grade": 1,
+"reason": "Criticisms imply improvements: coin flow, tower freedom"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Criticizes coin flow and sell penalty; implicit suggestions"
+},
+"a_is_first": false
+},
+{
+"n": 15,
+"qid": "bdfccde0-b8cc-51c9-9b32-33a378882e55",
+"chunk_id": "b2dfffc3-a600-52c2-b86f-5713065a1841",
+"kind": "disagree",
+"judge_a": {
+"grade": 2,
+"reason": "Lists objective: earn 200,000 Personal Conquest Points across Legacy"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Lists the 200,000 conquest objective, not how to earn"
+},
+"a_is_first": true
+},
+{
+"n": 16,
+"qid": "a2cabba7-815f-5c25-9bfd-7a9ef0119e8b",
+"chunk_id": "bf8c003a-da9f-5a40-8d55-f0a0f1695ef7",
+"kind": "control",
+"judge_a": {
+"grade": 2,
+"reason": "Conquest victory punished, war score problems"
+},
+"judge_b": {
+"grade": 2,
+"reason": "Conquest penalties and hard city cap"
+},
+"a_is_first": true
+},
+{
+"n": 17,
+"qid": "590bfcf7-5b47-5311-81d7-3b5651581430",
+"chunk_id": "f2353c52-88ec-5179-a694-75250e3044bc",
+"kind": "disagree",
+"judge_a": {
+"grade": 1,
+"reason": "Earlier update with listed improvements"
+},
+"judge_b": {
+"grade": 2,
+"reason": "Summarizes improvements in October update"
+},
+"a_is_first": true
+},
+{
+"n": 18,
+"qid": "a065afd3-1a2e-593c-bbc4-1fbef3b87e7d",
+"chunk_id": "03c19759-b996-59bf-a844-ea9fc000c573",
+"kind": "disagree",
+"judge_a": {
+"grade": 0,
+"reason": "Says inferior to predecessor with no specifics"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Says it is inferior to predecessor, no specifics"
+},
+"a_is_first": false
+},
+{
+"n": 19,
+"qid": "938bde93-94b0-5b29-b189-3787f30cc313",
+"chunk_id": "198612b3-c546-5a2b-8724-465dcc6d17e7",
+"kind": "disagree",
+"judge_a": {
+"grade": 1,
+"reason": "July summer update adds Luminous Gems to Solo Shop; tangential"
+},
+"judge_b": {
+"grade": 0,
+"reason": "No in-game store items for summer update"
+},
+"a_is_first": false
+},
+{
+"n": 20,
+"qid": "a81facfa-016f-5395-96fc-474d9f489d2b",
+"chunk_id": "d5ccbc53-da61-5d4e-8287-c2cecd28dfea",
+"kind": "disagree",
+"judge_a": {
+"grade": 2,
+"reason": "Describes United States of Greater Austria federal proposal (Popovici's plan)"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Describes in-game journal for the proposal, not proposal itself"
+},
+"a_is_first": true
+},
+{
+"n": 21,
+"qid": "a1f88b15-ae5e-5308-99f6-4f7081f386e6",
+"chunk_id": "f5c10b2d-935a-5a4d-96ee-650d4ba70a2a",
+"kind": "disagree",
+"judge_a": {
+"grade": 0,
+"reason": "Gold Rush only lists 10,000 tier"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Gold Rush event shown but only 10,000 tier"
+},
+"a_is_first": false
+},
+{
+"n": 22,
+"qid": "a7bca48e-0915-5ddd-82c0-265f344afe6a",
+"chunk_id": "b71f3a3a-51bc-52d1-b6c9-8995c07f8cef",
+"kind": "disagree",
+"judge_a": {
+"grade": 2,
+"reason": "Says they are the best in the series"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Generic praise of the series, little specifics"
+},
+"a_is_first": false
+},
+{
+"n": 23,
+"qid": "9c8ec653-6d80-5da3-8c81-3e21eff44c68",
+"chunk_id": "960a2e0d-3b79-59fd-9f3f-b4eee4afdcb9",
+"kind": "control",
+"judge_a": {
+"grade": 1,
+"reason": "Mentions Wee Witch's Friend spawn, not its passives"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Laetitia fight; mentions Friend spawn but not its passives"
+},
+"a_is_first": true
+},
+{
+"n": 24,
+"qid": "7c17da86-4f5b-5aed-b53a-c00ad52035ae",
+"chunk_id": "86737e79-6bb9-5e6e-bbe2-3e769acb9a10",
+"kind": "disagree",
+"judge_a": {
+"grade": 2,
+"reason": "WRC notice: new players can start career unaffected; old saves lost"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Career mode crash details; nothing on Japanese"
+},
+"a_is_first": true
+},
+{
+"n": 25,
+"qid": "9d18882d-b828-56e1-8de6-9bac2339c1d3",
+"chunk_id": "7ee74acd-a34e-5205-8e74-5cb03f79c3d3",
+"kind": "disagree",
+"judge_a": {
+"grade": 1,
+"reason": "Open beta date with rebuilt client design"
+},
+"judge_b": {
+"grade": 0,
+"reason": "Open beta release, not GUI update"
+},
+"a_is_first": false
+},
+{
+"n": 26,
+"qid": "a7bca48e-0915-5ddd-82c0-265f344afe6a",
+"chunk_id": "d7aeded5-6f66-58d3-b533-0c45a03c8fc1",
+"kind": "disagree",
+"judge_a": {
+"grade": 2,
+"reason": "Praises the remake as amazing"
+},
+"judge_b": {
+"grade": 1,
+"reason": "General praise of the remake, little detail"
+},
+"a_is_first": false
+},
+{
+"n": 27,
+"qid": "767f538b-52d8-51ac-b03b-3d5293bf7866",
+"chunk_id": "03c8061c-cb27-5726-8b1f-33a835c93fa0",
+"kind": "disagree",
+"judge_a": {
+"grade": 2,
+"reason": "Names .mtl, .dds, .nmf, .ini files"
+},
+"judge_b": {
+"grade": 1,
+"reason": "Mentions the file types needed for mods, less directly"
+},
+"a_is_first": true
+},
+{
+"n": 28,
+"qid": "df525d4e-f4da-509d-b13e-1dae8b21bc7b",
+"chunk_id": "2b0995fb-fbf0-5843-9a6f-0305d8441120",
+"kind": "control",
+"judge_a": {
+"grade": 2,
+"reason": "Announces Dorfromantik now available natively on Mac"
+},
+"judge_b": {
+"grade": 2,
+"reason": "Announces Dorfromantik now available on Mac"
+},
+"a_is_first": false
+},
+{
+"n": 29,
+"qid": "030de044-71a2-54fa-8e31-887b27e19de5",
+"chunk_id": "569b163f-573b-565e-9fad-eaae79dd3025",
+"kind": "disagree",
+"judge_a": {
+"grade": 0,
+"reason": "Not a character with deployment abilities"
+},
+"judge_b": {
+"grade": 2,
+"reason": "Describes B.O.B. deployable ultimate and its stats"
+},
+"a_is_first": true
+},
+{
+"n": 30,
+"qid": "0cf5ab1e-346a-593c-b7dd-b8ee39b05128",
+"chunk_id": "51968c5f-6938-55dc-9911-a862d4dde195",
+"kind": "disagree",
+"judge_a": {
+"grade": 1,
+"reason": "Mentions technical issues without detail"
+},
+"judge_b": {
+"grade": 2,
+"reason": "Reports technical issues as biggest disappointment"
+},
+"a_is_first": true
+}
+]
