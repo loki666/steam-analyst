@@ -123,7 +123,7 @@ Held-out results (`models/*.metrics.json`):
 
 | Model | Split | Metric | Model | Majority baseline |
 | --- | --- | --- | --- | --- |
-| Sentiment, TF-IDF + LR | 55 unseen games, 38.6k English reviews | F1 (positive) / macro-F1 / ROC-AUC | 0.886 / 0.873 / 0.945 | 0.702 / 0.351 / 0.5 |
+| Sentiment, TF-IDF + LR | 55 unseen games, 38.4k English reviews | F1 (positive) / macro-F1 / ROC-AUC | 0.884 / 0.872 / 0.944 | 0.700 / 0.350 / 0.5 |
 | Reception, LightGBM | released 2023+ (7,368 games, ≥ 50 votes) | accuracy [95% CI] / macro-F1 / log loss / ECE | 0.674 [0.663, 0.684] / 0.424 / 0.779 / 0.015 | 0.667 / 0.267 / 0.935 / 0.167 |
 
 The reception model gives much better probabilities than the baseline (log loss, macro-F1,
