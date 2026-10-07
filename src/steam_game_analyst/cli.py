@@ -217,6 +217,15 @@ def _embedder(device: str):
     return SentenceEmbedder(s.embed_model, device=device, cache_dir=str(s.models_dir / "hf"))
 
 
+def _token_counter():
+    """The embedding model's tokenizer: chunk boundaries (and so chunk ids) must be the same
+    wherever chunks are made, or gold-set chunk ids point at different text in the index."""
+    from steam_game_analyst.retrieval.chunking import hf_token_counter
+
+    s = get_settings()
+    return hf_token_counter(s.embed_model, cache_dir=str(s.models_dir / "hf"))
+
+
 @index_app.command("build")
 def index_build(
     source: Annotated[
@@ -227,7 +236,6 @@ def index_build(
     device: str = typer.Option(None, help="Embedding device (default: SGA_INDEX_EMBED_DEVICE)"),
 ) -> None:
     """Chunk the processed tables, embed them and load them into Qdrant."""
-    from steam_game_analyst.retrieval.chunking import hf_token_counter
     from steam_game_analyst.retrieval.index import build_index
 
     s = get_settings()
@@ -237,7 +245,7 @@ def index_build(
         _embedder(device or s.index_embed_device),
         sources=tuple(source or ("review", "news", "wiki")),
         recreate=recreate,
-        count=hf_token_counter(s.embed_model, cache_dir=str(s.models_dir / "hf")),
+        count=_token_counter(),
     )
     console.print(counts)
 
@@ -385,10 +393,11 @@ def eval_synth(
     s = get_settings()
     games_df = pl.read_parquet(s.processed_dir / "games.parquet", columns=["appid", "name"])
     names: dict[int, str] = dict(games_df.iter_rows())
+    count = _token_counter()
     chunks = []
     for file, make_chunks in SOURCES.values():
         if (s.processed_dir / file).exists():
-            chunks += make_chunks(pl.read_parquet(s.processed_dir / file), names)
+            chunks += make_chunks(pl.read_parquet(s.processed_dir / file), names, count=count)
     picked = sample_chunks(chunks, per_type=per_type, seed=seed)
     llm_model = model or s.llm_dev_model
     llm = OllamaChat(s.ollama_host, llm_model, options={"temperature": 0.7, "num_ctx": 4096})

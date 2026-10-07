@@ -64,3 +64,16 @@ def test_generated_items_carry_their_split():
         chunks[:1], ScriptedLLM([json.dumps({"question": "Q?", "answer": "A"})]), model="m"
     )
     assert items[0]["split"] == synth.split_for(items[0]["qid"])
+
+
+def test_sample_chunks_measures_cjk_text_in_characters_not_spaces():
+    from steam_game_analyst.retrieval.chunking import Chunk
+
+    zh = Chunk("zh", "黑神话", {"doc_type": "review", "game": "Wukong", "text": "性能问题" * 15})
+    picked = synth.sample_chunks([zh], per_type=1, min_words=40, seed=1)
+    assert [c.id for c in picked] == ["zh"]
+
+
+def test_prompt_asks_for_questions_a_user_would_write():
+    for phrase in ('"the reviewer"', '"the player"', '"this update"', '"the latest patch"'):
+        assert phrase in synth.PROMPT

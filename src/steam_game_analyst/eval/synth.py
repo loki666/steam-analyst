@@ -15,7 +15,7 @@ from typing import Any
 from rich.console import Console
 from tqdm import tqdm
 
-from steam_game_analyst.retrieval.chunking import Chunk
+from steam_game_analyst.retrieval.chunking import Chunk, approx_token_count
 from steam_game_analyst.retrieval.rag import ChatModel
 
 console = Console()
@@ -27,9 +27,12 @@ PROMPT = """Here is a passage from a source about the PC game "{game}" ({doc_typ
 </passage>
 
 Write ONE question that a player or games-industry analyst could ask, which this passage \
-answers specifically. Name the game in the question. Do not mention "the passage", "the \
-review" or "the author". Reply with JSON only: {{"question": "...", "answer": "..."}} where \
-the answer is one or two sentences taken from the passage."""
+answers specifically. Write it as someone who has never seen the passage: name the game, and \
+when the question is about a patch, event or character, name that too. Never refer to the \
+source itself: no "the passage", "the review", "the reviewer", "the player", "the author", \
+"this update" or "the latest patch". Write the question in English whatever the passage's \
+language. Reply with JSON only: {{"question": "...", "answer": "..."}} where the answer is one \
+or two sentences from the passage, in English."""
 
 _JSON = re.compile(r"\{.*\}", re.S)
 
@@ -43,11 +46,12 @@ def split_for(qid: str) -> str:
 def sample_chunks(
     chunks: Sequence[Chunk], per_type: int, min_words: int = 40, seed: int = 13
 ) -> list[Chunk]:
-    """Up to `per_type` chunks per doc_type, skipping short ones; one chunk per game per type
-    until every game has had a turn, so questions spread across the catalog."""
+    """Up to `per_type` chunks per doc_type, skipping short ones (CJK text counted per
+    character, so it is not dropped for lacking spaces); one chunk per game per type until
+    every game has had a turn, so questions spread across the catalog."""
     by_type: dict[str, list[Chunk]] = defaultdict(list)
     for c in chunks:
-        if len(c.payload["text"].split()) >= min_words:
+        if approx_token_count(c.payload["text"]) >= min_words:
             by_type[c.payload["doc_type"]].append(c)
     rng = random.Random(seed)
     picked: list[Chunk] = []
