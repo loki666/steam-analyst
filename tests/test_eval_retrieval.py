@@ -79,3 +79,12 @@ def test_paired_comparison_counts_wins_and_losses():
         ]
     }
     assert ev.compare(before, after) == {"better": 1, "worse": 1, "same": 1, "n": 3}
+
+
+def test_broad_questions_are_left_out_of_retrieval_metrics():
+    items = [*ITEMS, {**ITEMS[0], "qid": "br", "question": "qbr", "scope": "broad"}]
+    retriever = FakeRetriever({"qa": ["s1"], "qb": ["s2"], "qc": ["s3"], "qbr": ["x"]})
+    res = ev.evaluate(items, retriever, split="dev")
+    assert res["n"] == 3 and res["excluded_broad"] == 1
+    assert res["overall"]["recall@5"] == 1.0
+    assert "br" not in {q["qid"] for q in res["per_question"]}

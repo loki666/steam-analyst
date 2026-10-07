@@ -43,10 +43,13 @@ def evaluate(
     k: int = max(KS),
     final: bool = False,
 ) -> dict[str, Any]:
-    """Recall@5/@20 and MRR@20 of the labelled source document, overall and per doc type."""
+    """Recall@5/@20 and MRR@20 of the labelled source document, overall and per doc type.
+    Questions labelled scope "broad" (many documents answer them equally well) have no single
+    right document, so they are left out here and judged in the end-to-end answer eval."""
     if split == "test" and not final:
         raise PermissionError("the test split is frozen: evaluate it once, with final=True")
-    chosen = [i for i in items if i.get("split") == split]
+    in_split = [i for i in items if i.get("split") == split]
+    chosen = [i for i in in_split if i.get("scope") != "broad"]
     ranks: list[int | None] = []
     by_type: dict[str, list[int | None]] = defaultdict(list)
     per_question: list[dict[str, Any]] = []
@@ -60,6 +63,7 @@ def evaluate(
         "split": split,
         "k": k,
         "n": len(chosen),
+        "excluded_broad": len(in_split) - len(chosen),
         "overall": _summary(ranks),
         "by_doc_type": {t: _summary(r) for t, r in sorted(by_type.items())},
         "per_question": per_question,
