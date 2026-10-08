@@ -705,5 +705,127 @@ def eval_all(
     console.print(f"-> {out}.json, {out}.md")
 
 
+@eval_app.command("answers")
+def eval_answers(
+    split: str = typer.Option("dev", help="dev | test (frozen: needs --final)"),
+    final: bool = typer.Option(False, "--final", help="Allow the one-off run on the test split"),
+    label: str = typer.Option("run", help="Name for this configuration, e.g. hybrid-14b"),
+    model: str = typer.Option(None, help="Ollama model (default: SGA_LLM_MODEL, the 14B)"),
+    mode: str = typer.Option("hybrid", help="Retrieval mode: hybrid | dense | bm25 | rerank"),
+    max_iterations: int = typer.Option(6, help="Cap on tool-calling rounds"),
+    resume: str = typer.Option(None, help="Continue a run: path of its answers .jsonl"),
+) -> None:
+    """W5: run the agent on the answer question set; routing accuracy and latency per
+    category. Writes every answer with its evidence (for judging) and a summary table."""
+    from datetime import UTC, datetime
+    from pathlib import Path
+
+    from steam_game_analyst.agent.factory import build_agent
+    from steam_game_analyst.eval.answers import load_questions, run_answers, summarize, to_markdown
+
+    s = get_settings()
+    items = load_questions(s.data_dir / "eval" / "answer_questions.jsonl")
+    llm_model = model or s.llm_model
+    agent, toolbox = build_agent(s, llm_model, _retriever(mode), max_iterations)
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    out = (
+        Path(resume)
+        if resume
+        else s.data_dir / "eval" / "results" / f"answers_{split}_{label}_{stamp}.jsonl"
+    )
+    meta = {"label": label, "model": llm_model, "retrieval_mode": mode}
+    try:
+        records = run_answers(agent.run, items, out, split=split, final=final, meta=meta)
+    except PermissionError as e:
+        raise typer.BadParameter(str(e)) from e
+    finally:
+        toolbox.close()
+    summary = summarize(records)
+    md = to_markdown(summary, f"Answer eval — {split}, {label} ({llm_model}, {mode})")
+    out.with_suffix(".summary.json").write_text(json.dumps({**meta, **summary}, indent=1))
+    out.with_suffix(".md").write_text(md)
+    console.print(md)
+    console.print(f"-> {out}")
+
+
+def _read_jsonl(path: str) -> list[dict]:
+    from pathlib import Path
+
+    return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
+
+
+@eval_app.command("judge-batch")
+def eval_judge_batch(
+    runs: Annotated[list[str], typer.Argument(help="answers_*.jsonl files to judge together")],
+    name: str = typer.Option(..., help="Batch name, e.g. dev-hybrid-vs-rerank"),
+    seed: int = typer.Option(0, help="Shuffle seed"),
+) -> None:
+    """Blind judge batch from one or more answer runs: items (what the judge reads) and a
+    separate key (which run wrote each item). Grades go in judgments_<judge>.jsonl."""
+    from steam_game_analyst.eval.answer_judge import RUBRIC, RUBRIC_VERSION, make_batch
+    from steam_game_analyst.eval.answers import load_questions
+
+    s = get_settings()
+    questions = load_questions(s.data_dir / "eval" / "answer_questions.jsonl")
+    items, key = make_batch([_read_jsonl(r) for r in runs], questions, seed=seed)
+    out = s.data_dir / "eval" / "judging" / name
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "items.json").write_text(json.dumps(items, indent=1, ensure_ascii=False))
+    (out / "key.json").write_text(json.dumps({"runs": runs, "key": key}, indent=1))
+    (out / "rubric.md").write_text(f"Rubric {RUBRIC_VERSION}\n\n{RUBRIC}\n")
+    console.print(f"{len(items)} items -> {out}/items.json (key kept apart in key.json)")
+
+
+@eval_app.command("judge-score")
+def eval_judge_score(
+    name: str = typer.Option(..., help="Batch name given to judge-batch"),
+    judge: str = typer.Option("claude", help="Judgments file suffix: judgments_<judge>.jsonl"),
+    baseline: str = typer.Option(None, help="Run label to compare the others against"),
+    second: str = typer.Option(None, help="Second judge's suffix: report agreement with it"),
+) -> None:
+    """Score a judged batch: grades per run label and category with 95% CIs, paired
+    differences from the baseline label, and agreement with a second judge."""
+    from steam_game_analyst.eval.answer_judge import agreement, load_judgments, paired, score
+    from steam_game_analyst.eval.answers import load_questions
+
+    s = get_settings()
+    folder = s.data_dir / "eval" / "judging" / name
+    key = json.loads((folder / "key.json").read_text())["key"]
+    judgments = load_judgments(folder / f"judgments_{judge}.jsonl")
+    questions = load_questions(s.data_dir / "eval" / "answer_questions.jsonl")
+    missing = sorted(set(key) - set(judgments))
+    report: dict = {"judge": judge, "n_items": len(key), "unjudged": missing}
+    report["scores"] = score(judgments, key, questions)
+    labels = sorted({k["label"] for k in key.values()})
+    if baseline:
+        report["vs_baseline"] = {
+            lab: paired(judgments, key, lab, baseline) for lab in labels if lab != baseline
+        }
+    if second:
+        other = load_judgments(folder / f"judgments_{second}.jsonl")
+        report["agreement"] = {
+            f: agreement(judgments, other, f) for f in ("correct", "grounded", "cites")
+        }
+    (folder / f"scores_{judge}.json").write_text(json.dumps(report, indent=1))
+    for lab, sc in report["scores"].items():
+        o = sc["overall"]
+        console.print(
+            f"{lab}: n={o['n']} correct {o['correct']['mean']:.2f} grounded "
+            f"{o['grounded']['mean']:.2f} pass {o['pass']['mean']:.2f} "
+            f"[{o['pass']['lo']:.2f}, {o['pass']['hi']:.2f}]"
+        )
+    for lab, d in report.get("vs_baseline", {}).items():
+        c = d["correct"]
+        console.print(
+            f"{lab} - {baseline}: correct {c['mean']:+.2f} [{c['lo']:+.2f}, {c['hi']:+.2f}] "
+            f"({c['better']} better / {c['worse']} worse, n={d['n']})"
+        )
+    if second:
+        console.print(f"agreement with {second}: {report['agreement']}")
+    if missing:
+        console.print(f"[yellow]{len(missing)} items not judged yet[/]")
+    console.print(f"-> {folder}/scores_{judge}.json")
+
+
 if __name__ == "__main__":
     app()
