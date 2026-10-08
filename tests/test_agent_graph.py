@@ -355,3 +355,20 @@ def test_answer_prompt_has_a_total_evidence_budget(toolbox):
     agent.run("dump reviews")
     prompt = llm.seen[-1][-1].content
     assert len(prompt) < graph.TOOL_BUDGET_CHARS + 3000
+
+
+def test_on_step_reports_each_node_and_returns_the_same_final_state(toolbox):
+    replies = [
+        router(tools=["review_trend"]),
+        call("review_trend", {"appid": 1091500, "last_n_months": 12}),
+        "DONE",
+        "Reviews trend up [T1].",
+    ]
+    agent, _ = make_agent(toolbox, list(replies))
+    steps: list[str] = []
+    out = agent.run("Are Cyberpunk 2077 reviews trending up?", on_step=lambda n, u: steps.append(n))
+    assert steps == ["router", "agent", "tools", "agent", "answer"]
+    plain, _ = make_agent(toolbox, list(replies))
+    ref = plain.run("Are Cyberpunk 2077 reviews trending up?")
+    assert out["answer"] == ref["answer"] and out["citations"] == ref["citations"]
+    assert out["tool_results"] == ref["tool_results"]
