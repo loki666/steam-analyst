@@ -5,10 +5,11 @@ retrieval over Steam reviews, patch notes and wiki pages with data-science tools
 (SQL over the catalog, a review sentiment classifier, a reception predictor, trend tests).
 Runs on one Linux box with an NVIDIA GPU via Docker Compose. No paid API.
 
-> Status: **W3 — ML tools + agent loop (MVP)**. Data pipeline (W1), dense retrieval with
-> metadata filters and cited answers (W2), and the LangGraph agent with four data-science
-> tools (W3) work end to end; hybrid retrieval, DistilBERT and the gold set (W4), end-to-end
-> evaluation and the Streamlit UI (W5) follow. See `docs/PRD.md` for the plan.
+> Status: **W5 — end-to-end evaluation and UI**. Data pipeline (W1), retrieval with cited
+> answers (W2), the LangGraph agent with four data-science tools (W3), hybrid retrieval,
+> DistilBERT and the gold sets (W4), and a judged 60-question answer eval plus the Streamlit
+> UI (W5) work end to end. On the frozen test split 40% of answers are fully correct and
+> grounded ([results](#end-to-end-evaluation-w5)). See `docs/PRD.md` for the plan.
 
 ## Stack
 
@@ -164,12 +165,165 @@ developer's and publisher's earlier ratings, release year and price. Catalog fie
 snapshot values, not the exact launch state, so scores may be slightly optimistic (see
 `caveats` in the metrics file).
 
-Known limits: the review corpus ends in December 2024 and has no Starfield or RDR2 reviews,
-so U7 gets an honest "no data" answer; aspects are keyword weak labels (DistilBERT and a
-hand-labelled check come in W4); aspect tests are underpowered in short windows (~1,500
-sampled reviews per game across all years); the agent sometimes searches the 300-game
-subset where the full catalog was meant; the 14B model partly spills out of 10 GB VRAM, so
-answers take 10–90 s.
+Known limits: the review corpus runs through November 2024 (the last full month) and has no
+Starfield or RDR2 reviews, so U7 gets an honest "no data" answer; aspects come from a keyword
+lexicon (a DistilBERT aspect model tied it, see above); aspect tests are underpowered in short
+windows (~1,500 sampled reviews per game across all years); the agent sometimes searches the
+300-game subset where the full catalog was meant; answers take 20 s at the median and 37 s at
+p95 on the test set. The W5 evaluation below measures where answers go wrong.
+
+## Streamlit UI (W5)
+
+`make up` serves the app on http://localhost:8501. Each answer shows its citations as chips:
+`[T1]` points at a tool card, `[1]` at a source. Tool cards draw the review trend
+(monthly positive share with the change point or event date marked) and before/after
+complaint shares per aspect. The card header shows the event or split date the agent chose,
+so a wrong patch date is visible. A small-sample warning appears when either side of a
+before/after split has fewer than 30 effective reviews. Sources are split into "Cited" and
+"Also retrieved", and the tool trace lists the router's plan and every call. The
+screenshots below come from live runs of the 14B model on questions outside the eval set.
+
+| Answer with citations and cards | Trend |
+| --- | --- |
+| ![Answer](docs/img/ui-answer.png) | ![Trend](docs/img/ui-trend.png) |
+| **Waiting, with live steps** | **Out of scope** |
+| ![Running](docs/img/ui-running.png) | ![Refusal](docs/img/ui-refusal.png) |
+
+When Ollama or Qdrant is down the app says which one and offers a sources-only search
+([screenshot](docs/img/ui-services-down.png)). The agent keeps no chat memory: each
+question is answered on its own.
+
+## End-to-end evaluation (W5)
+
+```bash
+uv run sga eval answers --split dev --label hybrid-14b             # run the agent, score routing + latency
+uv run sga eval judge-batch data/eval/results/answers_dev_*.jsonl --name my-batch
+uv run sga eval judge-score --name my-batch --judge claude --second second
+```
+
+**Question set** (`data/eval/answer_questions.jsonl`): 60 questions, 20 dev and 40 test,
+across catalog, trend, sentiment, patch impact, reception, wiki and patch-note lookup,
+multi-tool, out-of-scope and no-data questions. Each lists the tools it must call, the
+tools it may call, and 1–3 key points. The key points were computed from the data with the
+ideal tool calls, not from the agent's answers. Every number in them was checked against its
+evidence, and each question was reviewed by hand before any run. The 5 questions used to
+tune the agent in W3 are left out. Some questions test refusals: a false premise, too few
+English reviews, a game without reviews, and a game not in the catalog.
+
+**Routing and latency** come from the run itself. Routing is exact when the scope call is
+right, every required tool was called, no tool outside the allowed set was called, and
+retrieval ran when the question needs quoted text.
+
+**Answer quality** is graded by an LLM judge (Claude) on a fixed rubric: **correct** 0–2
+against the key points, **grounded** 0–2 against the agent's own tool outputs and documents
+(invented numbers or significance claims count against it), and **cites** 0–1. **Pass** =
+correct 2 and grounded 2. Batches are blind: the judge doesn't know which configuration
+wrote an answer. A second judge (another Claude model) grades every answer independently.
+
+### Test results (frozen split, run once)
+
+40 questions, hybrid retrieval, Qwen 2.5 14B q4 on an RTX 3080, commit `cf175e3`.
+
+| Routing exact | Required-tool recall | Unexpected tool | Scope correct | Latency p50 / p95 |
+| --- | --- | --- | --- | --- |
+| 82% | 95% | 8% | 98% | 20.1 s / 36.8 s |
+
+| Judge | Correct (0–1) | Grounded (0–1) | Pass [95% CI] |
+| --- | --- | --- | --- |
+| Claude (primary) | 0.66 | 0.80 | **0.40** [0.25, 0.55] |
+| Claude (second judge) | 0.66 | 0.81 | 0.35 [0.20, 0.50] |
+
+| Category (primary judge) | n | Correct | Grounded | Pass |
+| --- | --- | --- | --- | --- |
+| Wiki and patch-note lookup | 7 | 0.86 | 0.93 | 0.57 |
+| Trend | 5 | 0.90 | 0.70 | 0.60 |
+| Sentiment | 5 | 0.80 | 0.80 | 0.40 |
+| Reception | 4 | 0.75 | 0.62 | 0.25 |
+| Patch impact | 5 | 0.40 | 0.60 | 0.20 |
+| Multi-tool | 3 | 0.33 | 0.67 | 0.00 |
+| Catalog | 7 | 0.29 | 0.93 | 0.14 |
+| Out of scope and no data | 4 | 1.00 | 1.00 | 1.00 |
+
+Correct and grounded are mean grades on a 0–1 scale; CIs bootstrap over questions.
+
+Where it fails:
+
+- **Catalog questions** report their query output faithfully but run the wrong query: the
+  Building tag instead of City Builder, an extra filter, or the 300-game subset instead of
+  the full catalog.
+- **Patch impact** depends on finding the right event date. Darktide's Patch #17 was tested
+  at October 2023 instead of February 2024, which reversed the conclusion.
+- **Reception answers** sometimes invert SHAP directions.
+- **Significance** is claimed for comparisons no tool tested.
+- **Two wrong refusals:** the peak-players question, and Baldur's Gate 3 vs ELDEN RING
+  playtime ("data missing").
+
+Refusals and no-data questions all pass. The dev pass rates (0.35–0.50) predicted the test
+result.
+
+### Can the judge be trusted?
+
+| Comparison | Correct (weighted κ) | Grounded |
+| --- | --- | --- |
+| Judge vs second judge, 80 dev answers | 0.97 | κ 0.81 |
+| Judge vs second judge, 40 test answers | 0.88 | κ 0.84 |
+| Human (blind, 20 dev answers) vs judge | 0.58 (second judge 0.61) | 45% exact agreement |
+
+The two judges agree closely. The human grades, made blind before seeing any judge grade,
+agree moderately on correctness. Every disagreement went the same way: the judges graded
+lower, never higher.
+
+On grounding the human gave the top grade to 18 of 20 answers, so κ is not meaningful
+there. Checking the disagreements against the evidence supported the judges. One answer read
+well but claimed there were no English reviews for Tale of Immortal, while its own documents
+included three. A reader who doesn't open the evidence misses that kind of error, which is
+why grounding is graded by the judge.
+
+### Decisions made on dev
+
+| Dev run (20 questions) | Correct | Grounded | Pass [95% CI] | Routing exact | p95 |
+| --- | --- | --- | --- | --- | --- |
+| hybrid, W4 prompts | 0.68 | 0.93 | 0.50 [0.30, 0.75] | 95% | 31 s |
+| rerank, W4 prompts | 0.72 | 0.78 | 0.35 [0.15, 0.55] | 95% | 44 s |
+| hybrid, + router line + formatting rules | 0.72 | 0.68 | 0.40 [0.20, 0.60] | 95% | 41 s |
+| rerank, + router line + formatting rules | 0.68 | 0.62 | 0.40 [0.20, 0.60] | 90% | 42 s |
+| hybrid, formatting rules reworded | 0.72 | 0.75 | 0.45 | 95% | 43 s |
+
+- **Hybrid stays the default retrieval mode.** Rerank ranked chunks better in W4 (nDCG
+  +0.115), but its answers were no better, and with the W4 prompts its p95 was 12.5 s
+  slower (with the other prompts it was within a second of hybrid).
+- **A router line puts in-game content in scope** (mechanics, characters, story, items). The
+  W4 router refused "Who runs Bancho Sushi in Dave the Diver?".
+- **Answer-formatting rules were tried and dropped.** The rules asked for percentages and
+  tidy p-values. Paired against the W4 prompt, grounding fell by 0.17 [−0.30, −0.05], with 0
+  questions better and 6 worse, and correctness didn't improve. The model began adding
+  untested significance claims. Rewording the rule didn't recover it, so the test run uses
+  the W4 answer prompt with only the router line added. That exact combination was not run
+  on dev before the test; the test run measures it.
+- **The game finder now matches a main title before a colon** ("New World" → New World:
+  Aeternum), after a dev answer analysed the wrong game.
+
+### Would a bigger local model help?
+
+Qwen 2.5 32B q4 (~20 GB) does not fit in the 3080's 10 GB, so Ollama runs about half of it
+on the CPU. Both models answered the 20 dev questions on the same commit (`cf175e3`), and
+the answers were judged in one blind batch:
+
+| Dev, same commit | 14B | 32B |
+| --- | --- | --- |
+| Correct / grounded (0–1) | 0.82 / 0.93 | 0.72 / 0.82 |
+| Pass [95% CI] (second judge) | 0.65 [0.45, 0.85] (0.75) | 0.50 [0.30, 0.70] (0.45) |
+| Routing exact | 95% | 85% |
+| Latency p50 / p95 | 20 s / 30 s | 100 s / 151 s |
+| GPU utilization (mean) / RAM (max) | 42% / 14.3 GB | 13% / 14.6 GB |
+
+The 32B is not better: 32B − 14B on correct is −0.10 [−0.30, +0.10] (2 questions better, 5
+worse; second judge −0.15 [−0.30, 0.00]). It is also 5× slower, because the GPU waits on the
+CPU layers. Its errors are the same kind as the 14B's: windows that flip a conclusion, an
+invented update date, skipped sentiment calls on patch questions, and untested significance
+claims. They come from the agent's tool-use choices rather than model size, so the 14B
+stays. The 14B's 0.65 here is above its test result (0.40), because these 20 questions
+informed W5's decisions; the test number is the one to quote.
 
 ## Local development (no Docker)
 
