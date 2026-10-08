@@ -1,0 +1,40 @@
+{"jid": "05a3b5ab093c", "correct": 2, "grounded": 1, "cites": 1, "reason": "Direction of the price effect is misread (SHAP 'towards' negative bucket), though probabilities and Early Access driver are right.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "b129a749cfb7", "correct": 0, "grounded": 2, "cites": 1, "reason": "Refused an answerable question (Call of Duty is the key answer).", "judge": "claude-b", "rubric": "v1"}
+{"jid": "63b725b7570a", "correct": 1, "grounded": 0, "cites": 1, "reason": "Bucket and probabilities right but the SHAP directions are inverted throughout the driver explanation.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "9bc2dc8217b5", "correct": 1, "grounded": 2, "cites": 1, "reason": "Flat trend and change point correct, but omits the Aug dip and ~70% overall level.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "c51d07171c78", "correct": 2, "grounded": 2, "cites": 1, "reason": "No significant change and rare performance complaints, consistent with T2.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "6b833170bdd7", "correct": 1, "grounded": 2, "cites": 1, "reason": "Rise 55.8 to 65.4% with p right, but presents the 10-review sentiment split without flagging the tiny sample.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "ed161f680818", "correct": 1, "grounded": 2, "cites": 1, "reason": "Explains the Project Assembly purpose but says it cannot tell whether more than one can be built.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "dc6f8208f25d", "correct": 2, "grounded": 1, "cites": 1, "reason": "Volume decline and April shift right, but calls p=0.0809 'statistically significant'.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "0b62bcb56a22", "correct": 2, "grounded": 2, "cites": 1, "reason": "All listed changes match key points and Patch 1.2 documents.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "99547a07630b", "correct": 2, "grounded": 2, "cites": 1, "reason": "Correctly reports no reviews exist for the game and invents nothing.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "472fbd8ee68f", "correct": 2, "grounded": 2, "cites": 1, "reason": "Matches the patch note: second special activation mid attack chain for both power swords.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "29f9ead0ac02", "correct": 1, "grounded": 2, "cites": 1, "reason": "Probabilities match T1 but names no SHAP drivers and gives little hedge on the near-even odds.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "55e3161d647b", "correct": 2, "grounded": 2, "cites": 1, "reason": "Correctly declines a personal recommendation.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "64114f0c0ad1", "correct": 2, "grounded": 1, "cites": 0, "reason": "Core Sakurajima content right but omits level cap; 'Dog Coin' unsupported and [T1]/[T2] cited with no tool outputs.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "664b5a450057", "correct": 1, "grounded": 2, "cites": 1, "reason": "Notes the significant fall in positive share with right numbers but omits performance-complaint finding.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "ec26299e42e9", "correct": 2, "grounded": 2, "cites": 1, "reason": "Predicts negative_or_mixed as most likely, consistent with own tool output and key direction.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "9ef0809e9bac", "correct": 2, "grounded": 2, "cites": 1, "reason": "4-day cycle and crew jettisoned both correct and cited to doc 1.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "fd65416f20fd", "correct": 1, "grounded": 2, "cites": 1, "reason": "Numbers faithfully reported from T1 but far from key (5.5% vs ~12.5% mention, 7% vs 38% negative) and no overall positivity.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "a2140143a15c", "correct": 1, "grounded": 1, "cites": 1, "reason": "Right game and ratio, but story listed as complaint (key: praised) and tiny-sample caveat missing.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "7e9d922c1654", "correct": 0, "grounded": 2, "cites": 1, "reason": "Used the 'Building' tag so list is not City Builder games and misses all key games (Minami Lane etc.).", "judge": "claude-b", "rubric": "v1"}
+{"jid": "4806c5622b0f", "correct": 0, "grounded": 2, "cites": 1, "reason": "Median 5.34 comes from an extra Rogue-like tag filter and misses the key $4.99.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "dc886e4eb1fa", "correct": 2, "grounded": 1, "cites": 1, "reason": "11.25%/55.58% right but framed as 129 of 778 sampled reviews and trend bullet is off-topic.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "12d5f0a69b72", "correct": 2, "grounded": 2, "cites": 1, "reason": "Five Fuling totems at the Plains altar is correct and cited.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "d9d18b308b10", "correct": 2, "grounded": 2, "cites": 1, "reason": "2024 with 20,033 matches.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "4add470a63db", "correct": 1, "grounded": 1, "cites": 0, "reason": "Price $29.99 comes from a review anecdote cited to T2, comparison uses 3 cheap rows without a median, trend differs from key.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "1ad6ec1f516f", "correct": 1, "grounded": 2, "cites": 1, "reason": "Only says game master and finale, missing Scrybe of Beasts and camera-cards.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "df0ccfdbf5b3", "correct": 2, "grounded": 2, "cites": 1, "reason": "Correctly declines real-world football.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "2df8cec002d0", "correct": 2, "grounded": 1, "cites": 1, "reason": "Mention and negative shares match T1 but misstated as counts of sampled reviews; omits price complaints and overall positivity.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "c2d65da3650f", "correct": 0, "grounded": 2, "cites": 1, "reason": "Wrong set of Souls-like games vs key (only Black Myth overlaps) and only four given.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "850ac5c7d831", "correct": 1, "grounded": 1, "cites": 1, "reason": "Values and non-significance right, but '0.2544%' misstates the tool's 0.2544 per year and no short-window caveat.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "58ff815a4bad", "correct": 1, "grounded": 1, "cites": 1, "reason": "Conclusion of no significant change agrees with key but analysis dated Patch 1.2 to 2022 and bug share direction differs.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "ce9d11162713", "correct": 0, "grounded": 2, "cites": 1, "reason": "Accepts the premise and names HELLDIVERS 2 despite flat trends; top-3 differs from key.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "921412448e3f", "correct": 1, "grounded": 1, "cites": 1, "reason": "Decline direction right but reports a per-quarter average as per month and gives none of the quarterly figures.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "a6b5d9d0ced3", "correct": 0, "grounded": 0, "cites": 1, "reason": "Wrong event date (Oct 2023 not 21 Feb 2024) yields a reversed conclusion (increase instead of fall).", "judge": "claude-b", "rubric": "v1"}
+{"jid": "d5dd8a2f5cdf", "correct": 2, "grounded": 2, "cites": 1, "reason": "Significant downturn and April change point both match T1 numbers.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "d7e3e66cd894", "correct": 2, "grounded": 1, "cites": 1, "reason": "Ratios right and Hades higher, but 'statistically significant' asserted with no test.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "7557e5adfc3b", "correct": 0, "grounded": 2, "cites": 1, "reason": "Says the data cannot answer, but playtime data exists (ELDEN RING higher).", "judge": "claude-b", "rubric": "v1"}
+{"jid": "0db7a238da8d", "correct": 2, "grounded": 2, "cites": 1, "reason": "6.46% and 76.4% positive match T2 and key.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "a6b92c0901b2", "correct": 2, "grounded": 2, "cites": 1, "reason": "Correctly declines an off-topic cooking question.", "judge": "claude-b", "rubric": "v1"}
+{"jid": "a53effecbf75", "correct": 2, "grounded": 2, "cites": 1, "reason": "Bugs and price as top complaints with figures matching T1.", "judge": "claude-b", "rubric": "v1"}
