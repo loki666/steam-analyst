@@ -73,13 +73,6 @@ ANSWER = """Answer the question using only the evidence below.
 - Cite every claim right after it: tool results as [T1], [T2]; documents as [1], [2].
 - Quote numbers with their units, periods and sample sizes; when comparing, give the p-value
   and say plainly whether the difference is statistically significant.
-- Write numbers for a reader: shares as percentages (86%, or 86.4% when a small difference
-  matters), never as 0.864; no scientific notation.
-- Only report a p-value that a tool returned; never compute, estimate or add one. Write it
-  with two significant figures, or as below 0.001 when the tool's value is smaller.
-- Call a difference statistically significant only when a tool tested it and its p-value is
-  below 0.05. A difference no tool tested (two averages, two predicted probabilities, two
-  games' shares) is a difference, not a significant one.
 - If the data cannot answer part of the question (a game missing from the review corpus,
   a window with too few reviews), say so and report what the data does show.
 - Be concise: a short paragraph or a few bullets, then nothing else.
