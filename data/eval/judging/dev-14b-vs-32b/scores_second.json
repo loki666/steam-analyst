@@ -1,0 +1,494 @@
+{
+ "judge": "second",
+ "n_items": 40,
+ "unjudged": [],
+ "scores": {
+  "hybrid-14b-cf175e3": {
+   "overall": {
+    "n": 20,
+    "correct": {
+     "mean": 0.85,
+     "lo": 0.7,
+     "hi": 0.975
+    },
+    "grounded": {
+     "mean": 0.925,
+     "lo": 0.8,
+     "hi": 1.0
+    },
+    "cites": {
+     "mean": 0.95,
+     "lo": 0.85,
+     "hi": 1.0
+    },
+    "pass": {
+     "mean": 0.75,
+     "lo": 0.55,
+     "hi": 0.95
+    }
+   },
+   "by_category": {
+    "catalog": {
+     "n": 3,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "multi": {
+     "n": 1,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "no_data": {
+     "n": 1,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "out_of_scope": {
+     "n": 1,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "patch": {
+     "n": 3,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "rag": {
+     "n": 3,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "reception": {
+     "n": 2,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 0.75,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.5,
+      "lo": 0.0,
+      "hi": 1.0
+     }
+    },
+    "sentiment": {
+     "n": 3,
+     "correct": {
+      "mean": 0.5,
+      "lo": 0.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.3333333333333333,
+      "lo": 0.0,
+      "hi": 1.0
+     }
+    },
+    "trend": {
+     "n": 3,
+     "correct": {
+      "mean": 0.5,
+      "lo": 0.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.3333333333333333,
+      "lo": 0.0,
+      "hi": 1.0
+     }
+    }
+   }
+  },
+  "hybrid-32b-cf175e3": {
+   "overall": {
+    "n": 20,
+    "correct": {
+     "mean": 0.7,
+     "lo": 0.525,
+     "hi": 0.85
+    },
+    "grounded": {
+     "mean": 0.825,
+     "lo": 0.725,
+     "hi": 0.925
+    },
+    "cites": {
+     "mean": 0.95,
+     "lo": 0.85,
+     "hi": 1.0
+    },
+    "pass": {
+     "mean": 0.45,
+     "lo": 0.25,
+     "hi": 0.65
+    }
+   },
+   "by_category": {
+    "catalog": {
+     "n": 3,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "multi": {
+     "n": 1,
+     "correct": {
+      "mean": 0.5,
+      "lo": 0.5,
+      "hi": 0.5
+     },
+     "grounded": {
+      "mean": 0.5,
+      "lo": 0.5,
+      "hi": 0.5
+     },
+     "cites": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     },
+     "pass": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     }
+    },
+    "no_data": {
+     "n": 1,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "out_of_scope": {
+     "n": 1,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "patch": {
+     "n": 3,
+     "correct": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 0.8333333333333334,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     }
+    },
+    "rag": {
+     "n": 3,
+     "correct": {
+      "mean": 0.8333333333333334,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     }
+    },
+    "reception": {
+     "n": 2,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 0.5,
+      "lo": 0.5,
+      "hi": 0.5
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     }
+    },
+    "sentiment": {
+     "n": 3,
+     "correct": {
+      "mean": 0.5,
+      "lo": 0.5,
+      "hi": 0.5
+     },
+     "grounded": {
+      "mean": 0.6666666666666666,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     }
+    },
+    "trend": {
+     "n": 3,
+     "correct": {
+      "mean": 0.16666666666666666,
+      "lo": 0.0,
+      "hi": 0.5
+     },
+     "grounded": {
+      "mean": 0.8333333333333334,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     }
+    }
+   }
+  }
+ },
+ "vs_baseline": {
+  "hybrid-32b-cf175e3": {
+   "n": 20,
+   "correct": {
+    "mean": -0.15,
+    "lo": -0.3,
+    "hi": 0.0,
+    "better": 1,
+    "worse": 5
+   },
+   "pass": {
+    "mean": -0.3,
+    "lo": -0.5,
+    "hi": -0.1,
+    "better": 0,
+    "worse": 6
+   }
+  }
+ }
+}

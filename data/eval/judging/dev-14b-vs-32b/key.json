@@ -1,0 +1,168 @@
+{
+ "runs": [
+  "data/eval/results/answers_dev_hybrid-14b-cf175e3_20261008T140521Z.jsonl",
+  "data/eval/results/answers_dev_hybrid-32b-cf175e3_20261008T141204Z.jsonl"
+ ],
+ "key": {
+  "a89f992bd859": {
+   "qid": "98c0b2c6-2ad7-5303-bce3-e0e6f5c72cae",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "724f7e4fb66a": {
+   "qid": "0d54cd0a-10a6-56d7-940c-9b6adcb4ffed",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "472aa5e38b5f": {
+   "qid": "9f4e8ad0-23ad-5282-9aaf-b7327d679355",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "58e4c3e4be9d": {
+   "qid": "0ff01351-457d-5d16-b312-3cab6b489aeb",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "ef2f5b0d2b8a": {
+   "qid": "c400a121-7a6f-524a-9d4d-e3d33e16a274",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "884e4fdf52f5": {
+   "qid": "02950903-1757-5815-886b-7cc88343107c",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "cf9ab73b4343": {
+   "qid": "ab7549bc-7883-50ee-9d79-57dd84c2188d",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "a8787d0bd1fb": {
+   "qid": "ff04022d-8ae4-52a6-9c10-c7f9e261982d",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "644caff927f2": {
+   "qid": "06627efd-494f-56dc-bfb1-46d58eee2bde",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "20253c14745e": {
+   "qid": "780a2502-c161-5c2a-bd37-344a59534d00",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "8791790e9b52": {
+   "qid": "e407002a-09f2-5d0a-9d05-68c0081f47bf",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "d31bfa2fee77": {
+   "qid": "b0f3bf0b-79eb-5b9f-8e6e-eaa3c4195dd5",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "902d6cebc722": {
+   "qid": "de9e4b5a-c2b3-5b55-9289-8163a75c8637",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "c599afabcaf1": {
+   "qid": "19abb13e-ec96-52b2-a200-10eb3612f2d0",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "f14f464175ca": {
+   "qid": "d882e441-84fc-59a7-9998-cb6f699eb86c",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "105e3d0761e8": {
+   "qid": "4e8f96c9-92d5-5f3e-979f-8a2c4d893260",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "49f80a71dc2a": {
+   "qid": "a0d2c5da-a987-5f53-b9f1-1d1df3fca1b1",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "22fb6382c7dc": {
+   "qid": "f78ee2e9-ee02-5aad-8f07-ae7ffde5e50b",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "86fa85717a11": {
+   "qid": "822ac42e-511e-5fb0-99f0-7f8cb5f18d46",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "60d7b0437fbc": {
+   "qid": "2391837d-816b-5354-921e-19b1843dee3d",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "5e32ce2cf647": {
+   "qid": "98c0b2c6-2ad7-5303-bce3-e0e6f5c72cae",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "62ebadaa7748": {
+   "qid": "0d54cd0a-10a6-56d7-940c-9b6adcb4ffed",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "0dbbbef83766": {
+   "qid": "9f4e8ad0-23ad-5282-9aaf-b7327d679355",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "52c1b73a374d": {
+   "qid": "0ff01351-457d-5d16-b312-3cab6b489aeb",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "c3b8d2881ea0": {
+   "qid": "c400a121-7a6f-524a-9d4d-e3d33e16a274",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "ee7a2f19a37b": {
+   "qid": "02950903-1757-5815-886b-7cc88343107c",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "afa06d7d127a": {
+   "qid": "ab7549bc-7883-50ee-9d79-57dd84c2188d",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "13e01e4fd6f6": {
+   "qid": "ff04022d-8ae4-52a6-9c10-c7f9e261982d",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "f63b16ac0156": {
+   "qid": "06627efd-494f-56dc-bfb1-46d58eee2bde",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "882e75c61afa": {
+   "qid": "780a2502-c161-5c2a-bd37-344a59534d00",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "74ab122ee930": {
+   "qid": "e407002a-09f2-5d0a-9d05-68c0081f47bf",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "f357e007e353": {
+   "qid": "b0f3bf0b-79eb-5b9f-8e6e-eaa3c4195dd5",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "7cc9144ef8f0": {
+   "qid": "de9e4b5a-c2b3-5b55-9289-8163a75c8637",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "8899b05a2ab6": {
+   "qid": "19abb13e-ec96-52b2-a200-10eb3612f2d0",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "26817eea75a4": {
+   "qid": "d882e441-84fc-59a7-9998-cb6f699eb86c",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "95243911fdc8": {
+   "qid": "4e8f96c9-92d5-5f3e-979f-8a2c4d893260",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "3b2df14c0ca3": {
+   "qid": "a0d2c5da-a987-5f53-b9f1-1d1df3fca1b1",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "6ba1a6651a0e": {
+   "qid": "f78ee2e9-ee02-5aad-8f07-ae7ffde5e50b",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "5e1788626ef4": {
+   "qid": "822ac42e-511e-5fb0-99f0-7f8cb5f18d46",
+   "label": "hybrid-32b-cf175e3"
+  },
+  "bc32998852ef": {
+   "qid": "2391837d-816b-5354-921e-19b1843dee3d",
+   "label": "hybrid-32b-cf175e3"
+  }
+ }
+}
