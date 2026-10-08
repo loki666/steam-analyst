@@ -1,0 +1,54 @@
+{
+ "question": "Are reviews for Valheim trending up or down over the last 12 months?",
+ "games": [
+  {
+   "appid": 892970,
+   "name": "Valheim",
+   "in_review_corpus": true
+  }
+ ],
+ "route": {
+  "in_scope": true,
+  "needs_retrieval": false,
+  "retrieval_query": "",
+  "tools": [
+   "review_trend"
+  ],
+  "plan": "1. Use review_trend tool to analyze Valheim's review trend over the last 12 months."
+ },
+ "plan": "1. Use review_trend tool to analyze Valheim's review trend over the last 12 months.",
+ "chunks": [],
+ "tool_results": [
+  {
+   "id": "T1",
+   "tool": "review_trend",
+   "args": {
+    "appid": 892970,
+    "granularity": "month",
+    "last_n_months": 12,
+    "window_months": 6
+   },
+   "ok": true,
+   "content": "{\"game\":{\"appid\":892970,\"name\":\"Valheim\"},\"granularity\":\"month\",\"data_through\":\"2024-11-01\",\"dropped_partial_month\":null,\"window\":{\"from\":\"2023-12-01\",\"to\":\"2024-11-01\"},\"series\":[{\"period\":\"2023-12-01\",\"n_reviews\":3254,\"positive_share\":0.8881},{\"period\":\"2024-01-01\",\"n_reviews\":3462,\"positive_share\":0.885},{\"period\":\"2024-02-01\",\"n_reviews\":2195,\"positive_share\":0.8806},{\"period\":\"2024-03-01\",\"n_reviews\":2658,\"positive_share\":0.8736},{\"period\":\"2024-04-01\",\"n_reviews\":2089,\"positive_share\":0.9009},{\"period\":\"2024-05-01\",\"n_reviews\":3760,\"positive_share\":0.8532},{\"period\":\"2024-06-01\",\"n_reviews\":2913,\"positive_share\":0.8139},{\"period\":\"2024-07-01\",\"n_reviews\":2865,\"positive_share\":0.8436},{\"period\":\"2024-08-01\",\"n_reviews\":2016,\"positive_share\":0.8428},{\"period\":\"2024-09-01\",\"n_reviews\":1660,\"positive_share\":0.8717},{\"period\":\"2024-10-01\",\"n_reviews\":2064,\"positive_share\":0.8813},{\"period\":\"2024-11-01\",\"n_reviews\":3247,\"positive_share\":0.9212}],\"source\":\"review_monthly: every cleaned review in the corpus (population counts)\",\"summary\":{\"n_reviews\":32183,\"positive_share\":0.8714},\"trend\":{\"direction\":\"flat\",\"positive_share_change_per_year\":-0.0006,\"p_value\":0.9838,\"method\":\"weighted least squares of monthly positive share on time (weights = reviews per month)\",\"volume_first_half_avg\":2903.0,\"volume_second_half_avg\":2460.8},\"change_point\":{\"period\":\"2024-09-01\",\"positive_share_before\":0.8641,\"positive_share_after\":0.8976,\"p_value\":4.054831428979324e-14,\"note\":\"most likely single shift in positive share; the p-value ignores the search over periods, so treat it as optimistic\"}}"
+  }
+ ],
+ "tool_errors": [],
+ "iterations": 2,
+ "errors": 0,
+ "notes": [],
+ "answer": "- The trend in positive review share for Valheim over the last 12 months is flat, with a positive share change per year of -0.0006 (p-value = 0.9838), indicating no significant change.\n- The average number of reviews per month was higher in the first half (2903 reviews/month) compared to the second half (2461 reviews/month) of the period.\n- A significant change point was detected on 2024-09-01, where the positive review share increased from 0.8641 to 0.8976 (p-value = 4.054831428979324e-14).\n\nSummary: The trend in Valheim's reviews over the last 12 months is flat with no significant change in positive review share. [T1]",
+ "citations": [
+  {
+   "id": "T1",
+   "kind": "tool",
+   "tool": "review_trend",
+   "args": {
+    "appid": 892970,
+    "granularity": "month",
+    "last_n_months": 12,
+    "window_months": 6
+   }
+  }
+ ],
+ "latency_s": 17.8
+}

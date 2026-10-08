@@ -1,0 +1,102 @@
+"""The Streamlit app end to end with AppTest: a fake agent replays real captured states, so no
+LLM, Qdrant or GPU is needed."""
+
+import json
+from pathlib import Path
+
+import pytest
+
+pytest.importorskip("streamlit")
+pytest.importorskip("plotly")
+
+import streamlit as st  # noqa: E402
+from streamlit.testing.v1 import AppTest  # noqa: E402
+
+from steam_game_analyst.agent.state import RouterDecision  # noqa: E402
+from steam_game_analyst.ui import services  # noqa: E402
+
+APP = Path(__file__).parents[1] / "src" / "steam_game_analyst" / "ui" / "app.py"
+FIX = Path(__file__).parent / "fixtures" / "ui"
+
+
+class ReplayAgent:
+    def __init__(self, name: str) -> None:
+        self.state = json.loads((FIX / f"{name}.json").read_text())
+        # the graph returns the router's pydantic model, the fixture stores its dump
+        self.state["route"] = RouterDecision.model_validate(self.state["route"])
+
+    def run(self, question, on_step=None):
+        if on_step:
+            on_step("router", {"games": self.state["games"], "route": self.state["route"]})
+            on_step("answer", {})
+        return dict(self.state)
+
+
+@pytest.fixture
+def app(tmp_path, monkeypatch):
+    from steam_game_analyst.config import get_settings
+
+    monkeypatch.setenv("SGA_DATA_DIR", str(tmp_path / "data"))  # traces land here
+    get_settings.cache_clear()
+    st.cache_resource.clear()
+    st.cache_data.clear()
+    monkeypatch.setattr(services, "health", lambda s: {"ollama": None, "qdrant": None})
+    monkeypatch.setattr(services, "build_retriever", lambda s, mode: object())
+    yield lambda: AppTest.from_file(str(APP), default_timeout=60)
+    get_settings.cache_clear()
+
+
+def test_empty_state_offers_example_questions(app):
+    at = app().run()
+    assert not at.exception
+    assert any("Ask about a Steam game" in m.value for m in at.markdown)
+    keys = [b.key for b in at.button if (b.key or "").startswith("example-")]
+    assert keys == [f"example-{i}" for i in range(4)]
+
+
+def test_an_answered_question_renders_cards_sources_and_trace(app, monkeypatch):
+    monkeypatch.setattr(services, "build", lambda s, r: ReplayAgent("hades_complaints"))
+    at = app().run()
+    at.button(key="example-0").click().run()
+    assert not at.exception
+    assert any(":gray-badge[T1]" in m.value for m in at.markdown)
+    assert [e.label for e in at.expander][:2] == [
+        "Sources (1 cited, 5 more retrieved)",
+        "Tool trace (1 calls)",
+    ]
+    assert any(m.label == "positive (Steam votes)" for m in at.metric)
+    assert at.session_state["history"][0]["progress"] == [
+        "Understood the question · Hades II",
+        "Wrote the answer",
+    ]
+
+
+def test_out_of_scope_question_is_declined_without_cards(app, monkeypatch):
+    monkeypatch.setattr(services, "build", lambda s, r: ReplayAgent("refusal"))
+    at = app()
+    at.run()
+    at.chat_input[0].set_value("What should I play tonight?").run()
+    assert not at.exception
+    assert any(m.value.startswith("I can only answer questions") for m in at.markdown)
+    assert not at.expander and not at.metric
+
+
+def test_model_down_keeps_the_question_and_explains_the_fix(app, monkeypatch):
+    monkeypatch.setattr(
+        services, "health", lambda s: {"ollama": "ConnectError: refused", "qdrant": None}
+    )
+    at = app().run()
+    at.button(key="example-1").click().run()
+    assert not at.exception
+    assert any(m.value == "**The language model isn't running**" for m in at.markdown)
+    assert at.button(key="t0-retry") and at.button(key="t0-search")
+    assert at.session_state["history"][0]["question"].startswith("Did performance complaints")
+
+
+def test_tool_errors_show_in_the_trace_and_as_a_warning(app, monkeypatch):
+    monkeypatch.setattr(services, "build", lambda s, r: ReplayAgent("tool_errors"))
+    at = app().run()
+    at.chat_input[0].set_value("Which roguelikes released in 2024 are best under $20?").run()
+    assert not at.exception
+    assert any(w.value == "Stopped after 4 invalid tool calls." for w in at.warning)
+    assert any(e.label == "Tool trace (7 calls)" for e in at.expander)
