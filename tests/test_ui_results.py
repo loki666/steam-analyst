@@ -96,7 +96,7 @@ def test_tool_summaries_are_compact_and_come_from_the_output():
     assert valheim.status == "ok"
     assert "32,183 reviews" in valheim.summary and "trend flat (p 0.98)" in valheim.summary
     hades = results.tool_rows(load("hades_complaints"))[0].summary
-    assert "768 sampled · effective n 523.5 · 95.8% positive" in hades
+    assert "768 sampled · effective n 524 · 95.8% positive" in hades
     starfield = results.tool_rows(load("starfield_no_data"))[0].summary
     assert starfield == "Starfield · no dated reviews: catalog facts only"
     reception = results.tool_rows(load("reception"))[0].summary

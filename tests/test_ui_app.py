@@ -32,6 +32,13 @@ class ReplayAgent:
         return dict(self.state)
 
 
+def walk(node):
+    """Every element under an AppTest block, in render order."""
+    yield node
+    for child in getattr(node, "children", {}).values():
+        yield from walk(child)
+
+
 @pytest.fixture
 def app(tmp_path, monkeypatch):
     from steam_game_analyst.config import get_settings
@@ -103,6 +110,22 @@ def test_model_down_keeps_the_question_and_explains_the_fix(app, monkeypatch):
     assert any(m.value == "**The language model isn't running**" for m in at.markdown)
     assert at.button(key="t0-retry") and at.button(key="t0-search")
     assert at.session_state["history"][0]["question"].startswith("Did performance complaints")
+
+
+def test_split_warning_sits_inside_the_sentiment_card(app, monkeypatch):
+    monkeypatch.setattr(services, "build", lambda s, r: ReplayAgent("cyberpunk_patch"))
+    at = app().run()
+    at.button(key="example-1").click().run()
+    assert not at.exception
+    text = "Only 7 effective reviews before and 25 after 21 Sep 2023"
+    hits = [w for w in at.warning if w.value.startswith(text)]
+    assert len(hits) == 1  # once, not also with the answer-level banners
+    # in reading order: after the sentiment card's header, not above the trend card
+    order = [getattr(n, "value", "") for n in walk(at.main)]
+    head = next(i for i, v in enumerate(order) if "Review sentiment · Cyberpunk" in str(v))
+    trend = next(i for i, v in enumerate(order) if "Positive share by month" in str(v))
+    warn = next(i for i, v in enumerate(order) if str(v).startswith(text))
+    assert trend < head < warn
 
 
 def test_tool_errors_show_in_the_trace_and_as_a_warning(app, monkeypatch):

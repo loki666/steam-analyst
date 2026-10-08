@@ -70,14 +70,15 @@ def test_banners_put_degraded_paths_first_then_data_caveats():
 
 
 def test_a_split_with_few_effective_reviews_is_warned_about():
-    b = steps.banners(load("cyberpunk_patch"))  # T2: effective n 7.2 before, 24.8 after
-    assert b == [
-        steps.Banner(
-            "warn",
-            "Only 7 effective reviews before and 25 after 21 Sep 2023: "
-            "differences under ~10 pts are noise.",
-        )
-    ]
+    state = load("cyberpunk_patch")  # T2: effective n 7.2 before, 24.8 after
+    cmp = json.loads(state["tool_results"][1]["content"])["comparison"]
+    assert steps.split_banner(cmp) == steps.Banner(
+        "warn",
+        "Only 7 effective reviews before and 25 after 21 Sep 2023: "
+        "differences under ~10 pts are noise.",
+    )
+    # it belongs to the sentiment card, not to the answer-level banners above the trend card
+    assert steps.banners(state) == []
     one_side = {"split_date": "2023-09-21", "effective_n": {"before": 40.0, "after": 12.4}}
     banner = steps.split_banner(one_side)
     assert banner is not None and banner.text.startswith("Only 12 effective reviews after 21 Sep")
@@ -121,5 +122,5 @@ def test_small_sample_and_truncated_outputs_are_flagged():
     small = {**t, "content": '{"small_sample":true,"n_reviews_sampled":22,"effective_n":14.0}'}
     cut = {**t, "content": '{"game":{"appid":1,"name":"x"},"aspects":{"bugs":{"n_m'}
     texts = [b.text for b in steps.banners({"tool_results": [small, cut]})]
-    assert "only 22 sampled reviews (effective n 14.0)" in texts[0]
+    assert "only 22 sampled reviews (effective n 14)" in texts[0]
     assert "size cap" in texts[1]

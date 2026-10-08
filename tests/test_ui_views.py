@@ -42,6 +42,17 @@ def test_trend_card_with_an_event_test():
     assert tile.help and "6 months before vs after 2023-09-21" in tile.help
 
 
+def test_the_date_the_agent_chose_leads_the_card_meta():
+    _, trend = tool("cyberpunk_patch", 0)
+    assert views.trend_meta(trend) == (
+        "event 21 Sep 2023 · Mar 2023 – Mar 2024 · every review, 2,775 in total"
+    )
+    _, sentiment = tool("cyberpunk_patch", 1)
+    assert views.sentiment_meta(sentiment) == (
+        "split 21 Sep 2023 · 28 Jun 2023 – 21 Dec 2023 · 39 sampled reviews · effective n 32"
+    )
+
+
 def test_signed_uses_two_significant_figures_and_a_true_minus():
     assert views.signed(-0.06) == "−0.06" and views.signed(12.9) == "+13"
     assert views.plural(1, "call") == "1 call" and views.plural(7, "call") == "7 calls"
@@ -59,7 +70,7 @@ def test_catalog_tiles_for_a_game_without_reviews():
 def test_sentiment_tiles_and_meta():
     _, out = tool("hades_complaints")
     assert views.sentiment_meta(out) == (
-        "6 May 2024 – 24 Nov 2024 · 768 sampled reviews · effective n 523.5"
+        "6 May 2024 – 24 Nov 2024 · 768 sampled reviews · effective n 524"
     )
     assert shown(views.sentiment_tiles(out)) == [
         ("95.8%", "positive (Steam votes)"),
@@ -72,7 +83,7 @@ def test_comparison_tiles_read_the_split():
     _, out = tool("cyberpunk_patch", 1)
     assert shown(views.comparison_tiles(out["comparison"])) == [
         ("91% → 96%", "positive · p 0.55"),
-        ("7.2 / 24.8", "effective n before / after"),
+        ("7 / 25", "effective n before / after"),
     ]
 
 

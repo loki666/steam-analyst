@@ -6,7 +6,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from steam_game_analyst.ui.results import Banner, parse_content, route_of
+from steam_game_analyst.ui.results import Banner, parse_content, route_of, whole
 from steam_game_analyst.ui.views import day_label, small_sides
 
 TOOL_VERB = {
@@ -127,12 +127,13 @@ def step_strip(result: dict[str, Any], latency_s: float | None = None) -> list[s
 
 
 def split_banner(cmp: dict[str, Any]) -> Banner | None:
-    """A before/after split with too few effective reviews on a side to trust small changes."""
+    """A before/after split with too few effective reviews on a side to trust small changes.
+    Shown inside the review_sentiment card it is about, not with the answer-level banners."""
     small = small_sides(cmp)
     if not small:
         return None
     parts = [
-        f"{n:.0f} effective reviews {side}" if i == 0 else f"{n:.0f} {side}"
+        f"{whole(n)} effective reviews {side}" if i == 0 else f"{whole(n)} {side}"
         for i, (side, n) in enumerate(small)
     ]
     sides = " and ".join(parts)
@@ -145,14 +146,13 @@ def split_banner(cmp: dict[str, Any]) -> Banner | None:
 def _tool_banners(t: dict[str, Any]) -> list[Banner]:
     out = parse_content(t.get("content", ""))
     found: list[Banner] = []
-    if t["tool"] == "review_sentiment" and (b := split_banner(out.get("comparison") or {})):
-        found.append(b)
     if t["tool"] == "review_sentiment" and out.get("small_sample"):
         found.append(
             Banner(
                 "warn",
                 f"Small sample in [{t['id']}]: only {out.get('n_reviews_sampled')} sampled "
-                f"reviews (effective n {out.get('effective_n')}). Treat the shares as indicative.",
+                f"reviews (effective n {whole(out.get('effective_n'))}). Treat the shares as "
+                "indicative.",
             )
         )
     if t["tool"] == "review_trend" and out.get("limitation"):

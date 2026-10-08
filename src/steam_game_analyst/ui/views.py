@@ -6,7 +6,7 @@ from __future__ import annotations
 from datetime import date
 from typing import Any, NamedTuple
 
-from steam_game_analyst.ui.results import pct
+from steam_game_analyst.ui.results import pct, whole
 
 MINUS = "−"  # a true minus sign, not a hyphen
 SMALL_EFFECTIVE_N = 30  # below this a before/after difference under ~10 points is noise
@@ -69,11 +69,18 @@ def trend_title(out: dict[str, Any]) -> str:
     return f"Positive share by {out.get('granularity', 'month')} · {game_name(out)}"
 
 
+def _lead(label: str, iso: str | None) -> str:
+    """The date the agent chose for the test, first in the meta line, so a date that is not
+    the patch the user asked about shows at a glance."""
+    return f"{label} {day_label(iso)} · " if iso else ""
+
+
 def trend_meta(out: dict[str, Any]) -> str:
     w, s = out.get("window", {}), out.get("summary", {})
     total = s.get("n_reviews")
     tail = f" · every review, {total:,} in total" if total is not None else ""
-    return f"{month_label(w.get('from'))} – {month_label(w.get('to'))}{tail}"
+    lead = _lead("event", (out.get("event_test") or {}).get("event_date"))
+    return f"{lead}{month_label(w.get('from'))} – {month_label(w.get('to'))}{tail}"
 
 
 def _shares(before: float | None, after: float | None) -> str:
@@ -138,9 +145,10 @@ def catalog_tiles(out: dict[str, Any]) -> list[Tile]:
 def sentiment_meta(out: dict[str, Any]) -> str:
     w = out.get("window", {})
     return (
+        f"{_lead('split', (out.get('comparison') or {}).get('split_date'))}"
         f"{day_label(w.get('from'))} – {day_label(w.get('to'))} · "
         f"{out.get('n_reviews_sampled', '?')} sampled reviews · "
-        f"effective n {out.get('effective_n', '?')}"
+        f"effective n {whole(out.get('effective_n'))}"
     )
 
 
@@ -188,7 +196,7 @@ def comparison_tiles(cmp: dict[str, Any]) -> list[Tile]:
             cmp.get("method"),
         ),
         Tile(
-            f"{eff.get('before', '?')} / {eff.get('after', '?')}",
+            f"{whole(eff.get('before'))} / {whole(eff.get('after'))}",
             "effective n before / after",
             "Kish effective sample size of the weighted review sample on each side.",
         ),

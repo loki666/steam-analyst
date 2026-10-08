@@ -21,7 +21,7 @@ from steam_game_analyst.ui.results import (
     tool_rows,
 )
 from steam_game_analyst.ui.services import Failure
-from steam_game_analyst.ui.steps import banners, step_strip
+from steam_game_analyst.ui.steps import banners, split_banner, step_strip
 from steam_game_analyst.ui.style import CSS
 
 EXAMPLES = (
@@ -80,6 +80,8 @@ def _trend_card(t: dict[str, Any], out: dict[str, Any], key: str) -> None:
 
 def _comparison(cmp: dict[str, Any], key: str) -> None:
     st.markdown(f"**Complaints before vs after {views.day_label(cmp.get('split_date'))}**")
+    if warning := split_banner(cmp):  # in the card it is about, not above the answer
+        st.warning(warning.text)
     _chart(charts.comparison_figure(cmp), f"{key}-cmp")
     if quiet := views.quiet_aspects(cmp):
         st.caption("No complaints either side: " + ", ".join(a.capitalize() for a in quiet))

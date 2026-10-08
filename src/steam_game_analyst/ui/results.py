@@ -172,6 +172,11 @@ def compact_args(args: dict[str, Any], n: int = ARGS_CHARS) -> str:
     return text if len(text) <= n else text[: n - 1] + "…"
 
 
+def whole(x: float | None) -> str:
+    """Effective sample sizes everywhere: a whole number ("523", never "523.5")."""
+    return "?" if x is None else f"{round(x):,}"
+
+
 def pct(x: float | None, digits: int = 1) -> str:
     return "n/a" if x is None else f"{100 * x:.{digits}f}%"
 
@@ -198,7 +203,7 @@ def _sum_sentiment(out: dict[str, Any]) -> str:
     w = out.get("window", {})
     return (
         f"{_game(out)} · {w.get('from', '?')} → {w.get('to', '?')} · "
-        f"{out.get('n_reviews_sampled', '?')} sampled · effective n {out.get('effective_n', '?')}"
+        f"{out.get('n_reviews_sampled', '?')} sampled · effective n {whole(out.get('effective_n'))}"
         f" · {pct(out.get('positive_share'))} positive"
     )
 
