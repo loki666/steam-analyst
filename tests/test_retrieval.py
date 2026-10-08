@@ -311,6 +311,28 @@ def test_numeric_names_cjk_names_and_ambiguous_aliases():
     assert games.find("tell me about 觅长生") == [(3, "觅长生")]
 
 
+def test_main_title_before_a_colon_is_an_alias():
+    games = query.GameIndex.from_names(
+        {
+            1: "New World: Aeternum",
+            2: "A Hole New World",
+            3: "Total War: WARHAMMER III",
+            4: "Total War: THREE KINGDOMS",
+            5: "Dead Space",
+            6: "Dead Space: Remastered Soundtrack",
+            7: "Cities: Skylines II",
+        }
+    )
+    assert games.find("Did New World's reviews change after Update 2.0.1?") == [
+        (1, "New World: Aeternum")
+    ]
+    assert games.find("Is A Hole New World any good?") == [(2, "A Hole New World")]
+    assert games.find("Which Total War game is best?") == []  # main title shared
+    assert games.find("Is Dead Space scary?") == [(5, "Dead Space")]  # exact name wins
+    assert games.find("Cities crash a lot") == []  # one-word main title: too risky
+    assert games.find("Total War: WARHAMMER III patch 4.1") == [(3, "Total War: WARHAMMER III")]
+
+
 def test_quoted_game_name_is_not_a_text_filter_and_after_excludes_year():
     q = query.parse_question('Reviews about "Hades" after 2023', GAMES)
     assert q.filters.appids == (1145360,)

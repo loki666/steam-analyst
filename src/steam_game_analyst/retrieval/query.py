@@ -86,9 +86,11 @@ class GameIndex:
                 continue
             full.setdefault(_norm(name), (appid, name))
             if ":" in name:  # "Warhammer 40,000: Darktide" -> no alias (one word)
-                alias_toks = _tokens(name.split(":", 1)[1])
-                if len(alias_toks) >= 2:
-                    aliases[" " + " ".join(alias_toks) + " "].add((appid, name))
+                # the subtitle and the main title ("New World: Aeternum" -> "New World")
+                for part in name.split(":", 1):
+                    alias_toks = _tokens(part)
+                    if len(alias_toks) >= 2:
+                        aliases[" " + " ".join(alias_toks) + " "].add((appid, name))
         merged = dict(full)
         for key, owners in aliases.items():
             if len(owners) == 1 and key not in full:
