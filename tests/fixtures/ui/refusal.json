@@ -1,0 +1,20 @@
+{
+ "question": "What should I play tonight?",
+ "games": [],
+ "route": {
+  "in_scope": false,
+  "needs_retrieval": false,
+  "retrieval_query": "",
+  "tools": [],
+  "plan": ""
+ },
+ "plan": "",
+ "chunks": [],
+ "tool_results": [],
+ "iterations": 0,
+ "errors": 0,
+ "notes": [],
+ "answer": "I can only answer questions about PC games on Steam. I can summarise what players say in reviews, explain game mechanics from wiki pages, track review trends and the effect of patches, filter and rank games in the Steam catalog, and predict how a game with given launch metadata is likely to be received.",
+ "citations": [],
+ "latency_s": 1.2
+}

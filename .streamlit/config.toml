@@ -1,0 +1,27 @@
+# Streamlit theme from the W5 design canvas ("Steam Game Analyst screens", design system v0):
+# quiet paper ground, one signal blue for what the system found, burnt orange for complaints.
+[theme]
+base = "light"
+primaryColor = "#2340C8"
+backgroundColor = "#F5F6F3"
+secondaryBackgroundColor = "#E8ECE5"
+textColor = "#18201D"
+borderColor = "#D2D8D0"
+font = "Public Sans:https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap"
+headingFont = "Archivo:https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&display=swap"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&display=swap"
+baseRadius = "small"
+
+[theme.sidebar]
+backgroundColor = "#E8ECE5"
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
+
+[server]
+# the source watcher walks every imported module, and transformers' lazy submodules
+# (torchvision-only ones) make it log tracebacks; the app is served, not edited live
+fileWatcherType = "none"

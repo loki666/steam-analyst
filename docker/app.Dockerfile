@@ -28,6 +28,7 @@ RUN uv sync --frozen --no-install-project --all-extras --no-dev --python 3.12 ||
 
 COPY src ./src
 COPY configs ./configs
+COPY .streamlit ./.streamlit
 COPY README.md ./
 RUN uv sync --all-extras --no-dev --python 3.12
 

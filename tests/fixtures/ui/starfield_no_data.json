@@ -1,0 +1,97 @@
+{
+ "question": "Are reviews for Starfield trending up or down over the last 12 months?",
+ "games": [
+  {
+   "appid": 1716740,
+   "name": "Starfield",
+   "in_review_corpus": false
+  }
+ ],
+ "route": {
+  "in_scope": true,
+  "needs_retrieval": true,
+  "retrieval_query": "Starfield review trend last 12 months",
+  "tools": [
+   "review_trend"
+  ],
+  "plan": "1. Use review_trend tool to analyze Starfield's review trend over the last 12 months."
+ },
+ "plan": "1. Use review_trend tool to analyze Starfield's review trend over the last 12 months.",
+ "chunks": [
+  {
+   "n": 1,
+   "id": "94924f86-83b3-55c0-8cdd-86154c5591e7",
+   "label": "Norland · review · 2024-08-26 · recommended · 86 h played",
+   "text": "scheint sich positiv zu entwickeln",
+   "url": null
+  },
+  {
+   "n": 2,
+   "id": "97bcbb2b-dd50-5606-8d50-8ec247ed0a84",
+   "label": "Slipways · review · 2021-06-04 · recommended · 11 h played",
+   "text": "Just an awesome game. Keeps you coming back again and again. Probably the best game I have played in the last 12 months.",
+   "url": null
+  },
+  {
+   "n": 3,
+   "id": "0fb3b77f-690e-5941-9f66-e1d3dee8793b",
+   "label": "The Outer Worlds · review · 2023-09-06 · recommended · 6 h played",
+   "text": "Obsidian Entertainment did Starfield before Starfield.",
+   "url": null
+  },
+  {
+   "n": 4,
+   "id": "8ebd21f7-7541-5bb8-9d01-9fc472336395",
+   "label": "Space Haven · review · 2022-07-02 · recommended · 146 h played",
+   "text": "успокаивает, чуть монотонно но за 2 года стало лучше и менее рутинно",
+   "url": null
+  },
+  {
+   "n": 5,
+   "id": "f48ddb93-6802-53e7-a60c-ccf0afd122b0",
+   "label": "Space Haven · review · 2024-06-21 · recommended · 52 h played",
+   "text": "It's kind of like Starfield, except I enjoy it.",
+   "url": null
+  },
+  {
+   "n": 6,
+   "id": "bec73065-7373-59ef-bbad-021b0064e917",
+   "label": "The Outer Worlds · review · 2024-10-09 · recommended · 41 h played",
+   "text": "If you haven't played starfield, this IS STARFIELD.",
+   "url": null
+  }
+ ],
+ "tool_results": [
+  {
+   "id": "T1",
+   "tool": "review_trend",
+   "args": {
+    "appid": 1716740,
+    "granularity": "month",
+    "last_n_months": 12,
+    "window_months": 6
+   },
+   "ok": true,
+   "content": "{\"game\":{\"appid\":1716740,\"name\":\"Starfield\"},\"available\":{\"all_time_catalog\":{\"name\":\"Starfield\",\"game_released_on\":\"2023-09-05\",\"positive_votes\":93942,\"negative_votes\":71585,\"positive_ratio_all_time\":0.5675},\"what_it_shows\":\"Steam's all-time positive / negative vote totals from release until the catalog dataset was compiled (that date is not recorded): overall reception, not its direction\"},\"limitation\":\"the review corpus (Mendeley, dated reviews of 300 games, up to 2024-12) has no reviews for this game, so this tool cannot show a trend\"}"
+  }
+ ],
+ "tool_errors": [],
+ "iterations": 2,
+ "errors": 0,
+ "notes": [],
+ "answer": "- The review trend tool for Starfield shows no trend data available due to a lack of reviews in the Mendeley corpus after the game's release. [T1]\n- The tool provides the overall reception of Starfield with 93,942 positive votes and 71,585 negative votes as of the last available data point, but this does not indicate the direction of reviews over time. [T1]\n- No specific review data for Starfield is available in the provided review corpus for the period in question. [1-6]",
+ "citations": [
+  {
+   "id": "T1",
+   "kind": "tool",
+   "tool": "review_trend",
+   "args": {
+    "appid": 1716740,
+    "granularity": "month",
+    "last_n_months": 12,
+    "window_months": 6
+   }
+  }
+ ],
+ "latency_s": 11.6
+}

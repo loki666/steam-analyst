@@ -1,0 +1,111 @@
+{
+ "question": "Did performance complaints drop after patch 2.0 of Cyberpunk 2077?",
+ "games": [
+  {
+   "appid": 1091500,
+   "name": "Cyberpunk 2077",
+   "in_review_corpus": true
+  }
+ ],
+ "route": {
+  "in_scope": true,
+  "needs_retrieval": true,
+  "retrieval_query": "Cyberpunk 2077 patch 2.0 performance complaints",
+  "tools": [
+   "review_trend"
+  ],
+  "plan": "1. Retrieve patch 2.0 release date and performance-related issues. 2. Use review_trend to analyze sentiment around performance before and after patch 2.0. 3. Summarize findings on whether performance complaints decreased post-patch."
+ },
+ "plan": "1. Retrieve patch 2.0 release date and performance-related issues. 2. Use review_trend to analyze sentiment around performance before and after patch 2.0. 3. Summarize findings on whether performance complaints decreased post-patch.",
+ "chunks": [
+  {
+   "n": 1,
+   "id": "bb8275c7-c30a-523e-99f5-8b41b01c7ce9",
+   "label": "Cyberpunk 2077 · review · 2023-10-06 · not recommended · 168 h played",
+   "text": "2.01 patch ruin my gameplayFps from 2.0 120 to 8x that really bad",
+   "url": null
+  },
+  {
+   "n": 2,
+   "id": "27e8df0a-76a9-51fd-b8bc-d9ea2d5d3b12",
+   "label": "Cyberpunk 2077 · patch_note · 2023-09-14 · Update 2.0 date revealed!",
+   "text": "THE MOMENT YOU'VE BEEN WAITING FOR\n\nhttps://youtu.be/odf7Q8Plcvw\n\nUpdate 2.0 for Cyberpunk 2077 is coming on September 21!",
+   "url": "https://steamstore-a.akamaihd.net/news/externalpost/steam_community_announcements/5480373588782965128"
+  },
+  {
+   "n": 3,
+   "id": "c13fa3d2-9f33-50d4-bd15-8131aaeaf474",
+   "label": "Cyberpunk 2077 · patch_note · 2023-09-21 · Update 2.0",
+   "text": "- Added Perks to expand netrunning capabilities. For example, a new Overclock mode allows you to upload quickhacks by consuming Health if you have insufficient RAM. You can also acquire the ability to queue multiple quickhacks on a single enemy.\n- Rebalanced RAM costs.\n- Rebalanced damage and upload time. Changed the effects of some quickhacks.\n- Removed the option to use Breach Protocol on enemies.\n\nOther\n\n- Health Items and grenades now have a limited number of charges that recharge over time after being used.\n- Stamina is no longer drained outside of combat for actions like sprinting, sliding and jumping. Stamina is drained when firing ranged weapons or attacking with melee weapons. Stamina cost varies by weapon.\n- Improved the Aim Assist feature.\n- Rebalanced the base game's main boss fights.\n- Introduced Armor Penetration for the base game's main bosses.\n- Removed the one-hit kill protection from civilians.\n\nPERKS & SKILLS",
+   "url": "https://steamstore-a.akamaihd.net/news/externalpost/steam_community_announcements/5219165352624021366"
+  },
+  {
+   "n": 4,
+   "id": "bf2a2f5a-86ed-5475-8d39-12f8b4d53902",
+   "label": "Cyberpunk 2077 · review · 2023-09-25 · not recommended · 220 h played",
+   "text": "“Deus Ex”, zannımca bu konuda çok daha iyi bir iş çıkartmıştı. Yine oyunun tanıtımında gösterilen ve oynanışta çeşitlilik yaratacak eşyaların, tam sürümde olmaması ayrı bir hayal kırıklığı yaşatmış olduğunu belirtmeden geçmemek gerek... Tabii, 2.0 güncellemesi ile birlikte bunlar 3 yıl sonra getirildi. 2.0 güncellemesinin notlarına da burada değinmek gerek. Şahsen, güncelleme notlarına bakarken utandım. Sözüm ona “güncelleme” dedikleri ve bunu “güncelleme notları” olarak yayımladıkları şey, “yayaların sürat halindeki araçlara çarpmaktan kaçınmaya çalışacak olması, NPC araçları önüne çıkan engeller karşısında yolunu değiştirecek olması” gibi abesle iştigal güncelleme notları yazılmış. sizlerin taktirine bırakıyorum.En nihayetinde oyunu 1.6 sürümünde oynamış ve bitirmiş birisi olarak şunu rahatlıkla söyleyebilirim ki 2.0 güncellemesi, oyuna sonunda gelmesini “şiddetle” istediğimiz çeşitli; düzeltmelerin, eşyaların getirildiği ve hatta doku kalitesinin de gerçekten “arttığı” bir güncelleme olmuş. Oyun, genel olarak hikaye ve senaryo bakımından gayet tatmin edici. Teknik açıdan ise kusurlu. Oyuna puanım: 6.5/10",
+   "url": null
+  },
+  {
+   "n": 5,
+   "id": "d1c0a751-d630-514d-a23a-209fe367a9fa",
+   "label": "Cyberpunk 2077 · review · 2023-12-07 · not recommended · 34 h played",
+   "text": "更新2.1版本后从60帧掉到30多40帧，牛的更新",
+   "url": null
+  },
+  {
+   "n": 6,
+   "id": "d7d0c0e3-daa0-52c8-9567-03e42146c4eb",
+   "label": "Cyberpunk 2077 · patch_note · 2021-03-29 · Patch 1.2",
+   "text": "Patch 1.2 for Cyberpunk 2077 is now live!\n\nThe list of changes for this update is available here:\nhttps://steamcommunity.com/games/1091500/announcements/detail/3021326294552766778\nhttps://steamcommunity.com/games/1091500/announcements/detail/3021326294552815854",
+   "url": "https://steamstore-a.akamaihd.net/news/externalpost/steam_community_announcements/4026754911360083107"
+  }
+ ],
+ "tool_results": [
+  {
+   "id": "T1",
+   "tool": "review_trend",
+   "args": {
+    "appid": 1091500,
+    "granularity": "month",
+    "event_date": "2023-09-21",
+    "window_months": 6
+   },
+   "ok": true,
+   "content": "{\"game\":{\"appid\":1091500,\"name\":\"Cyberpunk 2077\"},\"granularity\":\"month\",\"data_through\":\"2024-11-01\",\"dropped_partial_month\":null,\"window\":{\"from\":\"2023-03-01\",\"to\":\"2024-03-01\"},\"series\":[{\"period\":\"2023-03-01\",\"n_reviews\":190,\"positive_share\":0.9211},{\"period\":\"2023-04-01\",\"n_reviews\":243,\"positive_share\":0.7243},{\"period\":\"2023-05-01\",\"n_reviews\":123,\"positive_share\":0.9024},{\"period\":\"2023-06-01\",\"n_reviews\":182,\"positive_share\":0.7802},{\"period\":\"2023-07-01\",\"n_reviews\":160,\"positive_share\":0.9},{\"period\":\"2023-08-01\",\"n_reviews\":192,\"positive_share\":0.9271},{\"period\":\"2023-09-01\",\"n_reviews\":385,\"positive_share\":0.8312},{\"period\":\"2023-10-01\",\"n_reviews\":369,\"positive_share\":0.8455},{\"period\":\"2023-11-01\",\"n_reviews\":213,\"positive_share\":0.9624},{\"period\":\"2023-12-01\",\"n_reviews\":237,\"positive_share\":0.9198},{\"period\":\"2024-01-01\",\"n_reviews\":174,\"positive_share\":0.9195},{\"period\":\"2024-02-01\",\"n_reviews\":160,\"positive_share\":0.9375},{\"period\":\"2024-03-01\",\"n_reviews\":147,\"positive_share\":0.9456}],\"source\":\"review_monthly: every cleaned review in the corpus (population counts)\",\"summary\":{\"n_reviews\":2775,\"positive_share\":0.8757},\"trend\":{\"direction\":\"flat\",\"positive_share_change_per_year\":0.129,\"p_value\":0.0585,\"method\":\"weighted least squares of monthly positive share on time (weights = reviews per month)\",\"volume_first_half_avg\":181.7,\"volume_second_half_avg\":240.7},\"event_test\":{\"event_date\":\"2023-09-21\",\"window_months\":6,\"before\":{\"from\":\"2023-03-01\",\"to\":\"2023-09-01\",\"n_reviews\":1090,\"positive_share\":0.8495},\"after\":{\"from\":\"2023-10-01\",\"to\":\"2024-04-01\",\"n_reviews\":1300,\"positive_share\":0.9108},\"diff\":0.0612,\"p_value\":3.5576825269196726e-06,\"method\":\"two-proportion z-test; the event month is excluded from both windows\"}}"
+  },
+  {
+   "id": "T2",
+   "tool": "review_sentiment",
+   "args": {
+    "appid": 1091500,
+    "date_from": "2023-06-21",
+    "date_to": "2023-12-21",
+    "split_date": "2023-09-21",
+    "window_months": 3
+   },
+   "ok": true,
+   "content": "{\"game\":{\"appid\":1091500,\"name\":\"Cyberpunk 2077\"},\"window\":{\"from\":\"2023-06-28\",\"to\":\"2023-12-21\"},\"language\":\"english\",\"n_reviews_sampled\":39,\"effective_n\":32.0,\"small_sample\":false,\"unweighted_reviews\":0,\"positive_share\":0.9486,\"classifier_positive_share\":0.9262,\"comparison\":{\"split_date\":\"2023-09-21\",\"n_sampled\":{\"before\":10,\"after\":29},\"effective_n\":{\"before\":7.2,\"after\":24.8},\"positive_share\":{\"before\":0.9052,\"after\":0.9606,\"diff\":0.0554,\"p_value\":0.5549},\"complaint_share_by_aspect\":{\"performance\":{\"before\":0.0,\"after\":0.0,\"diff\":0.0,\"p_value\":1.0},\"bugs\":{\"before\":0.3491,\"after\":0.0901,\"diff\":-0.259,\"p_value\":0.0853},\"gameplay\":{\"before\":0.0,\"after\":0.0483,\"diff\":0.0483,\"p_value\":0.5476},\"story\":{\"before\":0.0,\"after\":0.0,\"diff\":0.0,\"p_value\":1.0},\"price\":{\"before\":0.1983,\"after\":0.0131,\"diff\":-0.1851,\"p_value\":0.0547},\"controls\":{\"before\":0.1509,\"after\":0.0,\"diff\":-0.1509,\"p_value\":0.0492}},\"method\":\"weighted shares, two-proportion z-test on Kish effective sample sizes\"},\"aspects\":{\"performance\":{\"n_mentions\":6,\"mention_share\":0.1687,\"negative_share_of_mentions\":0.0,\"complaint_share\":0.0,\"examples\":[]},\"bugs\":{\"n_mentions\":10,\"mention_share\":0.2168,\"negative_share_of_mentions\":0.6746,\"complaint_share\":0.1463,\"examples\":[{\"review_id\":\"fe038e9d77ba8234\",\"date\":\"2023-07-05\",\"text\":\"The bugs, now that there has been a crap tone of updates, are barely noticeable. There is -ONE- bug that BUGS the hell out of me, which is a phone glitch I get \"},{\"review_id\":\"99d9bd2d213b9a29\",\"date\":\"2023-07-09\",\"text\":\"Cyberpunk 2077 is a very game, it will give you possibly the best story, characters, and combat you've ever experienced then crumble it all with those same char\"}]},\"gameplay\":{\"n_mentions\":12,\"mention_share\":0.3374,\"negative_share_of_mentions\":0.1122,\"complaint_share\":0.0378,\"examples\":[{\"review_id\":\"9fb8b027d332fcef\",\"date\":\"2023-11-11\",\"text\":\"In not a single game, I feel empty after completing a quest.\"},{\"review_id\":\"8e86dd888cf11ced\",\"date\":\"2023-09-21\",\"text\":\"Enemy difficulty is no longer dependent on what area of Night City you're in.\"}]},\"story\":{\"n_mentions\":14,\"mention_share\":0.4028,\"negative_share_of_mentions\":0.0,\"complaint_share\":0.0,\"examples\":[]},\"price\":{\"n_mentions\":8,\"mention_share\":0.1514,\"negative_share_of_mentions\":0.3518,\"complaint_share\":0.0533,\"examples\":[{\"review_id\":\"3feb8adbfc0898ac\",\"date\":\"2023-08-26\",\"text\":\"It's not often that I give a game this much recognition because most games these days are cookie-cutter, money grabbing, bland, derivative IPs that only aim to \"},{\"review_id\":\"aa13bdf9a4fc25ef\",\"date\":\"2023-06-29\",\"text\":\"Animations are in need of much work and don't listen to your own foot steps as you run it will depress you rapidly as V sounds like they are just running around\"}]},\"controls\":{\"n_mentions\":2,\"mention_share\":0.0654,\"negative_share_of_mentions\":0.5,\"complaint_share\":0.0327,\"examples\":[{\"review_id\":\"99d9bd2d213b9a29\",\"date\":\"2023-07-09\",\"text\":\"There is a lot of variation to the moment-to-moment combat that the game gives you full reign to control proficiency in, be stealthy, loud, or a mix of the two.\"}]}},\"method\":\"English review sample reweighted to all reviews (year x rating strata); aspects by keyword, aspect polarity by the fine-tuned DistilBERT classifier on the sentences that mention the aspect\"}"
+  }
+ ],
+ "tool_errors": [],
+ "iterations": 2,
+ "errors": 0,
+ "notes": [],
+ "answer": "- Performance complaints did not show a statistically significant change after patch 2.0: the p-value is 1.0, indicating no significant difference [T2].\n- The positive review share increased from 90.52% before the patch to 96.06%, but this is not related to performance complaints specifically [T2].\n- The data does not provide specific numbers for performance complaints before and after the patch, only the overall trend and sentiment [T2].",
+ "citations": [
+  {
+   "id": "T2",
+   "kind": "tool",
+   "tool": "review_sentiment",
+   "args": {
+    "appid": 1091500,
+    "date_from": "2023-06-21",
+    "date_to": "2023-12-21",
+    "split_date": "2023-09-21",
+    "window_months": 3
+   }
+  }
+ ],
+ "latency_s": 29.6
+}

@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 import re
 import uuid
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from datetime import date
 from typing import Any, Literal, Protocol
 
@@ -154,7 +154,11 @@ class Agent:
         g.add_edge("answer", END)
         return g.compile()
 
-    def run(self, question: str) -> dict[str, Any]:
+    def run(
+        self, question: str, on_step: Callable[[str, dict[str, Any]], None] | None = None
+    ) -> dict[str, Any]:
+        """Final state for one question. `on_step(node, update)` is called after each node
+        finishes (the UI shows progress with it); without it the graph runs as one invoke."""
         state = {
             "question": question,
             "iterations": 0,
@@ -163,7 +167,19 @@ class Agent:
             "tool_results": [],
             "chunks": [],
         }
-        return self.graph.invoke(state, config={"recursion_limit": 4 * self.max_iterations + 12})
+        config: Any = {"recursion_limit": 4 * self.max_iterations + 12}
+        if on_step is None:
+            return self.graph.invoke(state, config=config)
+        final: dict[str, Any] = state
+        for mode, chunk in self.graph.stream(
+            state, config=config, stream_mode=["updates", "values"]
+        ):
+            if mode == "values":
+                final = chunk
+                continue
+            for node, update in chunk.items():
+                on_step(node, update or {})
+        return final
 
     # ------------------------------------------------------------------ nodes
     def _games_text(self, games: list[dict[str, Any]]) -> str:
