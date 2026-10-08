@@ -15,7 +15,11 @@ import streamlit as st
 from steam_game_analyst.agent.factory import append_trace, trace_record
 from steam_game_analyst.config import get_settings
 from steam_game_analyst.ui import render, services
-from steam_game_analyst.ui.steps import elapsed, progress_line
+from steam_game_analyst.ui.render import BOT_AVATAR, USER_AVATAR
+from steam_game_analyst.ui.runner import BackgroundRun
+from steam_game_analyst.ui.steps import ProgressLog, elapsed
+
+TICK_S = 1.0  # timer refresh while the agent works
 
 
 @st.cache_resource(show_spinner="Loading the search index…")
@@ -59,17 +63,26 @@ def sidebar() -> str:
     return services.SEARCH_MODES[quality]
 
 
-def _progress(box: Any, start: float) -> tuple[list[str], Any]:
-    lines: list[str] = []
-    shown = [0]  # tool results already reported
-
-    def on_step(node: str, update: dict[str, Any]) -> None:
-        lines.append(progress_line(node, update, shown[0]))
-        shown[0] = len(update.get("tool_results") or []) or shown[0]
-        box.write(f"**{lines[-1]}**")
-        box.update(label=f"Working on it · {elapsed(time.perf_counter() - start)}", expanded=True)
-
-    return lines, on_step
+def run_with_progress(agent: Any, question: str) -> tuple[dict[str, Any], list[str]]:
+    """The agent in a worker thread; this thread redraws the steps and the timer each second."""
+    start = time.perf_counter()
+    log = ProgressLog()
+    with st.status("Working on it · 0:00", expanded=True) as box:
+        st.caption("The local model usually answers in 10–90 s. Steps appear as they finish.")
+        body = st.empty()
+        body.markdown(log.markdown())
+        run = BackgroundRun(lambda on_step: agent.run(question, on_step=on_step)).start()
+        while not run.finished():
+            for node, update in run.poll(TICK_S):
+                log.feed(node, update)
+            body.markdown(log.markdown())
+            label = f"Working on it · {elapsed(time.perf_counter() - start)}"
+            box.update(label=label, expanded=True)
+        if run.error is not None:
+            raise run.error
+        box.update(label=f"Done in {elapsed(time.perf_counter() - start)}", state="complete")
+    assert run.result is not None
+    return run.result, log.done
 
 
 def execute(question: str, mode: str) -> dict[str, Any]:
@@ -81,11 +94,7 @@ def execute(question: str, mode: str) -> dict[str, Any]:
     start = time.perf_counter()
     try:
         agent = get_agent(mode, with_search=down["qdrant"] is None)
-        with st.status("Working on it", expanded=True) as box:
-            box.caption("The local model usually answers in 10–90 s. Steps appear as they finish.")
-            lines, on_step = _progress(box, start)
-            result = agent.run(question, on_step=on_step)
-            box.update(label=f"Done in {elapsed(time.perf_counter() - start)}", state="complete")
+        result, lines = run_with_progress(agent, question)
     except Exception as e:  # noqa: BLE001 — shown as a card with the details folded away
         return {"question": question, "failure": services.classify(e, settings)}
     latency = time.perf_counter() - start
@@ -107,10 +116,14 @@ def execute(question: str, mode: str) -> dict[str, Any]:
     }
 
 
+def user_message(question: str) -> None:
+    with st.chat_message("user", avatar=USER_AVATAR):
+        st.markdown(question.replace("$", r"\$"))
+
+
 def show_turn(i: int, turn: dict[str, Any], mode: str) -> None:
-    with st.chat_message("user"):
-        st.markdown(turn["question"].replace("$", r"\$"))
-    with st.chat_message("assistant"):
+    user_message(turn["question"])
+    with st.chat_message("assistant", avatar=BOT_AVATAR):
         if turn.get("chunks") is not None:
             render.sources_only(turn["chunks"])
         elif turn.get("failure") is not None:
@@ -121,11 +134,12 @@ def show_turn(i: int, turn: dict[str, Any], mode: str) -> None:
         else:
             if turn.get("service_note"):
                 st.info(turn["service_note"] + " This answer uses the tools only.")
-            render.answer(turn, f"t{i}")
+            render.answer(turn, f"t{i}", ask)
 
 
 def main() -> None:
-    st.set_page_config(page_title="Steam Game Analyst", page_icon=":material/insights:")
+    st.set_page_config(page_title="Steam Game Analyst", page_icon=BOT_AVATAR)
+    render.inject_style()
     mode = sidebar()
     history: list[dict[str, Any]] = st.session_state.setdefault("history", [])
     typed = st.chat_input("Ask about a game, a patch, or the catalog…")  # pinned to the bottom
@@ -139,9 +153,8 @@ def main() -> None:
     for i, turn in enumerate(history):
         show_turn(i, turn, mode)
     if question:
-        with st.chat_message("user"):
-            st.markdown(question.replace("$", r"\$"))
-        with st.chat_message("assistant"):
+        user_message(question)
+        with st.chat_message("assistant", avatar=BOT_AVATAR):
             turn = execute(question, mode)
         history.append(turn)
         st.rerun()

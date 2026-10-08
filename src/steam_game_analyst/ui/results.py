@@ -14,6 +14,7 @@ from typing import Any, Literal
 
 # one bracket can hold several ids: "[3]", "[T2]", "[3, 2]", "[T1][2]"
 CITE_GROUP = re.compile(r"\[((?:T?\d+)(?:\s*,\s*T?\d+)*)\]")
+_ONLY_CITES = re.compile(r"^\s*(?:\[(?:T?\d+)(?:\s*,\s*T?\d+)*\][\s.]*)+$")
 SNIPPET_CHARS = 280
 ARGS_CHARS = 140
 _WS = re.compile(r"\s+")
@@ -138,6 +139,20 @@ def _badge(ref: str, known: set[str]) -> str:
     return f":{color}-badge[{ref}]"
 
 
+def attach_lone_citations(text: str) -> str:
+    """A line that is only citations ("[T1]" alone after a blank line) joins the line above, so
+    the chips sit at the end of the claim instead of forming a paragraph of their own."""
+    out: list[str] = []
+    for line in text.split("\n"):
+        if _ONLY_CITES.match(line) and any(prev.strip() for prev in out):
+            while not out[-1].strip():
+                out.pop()
+            out[-1] = f"{out[-1].rstrip()} {line.strip()}"
+            continue
+        out.append(line)
+    return "\n".join(out)
+
+
 def answer_markdown(result: dict[str, Any]) -> str:
     """The answer as Streamlit markdown: citations become badges, `$` stays literal (st.markdown
     would read "$25 ... $15" as LaTeX)."""
@@ -147,7 +162,7 @@ def answer_markdown(result: dict[str, Any]) -> str:
     def sub(m: re.Match[str]) -> str:
         return " ".join(_badge(r.strip(), known) for r in m.group(1).split(","))
 
-    text = (result.get("answer") or "").replace("$", r"\$")
+    text = attach_lone_citations(result.get("answer") or "").replace("$", r"\$")
     return CITE_GROUP.sub(sub, text)
 
 

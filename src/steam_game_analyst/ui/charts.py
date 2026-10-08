@@ -12,7 +12,7 @@ from typing import Any
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from steam_game_analyst.ui.views import BUCKET_LABEL, feature_label, month_label
+from steam_game_analyst.ui.views import BUCKET_LABEL, comparison_rows, feature_label, month_label
 
 ACCENT = "#2340C8"
 WARN = "#A04E0C"
@@ -20,16 +20,18 @@ MENTION = "#B9C2BB"
 MUTED = "#55605B"
 INK = "#18201D"
 LINE = "#D2D8D0"
-SURFACE = "#FFFFFF"
-FONT = "Public Sans, system-ui, sans-serif"
+CLEAR = "rgba(0,0,0,0)"  # the chart sits on its card: one surface, no white box
+# CJK fallbacks: review text includes Chinese and Japanese
+FONT = '"Public Sans", "Noto Sans CJK SC", "Noto Sans", system-ui, sans-serif'
+SIGNIFICANCE = 0.05
 
 
 def _layout(fig: go.Figure, height: int) -> go.Figure:
     fig.update_layout(
         height=height,
         margin={"l": 8, "r": 8, "t": 28, "b": 8},
-        paper_bgcolor=SURFACE,
-        plot_bgcolor=SURFACE,
+        paper_bgcolor=CLEAR,
+        plot_bgcolor=CLEAR,
         font={"family": FONT, "color": INK, "size": 13},
         legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "x": 0},
         hoverlabel={"font": {"family": FONT}},
@@ -136,65 +138,97 @@ def aspect_figure(aspects: dict[str, Any]) -> go.Figure | None:
         return None
     rows.sort(key=lambda kv: kv[1].get("mention_share") or 0)
     names = [k.capitalize() for k, _ in rows]
+    mentions = [v.get("mention_share") or 0 for _, v in rows]
+    complaints = [v.get("complaint_share") or 0 for _, v in rows]
     fig = go.Figure()
     fig.add_bar(
         y=names,
-        x=[v.get("mention_share") or 0 for _, v in rows],
+        x=mentions,
+        customdata=complaints,
         orientation="h",
         name="mentions the aspect",
         marker={"color": MENTION},
         width=0.7,
+        texttemplate="%{x:.1%} · %{customdata:.1%}",
+        textposition="outside",
+        cliponaxis=False,
         hovertemplate="%{y}: %{x:.1%} mention it<extra></extra>",
     )
     fig.add_bar(
         y=names,
-        x=[v.get("complaint_share") or 0 for _, v in rows],
+        x=complaints,
         orientation="h",
         name="complains about it",
         marker={"color": WARN},
         width=0.35,
         hovertemplate="%{y}: %{x:.1%} complain<extra></extra>",
     )
-    fig.update_layout(barmode="overlay")
-    fig.update_xaxes(tickformat=".0%", title_text="share of all reviews")
+    fig.update_layout(barmode="overlay", uniformtext={"minsize": 11})
+    # head room on the right for the "mention · complaint" labels
+    fig.update_xaxes(
+        tickformat=".0%", title_text="share of all reviews", range=[0, max(mentions) * 1.35]
+    )
     return _layout(fig, 70 + 44 * len(rows))
 
 
-def _p_text(p: float | None) -> str:
-    return "p n/a" if p is None else f"p {p:.2g}"
+def p_mark(p: float | None) -> tuple[str, str]:
+    """Right-hand label of a dumbbell row and its colour: accent when significant."""
+    if p is None:
+        return "p n/a", MUTED
+    if p < SIGNIFICANCE:
+        return f"p {p:.2g}", ACCENT
+    return "n.s.", MUTED
+
+
+def _dumbbell_labels(fig: go.Figure, rows: list[tuple[str, float, float, float | None]]) -> None:
+    for aspect, _, _, p in rows:
+        text, color = p_mark(p)
+        fig.add_annotation(
+            x=1.0,
+            xref="paper",
+            xanchor="left",
+            y=aspect.capitalize(),
+            text=text,
+            showarrow=False,
+            font={"color": color, "size": 12},
+        )
 
 
 def comparison_figure(comparison: dict[str, Any]) -> go.Figure | None:
-    """review_sentiment split_date: complaint share before vs after, one dumbbell per aspect."""
-    by_aspect = comparison.get("complaint_share_by_aspect") or {}
-    rows = [(k, v) for k, v in by_aspect.items() if v.get("before") is not None]
+    """review_sentiment split_date: complaint share before (muted) vs after (accent), one
+    dumbbell per aspect; aspects with no complaints on either side are left out."""
+    rows = sorted(comparison_rows(comparison), key=lambda r: max(r[1], r[2]))
     if not rows:
         return None
-    rows.sort(key=lambda kv: max(kv[1]["before"], kv[1].get("after") or 0))
-    labels = [f"{k.capitalize()} · {_p_text(v.get('p_value'))}" for k, v in rows]
+    names = [r[0].capitalize() for r in rows]
     fig = go.Figure()
-    for label, (_, v) in zip(labels, rows, strict=True):
+    for name, (_, before, after, _) in zip(names, rows, strict=True):
         fig.add_scatter(
-            x=[v["before"], v.get("after")],
-            y=[label, label],
+            x=[before, after],
+            y=[name, name],
             mode="lines",
             line={"color": LINE, "width": 3},
             showlegend=False,
             hoverinfo="skip",
         )
-    for side, color in (("before", MENTION), ("after", ACCENT)):
+    for i, (side, color) in enumerate((("before", MUTED), ("after", ACCENT)), start=1):
         fig.add_scatter(
-            x=[v.get(side) for _, v in rows],
-            y=labels,
+            x=[r[i] for r in rows],
+            y=names,
             mode="markers",
             name=side,
+            cliponaxis=False,
             marker={"color": color, "size": 13},
             hovertemplate="%{y}: %{x:.1%} " + side + "<extra></extra>",
         )
+    _dumbbell_labels(fig, rows)
+    top = max(max(r[1], r[2]) for r in rows)
     fig.update_xaxes(
-        tickformat=".0%", title_text="share of reviews complaining", rangemode="tozero"
+        tickformat=".0%", title_text="share of reviews complaining", range=[-0.02 * top, top * 1.08]
     )
-    return _layout(fig, 70 + 44 * len(rows))
+    fig = _layout(fig, 70 + 44 * len(rows))
+    fig.update_layout(margin={"r": 64})  # room for the p labels
+    return fig
 
 
 def reception_figure(out: dict[str, Any]) -> go.Figure | None:

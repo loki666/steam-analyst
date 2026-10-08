@@ -13,7 +13,7 @@ import streamlit as st  # noqa: E402
 from streamlit.testing.v1 import AppTest  # noqa: E402
 
 from steam_game_analyst.agent.state import RouterDecision  # noqa: E402
-from steam_game_analyst.ui import services  # noqa: E402
+from steam_game_analyst.ui import render, services  # noqa: E402
 
 APP = Path(__file__).parents[1] / "src" / "steam_game_analyst" / "ui" / "app.py"
 FIX = Path(__file__).parent / "fixtures" / "ui"
@@ -60,18 +60,22 @@ def test_an_answered_question_renders_cards_sources_and_trace(app, monkeypatch):
     at.button(key="example-0").click().run()
     assert not at.exception
     assert any(":gray-badge[T1]" in m.value for m in at.markdown)
-    assert [e.label for e in at.expander][:2] == [
-        "Sources (1 cited, 5 more retrieved)",
-        "Tool trace (1 calls)",
-    ]
-    assert any(m.label == "positive (Steam votes)" for m in at.metric)
+    assert [e.label for e in at.expander][:2] == ["Sources (1 cited)", "Tool trace (1 call)"]
+    assert [t.label for t in at.tabs] == ["Cited (1)", "Also retrieved (5)"]
+    assert any(m.value.startswith(":blue-badge[1] Hades II · review") for m in at.markdown)
+    title = '<span class="sga-title">Review sentiment · Hades II</span>'
+    assert any(title in m.value for m in at.markdown)
+    tiles = {m.label: m for m in at.metric}
+    assert tiles["positive (Steam votes)"].value == "95.8%"
+    assert tiles["positive (Steam votes)"].help.startswith("Share of reviews voted up")
+    assert [c.avatar for c in at.chat_message] == [render.USER_AVATAR, render.BOT_AVATAR]
     assert at.session_state["history"][0]["progress"] == [
         "Understood the question · Hades II",
         "Wrote the answer",
     ]
 
 
-def test_out_of_scope_question_is_declined_without_cards(app, monkeypatch):
+def test_out_of_scope_question_is_declined_with_example_buttons(app, monkeypatch):
     monkeypatch.setattr(services, "build", lambda s, r: ReplayAgent("refusal"))
     at = app()
     at.run()
@@ -79,6 +83,14 @@ def test_out_of_scope_question_is_declined_without_cards(app, monkeypatch):
     assert not at.exception
     assert any(m.value.startswith("I can only answer questions") for m in at.markdown)
     assert not at.expander and not at.metric
+    tries = [b for b in at.button if (b.key or "").startswith("t0-try-")]
+    assert [b.label for b in tries] == list(render.EXAMPLES[:2])
+    tries[0].click().run()  # asks the example as the next question
+    assert not at.exception
+    assert [t["question"] for t in at.session_state["history"]] == [
+        "What should I play tonight?",
+        render.EXAMPLES[0],
+    ]
 
 
 def test_model_down_keeps_the_question_and_explains_the_fix(app, monkeypatch):

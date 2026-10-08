@@ -64,6 +64,18 @@ def test_answer_markdown_escapes_dollars_and_leaves_unknown_ids():
     assert r"\$25" in md and "[T7]" in md and ":gray-badge[T1]" in md
 
 
+def test_a_paragraph_of_only_citations_joins_the_line_above():
+    valheim = load("valheim_trend")["answer"]  # ends "...significant change. [T1]" already
+    assert results.attach_lone_citations(valheim) == valheim
+    text = "Reviews are flat.\n\n[T1]\n\n- bugs fell\n  [2, 3].\nNext line."
+    assert results.attach_lone_citations(text) == (
+        "Reviews are flat. [T1]\n\n- bugs fell [2, 3].\nNext line."
+    )
+    assert results.attach_lone_citations("[T1] first") == "[T1] first"
+    md = results.answer_markdown({**load("valheim_trend"), "answer": "Flat.\n\n[T1]"})
+    assert md == "Flat. :gray-badge[T1]"
+
+
 def test_refusal_is_read_from_the_route_dict_or_model():
     assert results.is_refusal(load("refusal"))
     assert not results.is_refusal(load("valheim_trend"))

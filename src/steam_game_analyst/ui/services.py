@@ -83,6 +83,7 @@ def classify(e: BaseException, settings: Settings) -> Failure:
 def corpus_facts(settings: Settings) -> str | None:
     """The sidebar's one-line data description, read from the tables (None without data)."""
     from steam_game_analyst.tools.catalog import CatalogDB
+    from steam_game_analyst.tools.trend import ReviewTrend
 
     try:
         db = CatalogDB(settings.duckdb_path)
@@ -90,10 +91,11 @@ def corpus_facts(settings: Settings) -> str | None:
         return None
     try:
         n_games = db.fetch("SELECT count(DISTINCT appid) FROM review_monthly")[0][0]
-        end = db.fetch("SELECT max(created_at)::DATE FROM reviews")[0][0]
+        # the last full month, exactly as review_trend reports it in data_through
+        end = ReviewTrend(db).corpus_last_month
     finally:
         db.close()
-    until = f" · reviews to {end.strftime('%b %Y')}" if end else ""
+    until = f" · reviews through {end.strftime('%b %Y')}" if end else ""
     return f"{n_games} games with review text · full Steam catalog{until}"
 
 

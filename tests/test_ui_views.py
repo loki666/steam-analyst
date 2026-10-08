@@ -14,27 +14,42 @@ def tool(name: str, i: int = 0) -> tuple[dict, dict]:
     return t, parse_content(t["content"])
 
 
+def shown(tiles: list[views.Tile]) -> list[tuple[str, str]]:
+    return [(t.value, t.caption) for t in tiles]
+
+
 def test_trend_card_with_a_change_point():
     _, out = tool("valheim_trend")
     assert views.trend_title(out) == "Positive share by month · Valheim"
     assert views.trend_meta(out) == "Dec 2023 – Nov 2024 · every review, 32,183 in total"
-    assert views.trend_tiles(out) == [
-        ("flat", "trend · -0.1 pts/year, p 0.98"),
-        ("86% → 90%", "most likely shift, Sep 2024"),
-        ("2.9k → 2.5k", "reviews / period, 1st vs 2nd half"),
+    tiles = views.trend_tiles(out)
+    assert shown(tiles) == [
+        ("flat", "−0.06 pts/yr · p 0.98"),
+        ("86% → 90%", "shift · Sep 2024"),
+        ("2.9k → 2.5k", "reviews/month, H1 → H2"),
     ]
+    assert tiles[0].help and "weighted least squares" in tiles[0].help
+    assert tiles[2].help == (
+        "Average reviews per month: 2,903 in the first half of the window, 2,461 in the second."
+    )
 
 
 def test_trend_card_with_an_event_test():
     _, out = tool("cyberpunk_patch", 0)
-    value, caption = views.trend_tiles(out)[1]
-    assert caption.startswith("positive before / after event, p")
-    assert "→" in value
+    tile = views.trend_tiles(out)[1]
+    assert tile.caption == "before → after · p < 0.001"  # 0.059 is the slope's p, tile 0
+    assert tile.value == "85% → 91%"
+    assert tile.help and "6 months before vs after 2023-09-21" in tile.help
+
+
+def test_signed_uses_two_significant_figures_and_a_true_minus():
+    assert views.signed(-0.06) == "−0.06" and views.signed(12.9) == "+13"
+    assert views.plural(1, "call") == "1 call" and views.plural(7, "call") == "7 calls"
 
 
 def test_catalog_tiles_for_a_game_without_reviews():
     _, out = tool("starfield_no_data")
-    assert views.catalog_tiles(out) == [
+    assert shown(views.catalog_tiles(out)) == [
         ("56.8%", "positive, all-time votes"),
         ("165,527", "votes on Steam"),
         ("5 Sep 2023", "released"),
@@ -46,20 +61,27 @@ def test_sentiment_tiles_and_meta():
     assert views.sentiment_meta(out) == (
         "6 May 2024 – 24 Nov 2024 · 768 sampled reviews · effective n 523.5"
     )
-    tiles = views.sentiment_tiles(out)
-    assert tiles[:2] == [
+    assert shown(views.sentiment_tiles(out)) == [
         ("95.8%", "positive (Steam votes)"),
         ("94.3%", "positive (classifier)"),
+        ("3.5%", "complain about gameplay"),
     ]
-    assert tiles[2] == ("3.5%", "complain about gameplay")
 
 
 def test_comparison_tiles_read_the_split():
     _, out = tool("cyberpunk_patch", 1)
-    assert views.comparison_tiles(out["comparison"]) == [
-        ("91% → 96%", "positive reviews · p 0.55"),
-        ("7.2 / 24.8", "effective reviews before / after"),
+    assert shown(views.comparison_tiles(out["comparison"])) == [
+        ("91% → 96%", "positive · p 0.55"),
+        ("7.2 / 24.8", "effective n before / after"),
     ]
+
+
+def test_comparison_rows_drop_aspects_without_complaints_on_either_side():
+    _, out = tool("cyberpunk_patch", 1)
+    cmp = out["comparison"]
+    assert [r[0] for r in views.comparison_rows(cmp)] == ["bugs", "gameplay", "price", "controls"]
+    assert views.quiet_aspects(cmp) == ["performance", "story"]
+    assert views.small_sides(cmp) == [("before", 7.2), ("after", 24.8)]
 
 
 def test_reception_meta_and_feature_labels():

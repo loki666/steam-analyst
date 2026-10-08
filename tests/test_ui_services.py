@@ -1,5 +1,6 @@
 """Service checks and failure messages: a down service is a message, not a traceback."""
 
+import datetime
 import re
 
 import httpx
@@ -50,8 +51,22 @@ def test_corpus_facts_read_the_tables(built):
     facts = services.corpus_facts(built)
     assert facts is not None
     assert re.fullmatch(
-        r"4 games with review text · full Steam catalog · reviews to [A-Z][a-z]{2} \d{4}", facts
+        r"4 games with review text · full Steam catalog · reviews through [A-Z][a-z]{2} \d{4}",
+        facts,
     )
+
+
+def test_corpus_facts_month_is_the_trend_tools_data_through(built):
+    from steam_game_analyst.tools.catalog import CatalogDB
+    from steam_game_analyst.tools.trend import ReviewTrend, TrendArgs
+
+    db = CatalogDB(built.duckdb_path)
+    try:
+        through = ReviewTrend(db).run(TrendArgs(appid=1091500))["data_through"]
+    finally:
+        db.close()
+    month = datetime.date.fromisoformat(through).strftime("%b %Y")
+    assert (services.corpus_facts(built) or "").endswith(f"reviews through {month}")
 
 
 def test_corpus_facts_without_data(tmp_path):

@@ -48,16 +48,37 @@ def test_aspect_figure_overlays_complaints_on_mentions():
     mentions, complaints = fig.data
     assert len(mentions.y) == 6 and mentions.y[-1] == "Gameplay"  # most mentioned on top
     assert complaints.marker.color == charts.WARN
+    # one "mention · complaint" label per row, outside the bar
+    assert mentions.texttemplate == "%{x:.1%} · %{customdata:.1%}"
+    assert mentions.textposition == "outside" and mentions.customdata[-1] == 0.0353
     assert charts.aspect_figure({}) is None
 
 
-def test_comparison_figure_has_one_dumbbell_per_aspect_with_p_values():
+def test_charts_are_transparent_so_the_card_is_the_only_surface():
+    fig = charts.trend_figure(out("valheim_trend"))
+    assert fig is not None
+    assert fig.layout.paper_bgcolor == fig.layout.plot_bgcolor == charts.CLEAR
+    assert "Noto Sans CJK SC" in fig.layout.font.family
+
+
+def test_comparison_figure_has_one_dumbbell_per_aspect_with_p_labels():
     fig = charts.comparison_figure(out("cyberpunk_patch", 1)["comparison"])
     assert fig is not None
     before, after = fig.data[-2], fig.data[-1]
     assert (before.name, after.name) == ("before", "after")
-    assert len(before.y) == 6 and all("· p" in label for label in before.y)
-    assert "Bugs · p 0.085" in before.y
+    assert before.marker.color == charts.MUTED and after.marker.color == charts.ACCENT
+    assert before.cliponaxis is False and fig.layout.xaxis.range[0] < 0
+    # story and performance have no complaints either side: left out
+    assert list(before.y) == ["Gameplay", "Controls", "Price", "Bugs"]
+    labels = {a.y: (a.text, a.font.color) for a in fig.layout.annotations}
+    assert labels["Controls"] == ("p 0.049", charts.ACCENT)
+    assert labels["Bugs"] == ("n.s.", charts.MUTED)
+
+
+def test_p_mark_flags_only_significant_rows():
+    assert charts.p_mark(0.01) == ("p 0.01", charts.ACCENT)
+    assert charts.p_mark(0.2) == ("n.s.", charts.MUTED)
+    assert charts.p_mark(None) == ("p n/a", charts.MUTED)
 
 
 def test_reception_figures_show_buckets_and_signed_shap():

@@ -69,6 +69,53 @@ def test_banners_put_degraded_paths_first_then_data_caveats():
     assert steps.banners(load("valheim_trend")) == []
 
 
+def test_a_split_with_few_effective_reviews_is_warned_about():
+    b = steps.banners(load("cyberpunk_patch"))  # T2: effective n 7.2 before, 24.8 after
+    assert b == [
+        steps.Banner(
+            "warn",
+            "Only 7 effective reviews before and 25 after 21 Sep 2023: "
+            "differences under ~10 pts are noise.",
+        )
+    ]
+    one_side = {"split_date": "2023-09-21", "effective_n": {"before": 40.0, "after": 12.4}}
+    banner = steps.split_banner(one_side)
+    assert banner is not None and banner.text.startswith("Only 12 effective reviews after 21 Sep")
+    assert steps.split_banner({"effective_n": {"before": 30.0, "after": 99.0}}) is None
+
+
+def test_next_activity_names_what_runs_after_each_node():
+    route = load("cyberpunk_patch")["route"]
+    assert steps.next_activity("router", {"route": route}) == "Searching sources…"
+    no_docs = {**route, "needs_retrieval": False}
+    assert steps.next_activity("router", {"route": no_docs}) == "Planning the next step…"
+    assert steps.next_activity("router", {"route": load("refusal")["route"]}) is None
+    calls = AIMessage(content="", tool_calls=[{"name": "review_trend", "args": {}, "id": "a"}])
+    assert steps.next_activity("agent", {"messages": [calls]}) == "Running review_trend…"
+    assert steps.next_activity("agent", {"messages": [AIMessage("DONE")]}) == (
+        "Writing the answer…"
+    )
+    assert steps.next_activity("answer", {}) is None
+
+
+def test_progress_log_checks_finished_steps_and_bolds_only_the_current_one():
+    log = steps.ProgressLog()
+    assert log.markdown() == "**Understanding the question…**"
+    state = load("valheim_trend")
+    log.feed("router", {"games": state["games"], "route": state["route"]})
+    call = AIMessage("", tool_calls=[{"name": "review_trend", "args": {}, "id": "a"}])
+    log.feed("agent", {"messages": [call]})
+    log.feed("tools", {"tool_results": state["tool_results"]})
+    assert log.markdown().split("  \n") == [
+        "✓ Understood the question · Valheim",
+        "✓ Planned the next step · calling review_trend",
+        "✓ [T1] Ran review_trend",
+        "**Planning the next step…**",
+    ]
+    log.feed("answer", {})
+    assert log.current is None and not log.markdown().endswith("**")
+
+
 def test_small_sample_and_truncated_outputs_are_flagged():
     t = {"id": "T1", "tool": "review_sentiment"}
     small = {**t, "content": '{"small_sample":true,"n_reviews_sampled":22,"effective_n":14.0}'}
