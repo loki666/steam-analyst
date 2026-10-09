@@ -135,3 +135,15 @@ def test_tool_errors_show_in_the_trace_and_as_a_warning(app, monkeypatch):
     assert not at.exception
     assert any(w.value == "Stopped after 4 invalid tool calls." for w in at.warning)
     assert any(e.label == "Tool trace (7 calls)" for e in at.expander)
+
+
+def test_a_visitor_over_the_daily_cap_gets_a_limit_card_not_an_answer(app, monkeypatch):
+    monkeypatch.setenv("SGA_UI_DAILY_QUESTIONS_PER_VISITOR", "1")
+    monkeypatch.setattr(services, "build", lambda s, r: ReplayAgent("cyberpunk_patch"))
+    at = app().run()
+    at.button(key="example-1").click().run()
+    at.chat_input[0].set_value("And Palworld?").run()
+    assert not at.exception
+    last = at.session_state["history"][-1]
+    assert last["failure"].kind == "quota"
+    assert "result" in at.session_state["history"][0]

@@ -15,11 +15,13 @@ import streamlit as st
 from steam_game_analyst.agent.factory import append_trace, trace_record
 from steam_game_analyst.config import get_settings
 from steam_game_analyst.ui import render, services
+from steam_game_analyst.ui.quota import DailyQuota, visitor_id
 from steam_game_analyst.ui.render import BOT_AVATAR, USER_AVATAR
 from steam_game_analyst.ui.runner import BackgroundRun
 from steam_game_analyst.ui.steps import ProgressLog, elapsed
 
 TICK_S = 1.0  # timer refresh while the agent works
+MAX_QUESTION_CHARS = 500
 
 
 @st.cache_resource(show_spinner="Loading the search index…")
@@ -31,6 +33,12 @@ def get_retriever(mode: str) -> Any:
 def get_agent(mode: str, with_search: bool) -> Any:
     retriever = get_retriever(mode) if with_search else None
     return services.build(get_settings(), retriever)
+
+
+@st.cache_resource
+def get_quota() -> DailyQuota:
+    s = get_settings()
+    return DailyQuota(s.ui_daily_questions_per_visitor, s.ui_daily_questions_total)
 
 
 @st.cache_data(ttl=600, show_spinner=False)
@@ -88,6 +96,9 @@ def run_with_progress(agent: Any, question: str) -> tuple[dict[str, Any], list[s
 def execute(question: str, mode: str) -> dict[str, Any]:
     """Run one question with live progress; a failure becomes a turn, never a traceback."""
     settings = get_settings()
+    verdict = get_quota().take(visitor_id(dict(st.context.headers), st.context.ip_address))
+    if not verdict.allowed:
+        return {"question": question, "failure": services.quota_failure(verdict.reason, settings)}
     down = services.health(settings)
     if down["llm"]:
         return {"question": question, "failure": services.llm_down(settings, down["llm"])}
@@ -142,7 +153,10 @@ def main() -> None:
     render.inject_style()
     mode = sidebar()
     history: list[dict[str, Any]] = st.session_state.setdefault("history", [])
-    typed = st.chat_input("Ask about a game, a patch, or the catalog…")  # pinned to the bottom
+    # pinned to the bottom; the length cap bounds what one question can cost the hosted LLM
+    typed = st.chat_input(
+        "Ask about a game, a patch, or the catalog…", max_chars=MAX_QUESTION_CHARS
+    )
     question = typed or st.session_state.pop("pending", None)
     intro = st.empty()  # same slot every run, so the examples clear as soon as a run starts
     if not history and not question:

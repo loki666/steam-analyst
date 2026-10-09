@@ -149,3 +149,10 @@ def test_unknown_hosted_model_names_the_setting(hosted):
     f = services.classify(NotFoundError("No route for that URI", 404), hosted)
     assert f.kind == "model_missing" and "make pull-models" not in f.body
     assert "SGA_LLM_MODEL" in f.detail and "404" in f.detail
+
+
+def test_quota_messages_say_when_it_resets_and_offer_search(cfg):
+    mine = services.quota_failure("visitor", cfg)
+    assert mine.kind == "quota" and "00:00 UTC" in mine.body
+    everyone = services.quota_failure("total", cfg)
+    assert everyone.kind == "quota" and everyone.title != mine.title

@@ -42,6 +42,9 @@ class Settings(BaseSettings):
     # hosted Qwen3 only: keep its reasoning step (better reading of tool output, ~3x the
     # billed tokens and slower); off by default
     llm_reasoning: bool = False
+    # public demo: questions per visitor and in total per UTC day (None = no cap)
+    ui_daily_questions_per_visitor: int | None = None
+    ui_daily_questions_total: int | None = None
     llm_model: str = "qwen2.5:14b-instruct-q4_K_M"
     llm_dev_model: str = "qwen2.5:7b-instruct-q4_K_M"
     embed_model: str = "BAAI/bge-m3"

@@ -18,7 +18,9 @@ SEARCH_MODES = {"Standard": "hybrid", "Thorough (+3–5 s)": "rerank"}
 
 @dataclass(frozen=True)
 class Failure:
-    kind: Literal["llm_down", "llm_busy", "llm_auth", "model_missing", "data_missing", "error"]
+    kind: Literal[
+        "llm_down", "llm_busy", "llm_auth", "model_missing", "data_missing", "quota", "error"
+    ]
     title: str
     body: str
     detail: str
@@ -56,6 +58,23 @@ def llm_down(settings: Settings, reason: str) -> Failure:
         "The language model isn't running",
         "Your question was kept. Start the model with `make up`, then retry.",
         f"Ollama unreachable at {settings.ollama_host} ({reason})",
+    )
+
+
+def quota_failure(reason: str, settings: Settings) -> Failure:
+    """A question over the demo's daily cap (reason: "visitor" or "total")."""
+    if reason == "visitor":
+        title = f"You've asked {settings.ui_daily_questions_per_visitor} questions today"
+        detail = "per-visitor daily cap reached"
+    else:
+        title = "The demo has used today's model allowance"
+        detail = "daily total cap reached"
+    return Failure(
+        "quota",
+        title,
+        "This free demo shares a small daily model allowance. It resets at 00:00 UTC; "
+        "until then you can still search the sources without a written answer.",
+        detail,
     )
 
 
