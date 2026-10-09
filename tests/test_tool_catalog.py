@@ -132,3 +132,19 @@ def test_rating_views_expose_votes_and_a_wilson_lower_bound(db):
     assert tiny[1] == 110 and tiny[3] < tiny[2]
     # big, well-reviewed games outrank it
     assert res["rows"][-1][0] == "Tiny Shooter"
+
+
+def test_data_directory_can_move_after_the_build(built, tmp_path):
+    """sga.duckdb built on one machine opens elsewhere (host -> container, dev box -> VM)."""
+    import shutil
+
+    moved = tmp_path / "elsewhere" / "processed"
+    shutil.copytree(built.processed_dir, moved)
+    shutil.rmtree(built.processed_dir)  # the paths the build saw no longer exist
+    db = CatalogDB(moved / "sga.duckdb")
+    try:
+        for table in CatalogDB.TABLES:
+            assert db.fetch(f"SELECT count(*) FROM {table}")[0][0] >= 0
+        assert db.query("SELECT count(*) AS n FROM games")["rows"][0][0] > 0
+    finally:
+        db.close()

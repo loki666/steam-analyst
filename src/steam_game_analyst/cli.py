@@ -159,18 +159,25 @@ def data_all(
 @data_app.command("stats")
 def stats() -> None:
     """Quick sanity numbers from the DuckDB file."""
-    import duckdb
+    from steam_game_analyst.tools.catalog import CatalogDB
 
-    s = get_settings()
-    con = duckdb.connect(str(s.duckdb_path), read_only=True)
-    for q in (
-        "SELECT count(*) AS games FROM games",
-        "SELECT count(*) AS reviews, round(avg(CASE WHEN voted_up THEN 1 ELSE 0 END),3) AS positive_share FROM reviews",
-        "SELECT count(*) AS news, sum(CASE WHEN is_patch_note THEN 1 ELSE 0 END) AS patch_notes FROM news",
-        "SELECT min(month) AS first_month, max(month) AS last_month FROM review_monthly",
-    ):
-        console.print(con.execute(q).pl())
-    con.close()
+    db = CatalogDB(get_settings().duckdb_path)  # resolves the parquet files where they are now
+    try:
+        for label, q in (
+            ("games", "SELECT count(*) FROM games"),
+            (
+                "reviews, positive share",
+                "SELECT count(*), round(avg(CASE WHEN voted_up THEN 1 ELSE 0 END),3) FROM reviews",
+            ),
+            (
+                "news, patch notes",
+                "SELECT count(*), sum(CASE WHEN is_patch_note THEN 1 ELSE 0 END) FROM news",
+            ),
+            ("review months", "SELECT min(month), max(month) FROM review_monthly"),
+        ):
+            console.print(f"{label}: {db.fetch(q)[0]}")
+    finally:
+        db.close()
 
 
 # ----------------------------------------------------------------------------- train

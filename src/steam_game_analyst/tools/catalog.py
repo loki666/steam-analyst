@@ -32,6 +32,8 @@ _LIST_HINT = (
 
 _LIST_COLUMNS = ("tags", "genres", "categories")
 _RATED_TABLES = ("games", "games_all", "game_summary")
+# views over parquet files in sga.duckdb (data/build.py DUCKDB_DDL); the rest are tables in it
+PARQUET_TABLES = frozenset({"games", "games_all", "reviews", "news"})
 # n_votes and the Wilson 95% lower bound of the positive ratio: ranking by the bound keeps a
 # game with 3/3 positive votes below one with 9,500/10,000
 _RATING_COLUMNS = """,
@@ -144,10 +146,17 @@ class CatalogDB:
         data_dir = duckdb_path.parent.resolve()
         self._con = duckdb.connect(":memory:")
         self._con.execute(f"ATTACH '{duckdb_path.resolve().as_posix()}' AS sga (READ_ONLY)")
-        # queries run in the in-memory catalog, where only the allow-listed relations exist
+        # queries run in the in-memory catalog, where only the allow-listed relations exist.
+        # Parquet-backed tables are read from this file's own directory: the views stored in
+        # sga.duckdb hold the absolute paths of the machine that built it.
         for t in self.TABLES:
             extra = _RATING_COLUMNS if t in _RATED_TABLES else ""
-            self._con.execute(f"CREATE VIEW memory.main.{t} AS SELECT *{extra} FROM sga.main.{t}")
+            source = (
+                f"read_parquet('{(data_dir / f'{t}.parquet').as_posix()}')"
+                if t in PARQUET_TABLES
+                else f"sga.main.{t}"
+            )
+            self._con.execute(f"CREATE VIEW memory.main.{t} AS SELECT *{extra} FROM {source}")
         self._con.execute("USE memory")
         self._con.execute("SET memory_limit = '1GB'")
         self._con.execute(f"SET allowed_directories = ['{data_dir.as_posix()}/']")
