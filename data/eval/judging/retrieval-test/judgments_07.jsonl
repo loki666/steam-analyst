@@ -1,0 +1,193 @@
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "069d8578-9549-50c1-a77b-dc72c9671bc6", "grade": 0, "reason": "Different game; no command delay", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "13fe810a-393b-523f-890d-454c9eedc18e", "grade": 0, "reason": "Time loop game; unrelated to command delay", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "2aafd196-7ae4-5b00-8f07-420eab76e3ac", "grade": 1, "reason": "Delayed command execution in RTK XIV; possibly other game", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "2b6792af-c783-5f39-9ac1-32841e73a36d", "grade": 0, "reason": "Controller input lag, not command delay", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "381c417b-007c-5950-bf8a-5d490c47d185", "grade": 2, "reason": "Describes order delay mechanic and battlefield chaos experience", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "4adb03e0-21f9-5e8e-83f3-bf0eec0a5c22", "grade": 0, "reason": "Server latency satire; unrelated", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "73ed0e77-522d-59a7-be83-12a252688598", "grade": 0, "reason": "Control complaints, not command delay", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "805a350b-5ea4-5ea5-899d-ee3d80f85cb4", "grade": 0, "reason": "General early access review; no order delay", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "80603dd1-cad3-5e8e-bc6d-7dde109ad208", "grade": 0, "reason": "Off-topic short review", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "9131b037-9051-5cfd-8f8b-6bca2eddf3df", "grade": 0, "reason": "Off-topic city builder review", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "998c2723-6ba1-59e6-ac79-eee1af90c7c3", "grade": 0, "reason": "God commands hard to use; not delay", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "9bc11c62-8386-5e8d-ace0-511ffc167306", "grade": 0, "reason": "Off-topic MMO review", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "a5519525-7400-560d-b3d8-0fdfe9e3f737", "grade": 0, "reason": "Input lag, not command delay", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "a58580de-6acb-547c-8837-1d5f12ea41c1", "grade": 0, "reason": "Dialogue skipping; unrelated", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "af0a7fdb-1624-5c8b-94fd-3f27b7317670", "grade": 0, "reason": "Input delay in rhythm game; unrelated", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "ba18e0aa-41dc-5eda-b965-9068cf186f96", "grade": 0, "reason": "Off-topic", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "bfba81fc-209a-545e-bab8-f73d6d7ac9e4", "grade": 0, "reason": "Off-topic", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "cbfcb41a-5aa0-51f5-903b-92ef9c935372", "grade": 0, "reason": "Controls tricky; unrelated", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "d586bd63-5357-5633-882f-cf678d1694df", "grade": 0, "reason": "Input lag, not command delay", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "dba1fc63-a2df-50c8-b8da-746388df6338", "grade": 2, "reason": "Explains order delay, bugle/command range and experience", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "dd74bdff-c4c2-51ea-928c-cde3b16a3589", "grade": 0, "reason": "Off-topic", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "eb4b2cdf-99b7-5fed-be3a-b90c3b520d3f", "grade": 0, "reason": "Off-topic", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "f0a5f7e8-8adb-5255-b509-9d56697b8d37", "grade": 2, "reason": "Order delays novel approach, can be turned off", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "f46a30c0-27d3-5ab9-9726-f710355e941c", "grade": 0, "reason": "Interface issues; unrelated", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "fd3c473c-8a21-57b9-a371-e6f942ae2b3e", "grade": 0, "reason": "Off-topic", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "24c1fb78-e9d2-5572-ab62-9417b8039821", "chunk_id": "fe189cbe-55e8-5527-8324-aa36073a0be3", "grade": 0, "reason": "Command registration feedback, different game", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "09f05486-874b-5bca-b522-c200b78b94d0", "grade": 2, "reason": "Praises building, combat parry, food-HP system", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "18b7611c-5a0a-5dd3-8b91-aa4e210ed577", "grade": 2, "reason": "Enjoys construction, exploring, surviving", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "2a2dc35b-9719-5b43-8b67-c4bac8343c43", "grade": 1, "reason": "Describes core loop but negatively", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "3892e844-afae-5540-b951-c09c352615c6", "grade": 2, "reason": "Enjoys exploring, bosses, building, raids", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "39e3f8c7-cdbe-5cf7-9e47-b93b9cdab418", "grade": 1, "reason": "Few enjoyable moments listed; mostly grind complaints", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "3b7ae3db-cff6-5ca7-946e-dd55c2cd996b", "grade": 1, "reason": "Patch features, not player enjoyment", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "3fc55808-441d-5fd1-acd2-e2f77ef77327", "grade": 2, "reason": "Lists exploration, dungeons, skills, combat as pluses", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "43d3b630-ab0c-5ad5-8d9b-72d6faadcf61", "grade": 1, "reason": "Praises adventure and exploration, vague", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "721e61ee-03b1-5386-b00f-47e0e72b3f22", "grade": 0, "reason": "Dev update teaser, no mechanics enjoyed", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "739c972d-0665-548f-943a-a9e113d41987", "grade": 2, "reason": "Loves building system, weapons, aesthetic", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "757c3a77-1593-56c4-a712-af572282444e", "grade": 2, "reason": "Enjoys sailing and discovering lands", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "80169b96-3795-5d77-912c-a5accf7a6b6e", "grade": 2, "reason": "Praises gameplay, parry combat, crafting", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "804b3452-9ca5-5708-8614-ac6a48d53856", "grade": 0, "reason": "Board game news", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "944b5b9e-14d8-56fa-bed4-e1c9da295368", "grade": 0, "reason": "Too vague: atmospheric game", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "94999fb0-4b9d-5983-912a-2e507d35a2e8", "grade": 0, "reason": "PTB testing request news", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "95ff3b10-42d4-528b-b250-477129aa845d", "grade": 2, "reason": "Praises exploration, building, biomes, progression", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "a3412b08-b92f-5c8f-811e-8e0b92d6bacc", "grade": 1, "reason": "Lists new 1.0 mechanics, not opinions", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "af64757b-44c0-573a-8e54-56ae05b5cdc3", "grade": 2, "reason": "Enjoys survival, building, combat balance", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "bd95867b-d0c2-533a-ac48-7bbd23ee37bd", "grade": 0, "reason": "Negative multiplayer scaling complaint", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "c71e2a77-77bb-5038-be36-68151bb5970c", "grade": 0, "reason": "Comic and roadmap news", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "db094cc2-91b7-5674-a6da-1b22bb4c6575", "grade": 0, "reason": "Only says fun with friends", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "ede83c88-e0d9-55bf-976a-8ae640cafd31", "grade": 0, "reason": "Patch intro without mechanics detail", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5f82fede-3cdd-5f11-bccd-182f35b8d9c4", "chunk_id": "fcf6b370-e52b-5786-aa9c-b811cbb675b2", "grade": 0, "reason": "Too vague", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "146c2f2c-de21-580d-b4d0-2f9bc8b9ef6d", "grade": 0, "reason": "Player wish for DLC, no plan", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "18a5f693-d3df-51a8-9eec-58dafd14876c", "grade": 1, "reason": "Mentions lawsuit win and hopes for DLC", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "3d6dd441-94ad-574a-830f-6a4619ed2356", "grade": 0, "reason": "DLC mention, no plan or legal context", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "3de1cab4-0059-55fc-adb9-75e8a29b7a53", "grade": 0, "reason": "Joke DLC wish", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "3e430038-9c0b-5763-b1cc-d6031877bb9e", "grade": 1, "reason": "Mentions publisher dispute, hopes for DLC", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "3fa134d0-ede0-5017-9374-47d7c557d155", "grade": 0, "reason": "Asks when DLC, no info", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "443a5bcc-06fa-5b10-b005-e35af0f99ff1", "grade": 0, "reason": "Asks about updates only", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "502b4f15-6cd2-5511-9f6e-2445f028876a", "grade": 0, "reason": "Generic DLC wish", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "63ea45b7-75a9-5e25-90c4-635da358f82d", "grade": 0, "reason": "Asks about sequel content", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "74e7217a-9e1a-5289-8e01-892888c9993e", "grade": 0, "reason": "Generic DLC hope", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "86701a37-db2f-53e2-bcc6-751b649a44a8", "grade": 0, "reason": "Generic DLC wish", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "8f563128-5a77-53e6-b76e-566054a8430f", "grade": 0, "reason": "Unrelated recommendation", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "8fd7461d-bf8e-54ef-9e34-0808b9e336ce", "grade": 0, "reason": "Generic DLC demand", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "904c8e06-e37e-50ae-8038-1d245e5585a2", "grade": 0, "reason": "Release state comment", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "91262368-0f12-5a57-b6e1-b9e96d6fc813", "grade": 0, "reason": "Unrelated praise", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "93c10e67-e3fd-5173-81d8-a8e1d243e9f0", "grade": 0, "reason": "Unrelated review", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "9fd316b9-c284-50cf-8f93-7b40941c062e", "grade": 1, "reason": "Mentions internal problems halting updates, hopes DLC", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "c2385ea1-3db6-53ad-a5b8-11ea90a83e41", "grade": 2, "reason": "Lawsuit over, asks for DLC after Gu Long game", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "d7c0279f-142e-5533-97f0-57d6a9fb1b0b", "grade": 0, "reason": "Generic DLC wish", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "dcc5f409-1523-5787-a990-5b5214ce27a2", "grade": 0, "reason": "Unrelated praise", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "e083e8ee-4181-5127-96da-948109ca34e8", "grade": 0, "reason": "Generic DLC support", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "ea6d97ec-2652-59b3-b912-63d9a7d44241", "grade": 0, "reason": "Waiting for updates and DLC", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "f68ad767-057f-5cad-be51-d1ace2c6aefd", "grade": 0, "reason": "Ending complaint", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "f7000101-b2d8-5152-b17b-8c4994e4668a", "grade": 0, "reason": "Short content complaint", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2018b2b7-b902-5970-ba43-883b31597ced", "chunk_id": "fbb66c2d-e7ba-5c9d-868c-024136fb6821", "grade": 0, "reason": "Generic DLC wish", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "03be733f-60f1-5454-80fb-998abacd2c04", "grade": 1, "reason": "Pet clipping off screen bottom", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "12676083-0a4b-589f-9193-e1d99fce990c", "grade": 0, "reason": "Stats summary update news", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "13e4e686-1f40-5ac7-8be6-2004bfa0e210", "grade": 1, "reason": "Poor multi-monitor support, half head", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "1f2eb669-7060-56fa-8433-f1e68da97ff7", "grade": 0, "reason": "Flicker fix notice", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "208a26d6-e1e5-5605-873b-743dd2f122a9", "grade": 0, "reason": "Positive, no issue", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "31dba366-ad13-5f06-8a75-d2ad3a65ad6c", "grade": 0, "reason": "Joke review", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "4bd18b13-15f8-588a-a2e8-dffe6e520dd6", "grade": 0, "reason": "Fatal error complaint", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "4dfa8c23-d9de-5005-ae41-92db0623d07a", "grade": 0, "reason": "Pet blocks view; not detection", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "56bcaac2-3ba5-50ba-89e1-46d1fb79adca", "grade": 0, "reason": "Joke review", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "78751de2-039e-5721-903f-25ceac715146", "grade": 0, "reason": "Compile instructions", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "7b38ba9c-2575-505f-a652-10d036897122", "grade": 0, "reason": "Positive review", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "7d0cadde-8fdc-59d7-a5f1-af3754ced960", "grade": 0, "reason": "Background transparency issue", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "8470db5e-c0e0-51a1-ab2b-fa3ce44db2c8", "grade": 1, "reason": "Pet jumps back to gaming screen", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "8e977e24-a44c-5d19-b54d-eda96c57f221", "grade": 0, "reason": "Photo gallery wiki", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "936380e3-ca8a-5af8-991e-c493cce29016", "grade": 0, "reason": "Generic complaints", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "994f0a5d-4a4d-54af-a073-fcbd2bba366d", "grade": 0, "reason": "Off-topic", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "9e7e5349-fc2c-51e3-97b4-f2210a78eff1", "grade": 0, "reason": "Patch notes, no screen issue", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "b3a6a849-d651-59c9-9f00-f76362fa06da", "grade": 0, "reason": "Off-topic", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "c57f8cf5-750b-548d-8ac5-460f0593fe76", "grade": 0, "reason": "Resolution drop, not detection", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "c5c7df00-e257-53d1-bc69-e7fc0fe974c3", "grade": 0, "reason": "Vague not working", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "c80f798d-a779-5f97-99d4-61fcdacf0b11", "grade": 2, "reason": "Only detects main screen, teleports there", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "d39ec6a6-71c2-5417-89a6-3fde7a789022", "grade": 0, "reason": "Positive review", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "d95dc7c9-b184-502a-9329-045a3bc81a6f", "grade": 0, "reason": "Fullscreen app display issue, not detection", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "f5afde89-422a-53ef-9577-fa7ea4d48ecb", "grade": 0, "reason": "Crash complaint", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "59fdc6c6-3700-5fb7-affc-8ec6ad2359bb", "chunk_id": "fd078010-6428-59eb-9425-b8a3650f62f9", "grade": 0, "reason": "FAQ without screen detection", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "0df0796e-9370-5428-ba41-24f2bde47290", "grade": 0, "reason": "Survival complexity; visuals praised", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "15be7012-4ca6-5c1c-84a7-7a474487f8c6", "grade": 2, "reason": "Buggy combat delay, graphics and UI readability", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "17709025-11a6-5c83-bdd5-e9a814932d16", "grade": 1, "reason": "Combat counterintuitive, UI hard to read", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "1b2f5987-9073-5887-9272-0384a5998a8c", "grade": 0, "reason": "Mostly praise", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "241deee9-0e42-552e-b4e2-d990a69b06c3", "grade": 0, "reason": "Dev log, no issues", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "3a814a3c-6c3a-5fc5-8641-bafba1717cea", "grade": 0, "reason": "Praises combat and visuals", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "460a38bc-f4b2-5258-98f3-b776306d6e94", "grade": 0, "reason": "Battle deployment only, other game", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "499f25e5-af9a-5f3e-b54f-2eaa4d1799f1", "grade": 2, "reason": "Combat weak, visuals decade-old", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "4ab6fbd8-e741-5125-af94-56d18a7d503b", "grade": 0, "reason": "Bugs and progression", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "522f4d5c-753b-5382-acaf-fd429d8cec4a", "grade": 0, "reason": "Mostly praise", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "5e48c942-810c-5d72-a227-f4f59b1357ca", "grade": 0, "reason": "Praise scores", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "62c96208-6c02-513e-b5a0-9d3b58de1c87", "grade": 0, "reason": "Design decisions, not visuals", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "77e086be-8a20-5012-a026-b78ce7e574cf", "grade": 0, "reason": "Completeness discussion", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "8424baa3-5519-57dc-ae7e-715afee66d77", "grade": 0, "reason": "Battle depth only", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "86824dc3-26cf-522d-9d8e-017b8edb2678", "grade": 0, "reason": "Mostly dialog complaints", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "99e283ca-b55a-5cf2-954d-02cfef2da985", "grade": 1, "reason": "Sluggish combat, less visually aesthetic", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "ae51f0bc-c660-508a-8c23-70ab4d595391", "grade": 1, "reason": "Combat visual clutter, spongy enemies", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "b38d37df-036b-54c6-87f5-afe4c6b64c19", "grade": 0, "reason": "Dev blog", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "c624f67b-ed71-5184-a73b-6acb7bc60e8a", "grade": 0, "reason": "Repetitive combat, no visuals", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "caa675c8-d632-5107-8fc6-522f8a9aaab9", "grade": 1, "reason": "Hitbox combat issues, style over substance", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "d748e597-19fe-5cb5-892a-fd8bc40ac7e1", "grade": 0, "reason": "Praise", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "e7167d71-ae50-5470-a83c-30c90a15a965", "grade": 0, "reason": "Patch notes", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "df276bf7-d665-5c80-b7bd-79c715b9d16c", "chunk_id": "fce3ec82-22ca-593d-b523-aecfd22aff7d", "grade": 0, "reason": "Mostly praise of visuals and combat", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "08b6796d-fb51-5329-aec4-cfabe9a8c917", "grade": 1, "reason": "3 hours, not enough content; maybe other game", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "0990065f-e1df-5bb9-a061-5c0886748fcf", "grade": 0, "reason": "Ban complaint", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "1bc47a0d-3951-5955-9d3d-3c1b4d2a9ad8", "grade": 0, "reason": "Update content, no playtime", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "24363054-f626-5505-978a-19be2fc9b0f6", "grade": 0, "reason": "Launch failure, not content", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "2ecb90ee-e467-5f7c-9c65-cf68ee7cd1f5", "grade": 0, "reason": "Physics complaint", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "4307d621-dd7e-5136-a28a-3c2406758a44", "grade": 2, "reason": "Finished in 4.5 hours, too little content", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "437a8d36-51a3-5d89-83aa-de09790533ca", "grade": 0, "reason": "Update content, no playtime", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "51445f7f-9473-598a-a913-0a1a709e69b8", "grade": 0, "reason": "Difficult to get into", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "57599f89-c9c4-5ebc-9c13-0f0db6792d6e", "grade": 0, "reason": "Different game, progression fatigue", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "5b00fa13-df3b-5b49-9810-ed5312ea055c", "grade": 0, "reason": "Joke hours", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "5c763a63-5869-5ccc-8ff8-51e8e2492f1f", "grade": 0, "reason": "Progress loss", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "764b0bbc-2325-5f73-9f1a-4df783631b1f", "grade": 0, "reason": "Rules unclear", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "7ca160a3-798f-5a66-8ce4-006509f438bc", "grade": 0, "reason": "Off-topic", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "7fe34c87-ac40-5b8a-8e5f-4ef32abdeb17", "grade": 0, "reason": "Different game", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "8ff353a6-0291-520e-9de3-0f1487eb0f9c", "grade": 0, "reason": "Matchmaking", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "900074a3-21c1-560e-b447-55ec883e9f9e", "grade": 0, "reason": "Save corruption", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "99b67a6e-4078-5f6c-9d90-f25aef427dc3", "grade": 0, "reason": "Different game", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "a51de383-7a0a-5a4b-9c7b-b9df3172cb9b", "grade": 1, "reason": "Two hours, too little content; other game", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "ac530e3d-1258-5115-b8e8-c3b1c335da5c", "grade": 0, "reason": "Crashes", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "b3c35ba0-c740-50e6-baab-e11e8173b0b5", "grade": 0, "reason": "Different game price complaint", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "d6f7afb8-edb8-5842-998f-e9a334f907b2", "grade": 0, "reason": "Complexity", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "dc47428f-f6b0-5ead-8b8f-862c028980f0", "grade": 2, "reason": "Done in two hours, too expensive, content issues", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "e0df019d-a158-5d9b-bfd1-5969595a322f", "grade": 0, "reason": "Positive", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "f1456296-ac82-57c4-9b37-060c75ed41d5", "grade": 0, "reason": "Time wasted in hub", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "5fcb9bfc-445e-5132-877e-c41b31c7373b", "chunk_id": "f1d4293b-2077-5494-83cd-3163738ee193", "grade": 2, "reason": "6.2 hours, too little playtime", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "090acbf3-3fd7-5477-a318-a5e01917d4f0", "grade": 1, "reason": "Says drastically different, details truncated", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "09863e09-7f45-5f2e-9246-18f579242ce2", "grade": 2, "reason": "Mechanics overhauled, scale, frequent decisions", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "211d93f6-12b8-5cc3-b841-2cf5795e9f82", "grade": 2, "reason": "Shift from city building to diplomacy and laws", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "2b4b9d90-7264-554c-a53a-ff9939619c95", "grade": 1, "reason": "Mechanics differ, no detail", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "2bbe0d87-cb27-59de-b28e-4288772d37c0", "grade": 2, "reason": "Similar mechanics, council factions, districts", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "2fa3675c-59ea-5221-b992-cb6ebb9ed2e3", "grade": 0, "reason": "Too vague", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "348f6ce5-70fc-5604-8189-8d33bb73a7f1", "grade": 2, "reason": "Scaled up, political voting, endless mode", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "4173c44c-7e8b-5a65-a31b-41f5d13908df", "grade": 1, "reason": "New gameplay but UX complaints", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "4ea10805-081e-5880-8e55-ec05c12bddbc", "grade": 2, "reason": "Abstract numbers vs individual workers", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "531d07fd-4ee9-520a-9ec9-9414ab9ca72c", "grade": 2, "reason": "Districts vs individual buildings and workers", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "635fe36a-62f8-5172-a7ee-016543136d14", "grade": 0, "reason": "Too vague", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "7bee9b54-46f0-52b1-9d5c-f5f46a6880b7", "grade": 2, "reason": "Council and communities mechanics new", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "808662af-e4ca-5487-864e-c3755210be73", "grade": 1, "reason": "Tone differences, factions", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "9f850d4a-f59c-5f5d-95e9-01738fb8988d", "grade": 1, "reason": "Political simulator vs city builder, brief", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "b34c1da5-fb8b-57fc-a265-a4acdfdb078e", "grade": 2, "reason": "Politics, laws, anger vs first game", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "c0ecd4b0-b151-5323-a3c9-b487f9c3e253", "grade": 2, "reason": "Priority factions not heat, unlike first", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "c5bf8f53-3aa9-5972-97f0-bc7c857e60a7", "grade": 2, "reason": "Same building loop, scale differs", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "d3f5c66f-78fd-5bc0-9074-def2decbcc6f", "grade": 1, "reason": "Vastly different, no specifics", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "da8f5eb6-69d0-5386-93c1-fec68ddc0fd8", "grade": 2, "reason": "District-based building, faction buildings", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "e1eb2331-0b9c-5b61-b254-e714ce396dd8", "grade": 2, "reason": "No individual buildings, political system added", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "e8899b93-693b-501b-86be-263b186c855e", "grade": 2, "reason": "Districts, thousands of people, faction tech tree", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "ec96fb3e-dabc-5cf3-a6bf-09de6b07cba9", "grade": 2, "reason": "People as numbers, cold less threatening", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "fcf9dcb8-25cc-5b07-b880-096ccab89023", "grade": 2, "reason": "Factional decisions vs first game", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "9313c12a-1692-5fb5-89ab-a9627c22a7d4", "chunk_id": "ff1d61e9-86e5-524e-b344-3d784d629d6a", "grade": 1, "reason": "Familiar yet fresh mechanics, little detail", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "07d357bf-73d0-508d-9e7d-9137022ea704", "grade": 2, "reason": "Positive now, bugs fixed, graphics, DLC civs", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "17b755b5-7179-590c-ba42-69b4a33ed1c4", "grade": 1, "reason": "Positive but no reason", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "18b179da-7252-50be-a89c-803752015fb4", "grade": 2, "reason": "Best AoE, card system needs refinement", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "2a277cd5-9338-5773-994c-43e1aeda9dec", "grade": 2, "reason": "Depends; lists improvements and fixes", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "33237e0b-7b13-5570-b6f0-a6292b95f7e7", "grade": 2, "reason": "Negative; cards unlocked, lag, graphics praised", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "4d448ca3-f7bb-5cca-bf4c-f8c3372fca67", "grade": 2, "reason": "Negative; bugs, broken, scam", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "550bd730-8edc-5600-99d1-8a61924a0802", "grade": 1, "reason": "Negative with little reasoning", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "698cc1bf-0df1-5ad6-80c2-6c48cc5ac144", "grade": 2, "reason": "Letdown; outdated graphics, clunky", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "6e9f2eee-de33-5c9f-9b7a-20b71919970b", "grade": 2, "reason": "Worth it but needs optimization", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "7528d243-e5dc-5461-bdd0-2fbeb3622d5f", "grade": 0, "reason": "Only asks about file size", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "8196f444-cd23-5a47-a85e-86dd18012572", "grade": 2, "reason": "Great game, kept old content", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "94c51b35-60cb-57ae-b141-f499d808c2dd", "grade": 2, "reason": "Negative over censorship", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "bbda8a1a-ecd0-52ca-9366-b11c599bb0fd", "grade": 1, "reason": "Vague opinion, signature filler", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "bcf0dea1-8e4c-5daa-ad3a-a08614ec2646", "grade": 2, "reason": "Great but DLC money scheme", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "bf16de4f-db15-5c5e-ac06-3ab2cc09baa3", "grade": 2, "reason": "Negative: pathfinding, pacing, thin content", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "bf5424ce-6a74-5881-a60f-6b63302b3975", "grade": 2, "reason": "Negative: graphics, lag, unlocked cards", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "cbaf171c-0586-5387-adc7-2360e5c0dd35", "grade": 2, "reason": "Positive: flexible civs, maps", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "d5b71ad3-0e1f-5e8e-93b6-91d2501711c8", "grade": 2, "reason": "Negative over removed home city leveling", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "e03760dc-c145-5bfa-8a9c-232106429867", "grade": 2, "reason": "Mixed; remaster flaws unacknowledged", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "ecb75cb6-9b70-599a-8dcd-0dcf4142a8a2", "grade": 1, "reason": "Positive, no reason", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "fe418c19-92fa-5624-be92-896b59cd097e", "grade": 2, "reason": "Negative: UI, graphics, lost nostalgia", "judge": "claude-subagent", "rubric": "v1"}
+{"qid": "2e5b1124-b5e6-5a09-9f0d-c4837a100116", "chunk_id": "fec1b8b3-5884-5e3b-a8df-46802dec4970", "grade": 2, "reason": "Negative: paid civs not definitive", "judge": "claude-subagent", "rubric": "v1"}

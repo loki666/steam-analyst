@@ -212,18 +212,28 @@ does not help, 1 = relevant evidence, 2 = answers it), and every mode is scored 
 chunks graded relevant (2,672 grades on dev). `make eval` reproduces the table from the
 grades.
 
-| Dev (106 questions, top 10) | hit@5 | hit@10 | MRR@10 | nDCG@10 |
-| --- | --- | --- | --- | --- |
-| BM25 | 0.764 | 0.830 | 0.662 | 0.457 |
-| Dense (bge-m3) | 0.821 | 0.830 | 0.728 | 0.545 |
-| **Hybrid (RRF), default** | 0.858 [0.792, 0.925] | 0.887 [0.821, 0.943] | 0.744 [0.674, 0.816] | 0.554 [0.495, 0.618] |
-| Hybrid + rerank | 0.887 [0.821, 0.943] | 0.906 [0.849, 0.962] | 0.809 [0.740, 0.876] | 0.669 [0.605, 0.730] |
+Test split (frozen, scored once; 82 of 88 questions, see below):
 
-Paired against hybrid, the reranker improves nDCG@10 by +0.115 [+0.074, +0.159] (64
-questions better, 19 worse) and MRR@10 by +0.065 [+0.003, +0.126]; BM25 alone is worse
-(nDCG −0.097 [−0.134, −0.060]); dense alone ties hybrid. Hybrid stays the default anyway
-because reranking did not improve the answers (see [Decisions made on dev](#decisions-made-on-dev)).
-The test split has not been scored yet: its 2,066 pooled chunks still need grading.
+| Test (82 questions, top 10) | hit@5 | hit@10 | MRR@10 | nDCG@10 |
+| --- | --- | --- | --- | --- |
+| BM25 | 0.695 | 0.780 | 0.609 | 0.451 |
+| Dense (bge-m3) | 0.805 | 0.866 | 0.710 | 0.570 |
+| **Hybrid (RRF), default** | 0.841 [0.756, 0.915] | 0.890 [0.817, 0.951] | 0.727 [0.642, 0.808] | 0.572 [0.498, 0.641] |
+| Hybrid + rerank | 0.902 [0.829, 0.963] | 0.927 [0.866, 0.976] | 0.824 [0.748, 0.894] | 0.679 [0.610, 0.743] |
+
+Paired against hybrid on test, the reranker improves nDCG@10 by +0.107 [+0.050, +0.167] (45
+questions better, 24 worse) and MRR@10 by +0.097 [+0.019, +0.174]; BM25 alone is worse
+(nDCG −0.121 [−0.164, −0.080]); dense alone ties hybrid (−0.002 [−0.043, +0.042]). Dev (106
+questions) showed the same picture: hybrid hit@10 0.887, rerank nDCG +0.115 [+0.074,
++0.159]. Hybrid stays the default anyway because reranking did not improve the answers (see
+[Decisions made on dev](#decisions-made-on-dev)).
+
+The test pool (2,066 chunks) was graded by 11 Claude subagents with the rubric written down
+in `data/eval/judging/retrieval-test/rubric.md` (W4's dev grading left no written rubric,
+only the 0–2 scale). Six test questions (and one on dev) have no relevant chunk: they were
+written from passages a later re-index replaced, so they are left out of the averages. For
+questions that name no game ("Is the game worth buying?"), graders differed on whether other
+games' passages count, which raises those questions' scores for every mode alike.
 
 ## Streamlit UI (W5)
 
@@ -503,7 +513,7 @@ away from the eval set, and none was revised after its dev result.
 | --- | --- | --- |
 | Sentiment F1 ≥ 0.90 (held-out games) | 0.913 [0.904, 0.923], DistilBERT | yes |
 | Reception bucket accuracy above the majority baseline, with CI | 0.661 [0.647, 0.674] vs 0.645 | yes |
-| Recall@20 ≥ 0.85, hybrid + rerank | hit@10 0.906 on dev; recall@20 and the test split not measured | partly |
+| Recall@20 ≥ 0.85, hybrid + rerank | not measured as specified; hit@10 (a relevant chunk in the top 10) is 0.927 [0.866, 0.976] on test | not as specified |
 | Faithfulness ≥ 0.85 (judge) | grounded 0.84 local, 0.72 hosted (test) | no |
 | Tool-routing accuracy ≥ 0.90 | exact routing 82% local, 85% hosted (test) | no |
 | Median latency ≤ 20 s (14B on the 3080) | 20.1 s local, 17.4 s hosted (test) | about |
