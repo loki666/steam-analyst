@@ -6,11 +6,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      HF_HUB_OFFLINE: "1" # the tests are hermetic: no model downloads
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
       - run: uv python install 3.12
-      - run: uv sync --extra dev
+      # the tests import the agent, retrieval, ML and UI code, so every extra but notebooks
+      - run: uv sync --frozen --extra dev --extra rag --extra ml --extra ui
       - run: uv run ruff check src tests
       - run: uv run ruff format --check src tests
-      - run: uv run pytest
+      - run: uv run pytest -q
