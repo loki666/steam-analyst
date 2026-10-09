@@ -42,6 +42,31 @@ def strip_think(text: str) -> str:
     return _THINK_BLOCK.sub("", text).strip()
 
 
+# Gemini 3 returns a thought signature per tool call (tool_calls[i].extra_content) and rejects
+# the next turn unless each one comes back with its call; kept on the AIMessage under this key
+EXTRAS = "tool_call_extra_content"
+
+
+def _tool_call_extras(messages: list[BaseMessage]) -> dict[str, Any]:
+    return {
+        call_id: extra
+        for m in messages
+        for call_id, extra in (m.additional_kwargs.get(EXTRAS) or {}).items()
+    }
+
+
+def _hosted_message(m: dict[str, Any], extras: dict[str, Any]) -> dict[str, Any]:
+    """One payload message as stricter hosts want it: string content, signatures restored."""
+    out = {**m, "content": ""} if m.get("content") is None else m
+    if extras and out.get("tool_calls"):
+        calls = [
+            {**tc, "extra_content": extras[tc["id"]]} if tc.get("id") in extras else tc
+            for tc in out["tool_calls"]
+        ]
+        out = {**out, "tool_calls": calls}
+    return out
+
+
 class HostedChatOpenAI(ChatOpenAI):
     """ChatOpenAI for OpenAI-compatible hosts that are stricter than OpenAI (Workers AI wants a
     string content on every message), with Qwen3's reasoning optionally switched off."""
@@ -55,10 +80,33 @@ class HostedChatOpenAI(ChatOpenAI):
         if self.no_think:
             messages = no_think(messages)
         payload = super()._get_request_payload(messages, stop=stop, **kwargs)
-        payload["messages"] = [
-            {**m, "content": ""} if m.get("content") is None else m for m in payload["messages"]
-        ]
+        extras = _tool_call_extras(messages)
+        payload["messages"] = [_hosted_message(m, extras) for m in payload["messages"]]
         return payload
+
+    def _create_chat_result(
+        self, response: dict[str, Any] | Any, generation_info: dict[str, Any] | None = None
+    ) -> ChatResult:
+        result = super()._create_chat_result(response, generation_info)
+        raw = response if isinstance(response, dict) else response.model_dump()
+        extras = {
+            tc["id"]: tc["extra_content"]
+            for choice in raw.get("choices", [])
+            for tc in (choice.get("message") or {}).get("tool_calls") or []
+            if tc.get("extra_content")
+        }
+        if not extras:
+            return result
+        generations = [
+            ChatGeneration(
+                message=g.message.model_copy(
+                    update={"additional_kwargs": {**g.message.additional_kwargs, EXTRAS: extras}}
+                ),
+                generation_info=g.generation_info,
+            )
+            for g in result.generations
+        ]
+        return ChatResult(generations=generations, llm_output=result.llm_output)
 
     def _generate(
         self,

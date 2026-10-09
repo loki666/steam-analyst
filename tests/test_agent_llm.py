@@ -12,12 +12,8 @@ WORKERS_AI = "https://api.cloudflare.com/client/v4/accounts/abc123/ai/v1"
 
 
 def hosted(**kw) -> Settings:
-    return Settings(
-        llm_provider="openai",
-        llm_base_url=WORKERS_AI,
-        llm_api_key="test-key",
-        **kw,
-    )
+    fields = {"llm_provider": "openai", "llm_base_url": WORKERS_AI, "llm_api_key": "test-key"}
+    return Settings(**{**fields, **kw})
 
 
 def test_default_provider_is_local_ollama():
@@ -108,3 +104,44 @@ def test_reasoning_can_be_left_on_with_room_for_it():
     llm, router = chat_models(hosted(llm_reasoning=True), "@cf/qwen/qwen3-30b-a3b-fp8")
     assert not llm.no_think and not router.no_think
     assert llm.max_tokens > MAX_OUTPUT_TOKENS
+
+
+GEMINI = "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+
+def test_gemini_thought_signatures_go_back_with_their_tool_calls():
+    """Gemini 3 rejects a tool-call turn sent back without the signature it came with."""
+    from langchain_core.messages import HumanMessage, ToolMessage
+
+    llm, _ = chat_models(hosted(llm_base_url=GEMINI), "gemini-3.8-flash")
+    response = {
+        "id": "r1",
+        "model": "gemini-3.8-flash",
+        "object": "chat.completion",
+        "created": 0,
+        "choices": [
+            {
+                "index": 0,
+                "finish_reason": "tool_calls",
+                "message": {
+                    "role": "assistant",
+                    "content": None,
+                    "tool_calls": [
+                        {
+                            "id": "call_1",
+                            "type": "function",
+                            "function": {"name": "query_catalog", "arguments": '{"sql": "S"}'},
+                            "extra_content": {"google": {"thought_signature": "sig-abc"}},
+                        }
+                    ],
+                },
+            }
+        ],
+        "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2},
+    }
+    reply = llm._create_chat_result(response).generations[0].message
+    assert reply.tool_calls[0]["id"] == "call_1"
+    msgs = [HumanMessage("q"), reply, ToolMessage("1", tool_call_id="call_1")]
+    sent = llm._get_request_payload(msgs)["messages"][1]["tool_calls"][0]
+    assert sent["extra_content"] == {"google": {"thought_signature": "sig-abc"}}
+    assert sent["id"] == "call_1"
