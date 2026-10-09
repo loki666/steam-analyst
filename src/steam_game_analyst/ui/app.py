@@ -70,6 +70,11 @@ def sidebar() -> str:
         if st.button("New conversation", width="stretch"):
             st.session_state["history"] = []
         st.caption("Each question is answered on its own: the agent keeps no chat memory.")
+        st.caption(
+            "Data: Steam store, reviews and news, via the Steam Web API and public datasets; "
+            "Steam is a trademark of Valve Corporation, and this project is not affiliated "
+            "with or endorsed by Valve. Wiki text from Fandom, CC BY-SA 3.0."
+        )
     return services.SEARCH_MODES[quality]
 
 

@@ -245,6 +245,7 @@ def test_trace_record_is_json_serialisable(toolbox):
     line = json.dumps(rec)
     assert '"tool": "review_trend"' in line and rec["latency_s"] == 1.5
     assert "content" not in rec["tool_calls"][0]  # outputs stay out of the trace
+    assert rec["usage"] == {"llm_calls": 4, "input_tokens": 0, "output_tokens": 0}
 
 
 def test_parse_router_accepts_plan_as_a_list_and_tools_as_a_string():
@@ -399,3 +400,36 @@ def test_no_patch_section_when_nothing_matches(toolbox):
     agent, llm = make_agent(toolbox, [router(tools=["review_trend"]), "DONE", "Flat [T1]."])
     agent.run("Are Cyberpunk 2077 reviews trending up?")
     assert "Patch notes whose titles match the question: none" in llm.seen[1][0].content
+
+
+def used(text: str, tokens_in: int, tokens_out: int) -> AIMessage:
+    usage = {
+        "input_tokens": tokens_in,
+        "output_tokens": tokens_out,
+        "total_tokens": tokens_in + tokens_out,
+    }
+    return AIMessage(content=text, usage_metadata=usage)
+
+
+def test_run_sums_llm_token_usage(toolbox):
+    agent, _ = make_agent(
+        toolbox,
+        [
+            AIMessage(
+                content=router(),
+                usage_metadata={"input_tokens": 100, "output_tokens": 10, "total_tokens": 110},
+            ),
+            used("DONE", 200, 1),
+            used("4 games.", 300, 5),
+        ],
+    )
+    out = agent.run("anything about games")
+    assert out["usage"] == {"llm_calls": 3, "input_tokens": 600, "output_tokens": 16}
+
+
+def test_usage_is_counted_per_run(toolbox):
+    agent, _ = make_agent(
+        toolbox, [used(router(), 10, 1), used("DONE", 10, 1), used("A.", 10, 1)] * 2
+    )
+    agent.run("anything about games")
+    assert agent.run("anything about games")["usage"]["llm_calls"] == 3

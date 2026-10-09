@@ -17,13 +17,16 @@ from __future__ import annotations
 
 import json
 import re
+import threading
 import uuid
 from collections.abc import Callable, Iterable
 from datetime import date
 from typing import Any, Literal, Protocol
 
+from langchain_core.callbacks import BaseCallbackHandler
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
+from langchain_core.outputs import LLMResult
 from langgraph.graph import END, START, StateGraph
 from pydantic import ValidationError
 
@@ -113,6 +116,31 @@ def appids_in(content: str) -> set[str]:
     return found
 
 
+class UsageCounter(BaseCallbackHandler):
+    """LLM calls and tokens of one run, from each reply's usage_metadata (0 when the
+    provider reports none)."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self.calls = self.input_tokens = self.output_tokens = 0
+
+    def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
+        with self._lock:
+            for gens in response.generations:
+                for g in gens:
+                    meta = getattr(getattr(g, "message", None), "usage_metadata", None) or {}
+                    self.calls += 1
+                    self.input_tokens += int(meta.get("input_tokens", 0))
+                    self.output_tokens += int(meta.get("output_tokens", 0))
+
+    def totals(self) -> dict[str, int]:
+        return {
+            "llm_calls": self.calls,
+            "input_tokens": self.input_tokens,
+            "output_tokens": self.output_tokens,
+        }
+
+
 class Agent:
     def __init__(
         self,
@@ -168,9 +196,10 @@ class Agent:
             "tool_results": [],
             "chunks": [],
         }
-        config: Any = {"recursion_limit": 4 * self.max_iterations + 12}
+        usage = UsageCounter()  # per run: the agent itself is shared between UI sessions
+        config: Any = {"recursion_limit": 4 * self.max_iterations + 12, "callbacks": [usage]}
         if on_step is None:
-            return self.graph.invoke(state, config=config)
+            return {**self.graph.invoke(state, config=config), "usage": usage.totals()}
         final: dict[str, Any] = state
         for mode, chunk in self.graph.stream(
             state, config=config, stream_mode=["updates", "values"]
@@ -180,7 +209,7 @@ class Agent:
                 continue
             for node, update in chunk.items():
                 on_step(node, update or {})
-        return final
+        return {**final, "usage": usage.totals()}
 
     # ------------------------------------------------------------------ nodes
     def _games_text(self, games: list[dict[str, Any]]) -> str:

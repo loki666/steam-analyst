@@ -163,3 +163,9 @@ def test_hosted_deploy_hides_thorough_search_and_uses_hybrid(app, monkeypatch):
     assert not at.sidebar.radio
     at.button(key="example-1").click().run()
     assert not at.exception and modes == ["hybrid"]
+
+
+def test_sidebar_credits_the_data_sources(app):
+    at = app().run()
+    credits = " ".join(c.value for c in at.sidebar.caption)
+    assert "Valve" in credits and "not affiliated" in credits and "CC BY-SA" in credits

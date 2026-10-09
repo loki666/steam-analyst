@@ -72,6 +72,7 @@ def trace_record(state: dict[str, Any], latency_s: float, model: str) -> dict[st
         "answer": state.get("answer"),
         "citations": state.get("citations", []),
         "latency_s": round(latency_s, 2),
+        "usage": state.get("usage"),
     }
 
 
