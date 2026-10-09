@@ -200,6 +200,31 @@ windows (~1,500 sampled reviews per game across all years); the agent sometimes 
 300-game subset where the full catalog was meant; answers take 20 s at the median and 37 s at
 p95 on the test set. The W5 evaluation below measures where answers go wrong.
 
+## Retrieval evaluation (W4)
+
+**Gold set:** 195 questions, one written by the local LLM from each sampled chunk (reviews,
+patch notes, news and wiki sections), split 107 dev / 88 test by a hash of the question id.
+The plan asked for half of them to be checked by hand and for hand-written questions against
+U1–U8; neither was done, so the set leans towards questions one chunk answers, and a badly
+written question counts against every mode alike. **Judging is pooled:** the
+top 10 chunks of every mode, plus the source chunk, are graded blind by a Claude judge (0 =
+does not help, 1 = relevant evidence, 2 = answers it), and every mode is scored against all
+chunks graded relevant (2,672 grades on dev). `make eval` reproduces the table from the
+grades.
+
+| Dev (106 questions, top 10) | hit@5 | hit@10 | MRR@10 | nDCG@10 |
+| --- | --- | --- | --- | --- |
+| BM25 | 0.764 | 0.830 | 0.662 | 0.457 |
+| Dense (bge-m3) | 0.821 | 0.830 | 0.728 | 0.545 |
+| **Hybrid (RRF), default** | 0.858 [0.792, 0.925] | 0.887 [0.821, 0.943] | 0.744 [0.674, 0.816] | 0.554 [0.495, 0.618] |
+| Hybrid + rerank | 0.887 [0.821, 0.943] | 0.906 [0.849, 0.962] | 0.809 [0.740, 0.876] | 0.669 [0.605, 0.730] |
+
+Paired against hybrid, the reranker improves nDCG@10 by +0.115 [+0.074, +0.159] (64
+questions better, 19 worse) and MRR@10 by +0.065 [+0.003, +0.126]; BM25 alone is worse
+(nDCG −0.097 [−0.134, −0.060]); dense alone ties hybrid. Hybrid stays the default anyway
+because reranking did not improve the answers (see [Decisions made on dev](#decisions-made-on-dev)).
+The test split has not been scored yet: its 2,066 pooled chunks still need grading.
+
 ## Streamlit UI (W5)
 
 `make up` serves the app on http://localhost:8501. Each answer shows its citations as chips:
@@ -471,6 +496,17 @@ away from the eval set, and none was revised after its dev result.
   so in its output (`window_widened`); a wider requested window is never shrunk. On the dev
   run after the change the rule never fired: the 14B asked for 3 to 6 months and every
   side had at least 36 effective reviews, so dev cannot measure it.
+
+## Plan targets vs results
+
+| Target from the plan | Result | Met |
+| --- | --- | --- |
+| Sentiment F1 ≥ 0.90 (held-out games) | 0.913 [0.904, 0.923], DistilBERT | yes |
+| Reception bucket accuracy above the majority baseline, with CI | 0.661 [0.647, 0.674] vs 0.645 | yes |
+| Recall@20 ≥ 0.85, hybrid + rerank | hit@10 0.906 on dev; recall@20 and the test split not measured | partly |
+| Faithfulness ≥ 0.85 (judge) | grounded 0.84 local, 0.72 hosted (test) | no |
+| Tool-routing accuracy ≥ 0.90 | exact routing 82% local, 85% hosted (test) | no |
+| Median latency ≤ 20 s (14B on the 3080) | 20.1 s local, 17.4 s hosted (test) | about |
 
 ## Limitations
 
