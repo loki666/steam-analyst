@@ -10,6 +10,15 @@ from pathlib import Path
 
 import pytest
 
+
+@pytest.fixture(autouse=True)
+def _local_llm_settings(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Tests never pick up a hosted LLM from the developer's .env (env vars beat .env)."""
+    monkeypatch.setenv("SGA_LLM_PROVIDER", "ollama")
+    monkeypatch.setenv("SGA_LLM_BASE_URL", "")
+    monkeypatch.setenv("SGA_LLM_API_KEY", "")
+
+
 FIXTURES = Path(__file__).parent / "fixtures"
 
 CATALOG_ROWS = [

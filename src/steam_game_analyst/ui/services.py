@@ -1,10 +1,11 @@
-"""Backends for the UI: build the agent the way `sga agent` does, check that Ollama and Qdrant
+"""Backends for the UI: build the agent the way `sga agent` does, check that the LLM and Qdrant
 answer, and turn failures into a message a person can act on instead of a traceback."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Literal
+from urllib.parse import urlsplit
 
 import httpx
 
@@ -17,7 +18,7 @@ SEARCH_MODES = {"Standard": "hybrid", "Thorough (+3–5 s)": "rerank"}
 
 @dataclass(frozen=True)
 class Failure:
-    kind: Literal["llm_down", "model_missing", "data_missing", "error"]
+    kind: Literal["llm_down", "llm_busy", "llm_auth", "model_missing", "data_missing", "error"]
     title: str
     body: str
     detail: str
@@ -33,13 +34,23 @@ def ping(url: str, timeout: float = HEALTH_TIMEOUT_S) -> str | None:
 
 
 def health(settings: Settings) -> dict[str, str | None]:
-    return {
-        "ollama": ping(f"{settings.ollama_host.rstrip('/')}/api/tags"),
-        "qdrant": ping(f"{settings.qdrant_url.rstrip('/')}/collections"),
-    }
+    """None per service that answers. A hosted LLM is not pinged: that needs an authenticated
+    call, and its failures are classified when the agent runs."""
+    llm = None
+    if settings.llm_provider == "ollama":
+        llm = ping(f"{settings.ollama_host.rstrip('/')}/api/tags")
+    return {"llm": llm, "qdrant": ping(f"{settings.qdrant_url.rstrip('/')}/collections")}
 
 
 def llm_down(settings: Settings, reason: str) -> Failure:
+    if settings.llm_provider == "openai":
+        return Failure(
+            "llm_down",
+            "The language model service isn't answering",
+            "Your question was kept. Retry in a minute.",
+            # the host only: Workers AI puts the account id in the path
+            f"LLM endpoint {urlsplit(settings.llm_base_url or '').netloc} unreachable ({reason})",
+        )
     return Failure(
         "llm_down",
         "The language model isn't running",
@@ -50,8 +61,11 @@ def llm_down(settings: Settings, reason: str) -> Failure:
 
 def _is_connection_error(e: BaseException) -> bool:
     text = str(e).lower()
-    return isinstance(e, ConnectionError | httpx.ConnectError | httpx.ConnectTimeout) or (
-        "failed to connect" in text or "connection refused" in text
+    return (
+        isinstance(e, ConnectionError | httpx.ConnectError | httpx.ConnectTimeout)
+        or type(e).__name__ in {"APIConnectionError", "APITimeoutError"}  # openai client
+        or "failed to connect" in text
+        or "connection refused" in text
     )
 
 
@@ -60,6 +74,31 @@ def classify(e: BaseException, settings: Settings) -> Failure:
     detail = f"{type(e).__name__}: {e}"
     if _is_connection_error(e):
         return llm_down(settings, detail)
+    if type(e).__name__ == "RateLimitError":
+        return Failure(
+            "llm_busy",
+            "The language model is at its usage limit",
+            "Your question was kept. The free allowance resets daily; retry later.",
+            detail,
+        )
+    status = getattr(e, "status_code", None)
+    if isinstance(status, int):
+        # an HTTP error from the hosted endpoint: its body stays out of the public UI
+        detail = f"{type(e).__name__} (HTTP {status})"
+    if type(e).__name__ in {"AuthenticationError", "PermissionDeniedError"}:
+        return Failure(
+            "llm_auth",
+            "The language model service refused the request",
+            "Your question was kept. The app's model access needs fixing by its maintainer.",
+            f"{detail}, check SGA_LLM_API_KEY",
+        )
+    if type(e).__name__ == "NotFoundError" and settings.llm_provider == "openai":
+        return Failure(
+            "model_missing",
+            "The language model isn't available",
+            "Your question was kept. The app's model setting needs fixing by its maintainer.",
+            f"{detail}, check SGA_LLM_MODEL ({settings.llm_model}) and SGA_LLM_BASE_URL",
+        )
     if "not found" in str(e).lower() and type(e).__name__ == "ResponseError":
         return Failure(
             "model_missing",
@@ -118,7 +157,7 @@ def build_retriever(settings: Settings, mode: str) -> Any:
 
 
 def build(settings: Settings, retriever: Any | None) -> Any:
-    """The agent exactly as `sga agent` builds it (the 14B model, 6 tool rounds)."""
+    """The agent exactly as `sga agent` builds it (SGA_LLM_MODEL, 6 tool rounds)."""
     from steam_game_analyst.agent.factory import build_agent
 
     agent, _toolbox = build_agent(settings, settings.llm_model, retriever, MAX_ITERATIONS)

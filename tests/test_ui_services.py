@@ -44,7 +44,7 @@ def test_health_reports_each_service(cfg, monkeypatch):
     monkeypatch.setattr(services.httpx, "get", fake_get)
     status = services.health(cfg)
     assert status["qdrant"] is None
-    assert status["ollama"] == "ConnectError: connection refused"
+    assert status["llm"] == "ConnectError: connection refused"
 
 
 def test_corpus_facts_read_the_tables(built):
@@ -71,3 +71,81 @@ def test_corpus_facts_month_is_the_trend_tools_data_through(built):
 
 def test_corpus_facts_without_data(tmp_path):
     assert services.corpus_facts(Settings(data_dir=tmp_path)) is None
+
+
+@pytest.fixture
+def hosted() -> Settings:
+    return Settings(
+        QDRANT_URL="http://q.invalid:6333",
+        llm_provider="openai",
+        llm_base_url="https://api.example.invalid/client/v4/accounts/acct42/ai/v1",
+        llm_api_key="secret-key",
+    )
+
+
+def test_hosted_llm_is_not_pinged(hosted, monkeypatch):
+    seen = []
+
+    def fake_get(url, timeout):
+        seen.append(url)
+        return httpx.Response(200, request=httpx.Request("GET", url))
+
+    monkeypatch.setattr(services.httpx, "get", fake_get)
+    assert services.health(hosted) == {"llm": None, "qdrant": None}
+    assert seen == ["http://q.invalid:6333/collections"]
+
+
+class APIConnectionError(Exception):
+    """Stands in for openai.APIConnectionError (matched by name)."""
+
+
+class RateLimitError(Exception):
+    """Stands in for openai.RateLimitError (matched by name)."""
+
+
+class _StatusError(Exception):
+    """Stands in for openai.APIStatusError subclasses (matched by name, carry status_code)."""
+
+    def __init__(self, message: str, status_code: int) -> None:
+        super().__init__(message)
+        self.status_code = status_code
+
+
+class AuthenticationError(_StatusError):
+    pass
+
+
+class PermissionDeniedError(_StatusError):
+    pass
+
+
+class NotFoundError(_StatusError):
+    pass
+
+
+def test_unreachable_hosted_llm_says_retry_not_make_up(hosted):
+    f = services.classify(APIConnectionError("Connection error."), hosted)
+    assert f.kind == "llm_down" and "make up" not in f.body and "retry" in f.body.lower()
+    assert "api.example.invalid" in f.detail
+    assert "acct42" not in f.detail and "secret-key" not in f.detail
+
+
+def test_exhausted_free_allowance_is_its_own_message(hosted):
+    f = services.classify(RateLimitError("Error code: 429 - daily free allocation used"), hosted)
+    assert f.kind == "llm_busy" and "429" in f.detail
+
+
+def test_rejected_api_key_points_at_the_setting_without_the_provider_body(hosted):
+    for err in (
+        AuthenticationError("Incorrect API key provided: sk-ab***xyz", 401),
+        PermissionDeniedError("token lacks Workers AI permission", 403),
+    ):
+        f = services.classify(err, hosted)
+        assert f.kind == "llm_auth" and "SGA_LLM_API_KEY" in f.detail
+        assert str(err.status_code) in f.detail and str(err) not in f.detail
+
+
+def test_unknown_hosted_model_names_the_setting(hosted):
+    f = services.classify(NotFoundError("No route for that URI", 404), hosted)
+    assert f.kind == "model_missing" and "make pull-models" not in f.body
+    assert "SGA_LLM_MODEL" in f.detail and "404" in f.detail

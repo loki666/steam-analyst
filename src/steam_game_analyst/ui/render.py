@@ -237,6 +237,6 @@ def empty_state(on_pick: Pick) -> None:
     st.markdown("### Ask about a Steam game")
     st.markdown(
         "Every answer cites its sources [n] and the tool results [T1] it used. "
-        "The local model takes 10–90 s."
+        "The model takes 10–90 s."
     )
     examples(on_pick, "example")

@@ -10,6 +10,7 @@ from typing import Any
 import polars as pl
 
 from steam_game_analyst.agent.graph import Agent
+from steam_game_analyst.agent.llm import chat_models
 from steam_game_analyst.config import Settings
 from steam_game_analyst.retrieval.query import GameIndex
 from steam_game_analyst.tools.registry import ToolBox
@@ -34,17 +35,7 @@ def build_agent(
     retriever: Any | None,
     max_iterations: int,
 ) -> tuple[Agent, ToolBox]:
-    from langchain_ollama import ChatOllama
-
-    # num_predict bounds a runaway generation (answers and tool turns are far shorter)
-    common = {
-        "model": model,
-        "base_url": settings.ollama_host,
-        "num_ctx": 8192,
-        "num_predict": 1536,
-    }
-    llm = ChatOllama(temperature=0.1, **common)
-    router_llm = ChatOllama(temperature=0.0, format="json", **common)
+    llm, router_llm = chat_models(settings, model)
     toolbox = ToolBox(settings)
     corpus = {r[0] for r in toolbox.db.fetch("SELECT DISTINCT appid FROM review_monthly")}
     agent = Agent(

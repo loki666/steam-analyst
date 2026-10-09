@@ -5,10 +5,10 @@ from __future__ import annotations
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -33,6 +33,15 @@ class Settings(BaseSettings):
     models_dir: Path = Field(default_factory=lambda: project_root() / "models")
     configs_dir: Path = Field(default_factory=lambda: project_root() / "configs")
 
+    # "ollama" = the local server at OLLAMA_HOST; "openai" = any OpenAI-compatible endpoint
+    # (the hosted deploy uses Cloudflare Workers AI), which needs SGA_LLM_BASE_URL and
+    # SGA_LLM_API_KEY, with SGA_LLM_MODEL set to that provider's model name
+    llm_provider: Literal["ollama", "openai"] = "ollama"
+    llm_base_url: str | None = None
+    llm_api_key: SecretStr | None = None
+    # hosted Qwen3 only: keep its reasoning step (better reading of tool output, ~3x the
+    # billed tokens and slower); off by default
+    llm_reasoning: bool = False
     llm_model: str = "qwen2.5:14b-instruct-q4_K_M"
     llm_dev_model: str = "qwen2.5:7b-instruct-q4_K_M"
     embed_model: str = "BAAI/bge-m3"
@@ -57,6 +66,21 @@ class Settings(BaseSettings):
     qdrant_url: str = Field(default="http://localhost:6333", validation_alias="QDRANT_URL")
     # Optional contact appended to the User-Agent for public APIs (Fandom asks for one).
     http_contact: str | None = None
+
+    @model_validator(mode="after")
+    def _hosted_llm_is_complete(self) -> Settings:
+        if self.llm_provider == "openai":
+            missing = [
+                name
+                for name, value in (
+                    ("SGA_LLM_BASE_URL", self.llm_base_url),
+                    ("SGA_LLM_API_KEY", self.llm_api_key),
+                )
+                if not value
+            ]
+            if missing:
+                raise ValueError(f"SGA_LLM_PROVIDER=openai needs {' and '.join(missing)}")
+        return self
 
     @property
     def http_user_agent(self) -> str:

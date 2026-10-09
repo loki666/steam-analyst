@@ -47,7 +47,7 @@ def app(tmp_path, monkeypatch):
     get_settings.cache_clear()
     st.cache_resource.clear()
     st.cache_data.clear()
-    monkeypatch.setattr(services, "health", lambda s: {"ollama": None, "qdrant": None})
+    monkeypatch.setattr(services, "health", lambda s: {"llm": None, "qdrant": None})
     monkeypatch.setattr(services, "build_retriever", lambda s, mode: object())
     yield lambda: AppTest.from_file(str(APP), default_timeout=60)
     get_settings.cache_clear()
@@ -102,7 +102,7 @@ def test_out_of_scope_question_is_declined_with_example_buttons(app, monkeypatch
 
 def test_model_down_keeps_the_question_and_explains_the_fix(app, monkeypatch):
     monkeypatch.setattr(
-        services, "health", lambda s: {"ollama": "ConnectError: refused", "qdrant": None}
+        services, "health", lambda s: {"llm": "ConnectError: refused", "qdrant": None}
     )
     at = app().run()
     at.button(key="example-1").click().run()

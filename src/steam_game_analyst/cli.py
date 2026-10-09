@@ -450,7 +450,7 @@ def ask(
 @app.command("agent")
 def agent_cmd(
     question: str = typer.Argument(..., help="Analytical question about Steam games"),
-    model: str = typer.Option(None, help="Ollama model (default: SGA_LLM_MODEL, the 14B)"),
+    model: str = typer.Option(None, help="LLM model (default: SGA_LLM_MODEL, on SGA_LLM_PROVIDER)"),
     max_iterations: int = typer.Option(6, help="Cap on tool-calling rounds"),
     no_retrieval: bool = typer.Option(False, "--no-retrieval", help="Tools only, no Qdrant"),
     show_tools: bool = typer.Option(False, "--show-tools", help="Print every tool output"),
@@ -710,7 +710,7 @@ def eval_answers(
     split: str = typer.Option("dev", help="dev | test (frozen: needs --final)"),
     final: bool = typer.Option(False, "--final", help="Allow the one-off run on the test split"),
     label: str = typer.Option("run", help="Name for this configuration, e.g. hybrid-14b"),
-    model: str = typer.Option(None, help="Ollama model (default: SGA_LLM_MODEL, the 14B)"),
+    model: str = typer.Option(None, help="LLM model (default: SGA_LLM_MODEL, on SGA_LLM_PROVIDER)"),
     mode: str = typer.Option("hybrid", help="Retrieval mode: hybrid | dense | bm25 | rerank"),
     max_iterations: int = typer.Option(6, help="Cap on tool-calling rounds"),
     resume: str = typer.Option(None, help="Continue a run: path of its answers .jsonl"),

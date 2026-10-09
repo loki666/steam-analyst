@@ -68,7 +68,7 @@ def run_with_progress(agent: Any, question: str) -> tuple[dict[str, Any], list[s
     start = time.perf_counter()
     log = ProgressLog()
     with st.status("Working on it · 0:00", expanded=True) as box:
-        st.caption("The local model usually answers in 10–90 s. Steps appear as they finish.")
+        st.caption("The model usually answers in 10–90 s. Steps appear as they finish.")
         body = st.empty()
         body.markdown(log.markdown())
         run = BackgroundRun(lambda on_step: agent.run(question, on_step=on_step)).start()
@@ -89,8 +89,8 @@ def execute(question: str, mode: str) -> dict[str, Any]:
     """Run one question with live progress; a failure becomes a turn, never a traceback."""
     settings = get_settings()
     down = services.health(settings)
-    if down["ollama"]:
-        return {"question": question, "failure": services.llm_down(settings, down["ollama"])}
+    if down["llm"]:
+        return {"question": question, "failure": services.llm_down(settings, down["llm"])}
     start = time.perf_counter()
     try:
         agent = get_agent(mode, with_search=down["qdrant"] is None)
