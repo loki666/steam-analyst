@@ -147,3 +147,19 @@ def test_a_visitor_over_the_daily_cap_gets_a_limit_card_not_an_answer(app, monke
     last = at.session_state["history"][-1]
     assert last["failure"].kind == "quota"
     assert "result" in at.session_state["history"][0]
+
+
+def test_search_quality_choice_is_offered_by_default(app):
+    at = app().run()
+    assert [r.label for r in at.sidebar.radio] == ["Search quality"]
+
+
+def test_hosted_deploy_hides_thorough_search_and_uses_hybrid(app, monkeypatch):
+    monkeypatch.setenv("SGA_UI_THOROUGH_SEARCH", "false")
+    modes = []
+    monkeypatch.setattr(services, "build_retriever", lambda s, mode: modes.append(mode) or object())
+    monkeypatch.setattr(services, "build", lambda s, r: ReplayAgent("cyberpunk_patch"))
+    at = app().run()
+    assert not at.sidebar.radio
+    at.button(key="example-1").click().run()
+    assert not at.exception and modes == ["hybrid"]

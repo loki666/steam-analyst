@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     # public demo: questions per visitor and in total per UTC day (None = no cap)
     ui_daily_questions_per_visitor: int | None = None
     ui_daily_questions_total: int | None = None
+    # the "Thorough" (cross-encoder rerank) choice; off where the CPU is small (hosted VM)
+    ui_thorough_search: bool = True
     llm_model: str = "qwen2.5:14b-instruct-q4_K_M"
     llm_dev_model: str = "qwen2.5:7b-instruct-q4_K_M"
     embed_model: str = "BAAI/bge-m3"

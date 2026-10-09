@@ -60,11 +60,13 @@ def sidebar() -> str:
         st.markdown("## Steam Game Analyst")
         if facts := corpus_facts():
             st.caption(facts)
-        quality = st.radio(
-            "Search quality",
-            list(services.SEARCH_MODES),
-            help="Thorough re-ranks the top 50 sources with a cross-encoder.",
-        )
+        quality = next(iter(services.SEARCH_MODES))  # Standard
+        if get_settings().ui_thorough_search:
+            quality = st.radio(
+                "Search quality",
+                list(services.SEARCH_MODES),
+                help="Thorough re-ranks the top 50 sources with a cross-encoder.",
+            )
         if st.button("New conversation", width="stretch"):
             st.session_state["history"] = []
         st.caption("Each question is answered on its own: the agent keeps no chat memory.")

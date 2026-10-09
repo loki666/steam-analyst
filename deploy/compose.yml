@@ -40,6 +40,8 @@ services:
       # ~103 neurons a question against 10,000 free a day: stop just short of the allowance
       SGA_UI_DAILY_QUESTIONS_PER_VISITOR: "20"
       SGA_UI_DAILY_QUESTIONS_TOTAL: "90"
+      # no "Thorough" search: a 2.2 GB reranker scoring 50 passages on 2 ARM cores
+      SGA_UI_THOROUGH_SEARCH: "false"
       QDRANT_URL: http://qdrant:6333
       SGA_DATA_DIR: /app/data
       SGA_MODELS_DIR: /app/models
