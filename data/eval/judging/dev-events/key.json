@@ -1,0 +1,194 @@
+{
+ "runs": [
+  "data/eval/results/answers_dev_hybrid-14b-events_20261009T092950Z.jsonl",
+  "data/eval/results/answers_dev_hybrid-14b-cf175e3_20261008T140521Z.jsonl",
+  "data/eval/results/answers_dev_patch-qwen3cf-events_20261009T093918Z.jsonl",
+  "data/eval/results/answers_dev_hybrid-qwen3cf-think_20261009T071635Z.patch-only.jsonl"
+ ],
+ "key": {
+  "bd05e97de75e": {
+   "qid": "98c0b2c6-2ad7-5303-bce3-e0e6f5c72cae",
+   "label": "hybrid-14b-events"
+  },
+  "8acf3ac97df0": {
+   "qid": "0d54cd0a-10a6-56d7-940c-9b6adcb4ffed",
+   "label": "hybrid-14b-events"
+  },
+  "82798daa4ca0": {
+   "qid": "9f4e8ad0-23ad-5282-9aaf-b7327d679355",
+   "label": "hybrid-14b-events"
+  },
+  "e96d277c7433": {
+   "qid": "0ff01351-457d-5d16-b312-3cab6b489aeb",
+   "label": "hybrid-14b-events"
+  },
+  "18209f50ec9b": {
+   "qid": "c400a121-7a6f-524a-9d4d-e3d33e16a274",
+   "label": "hybrid-14b-events"
+  },
+  "bad675923b9b": {
+   "qid": "02950903-1757-5815-886b-7cc88343107c",
+   "label": "hybrid-14b-events"
+  },
+  "2631011373a4": {
+   "qid": "ab7549bc-7883-50ee-9d79-57dd84c2188d",
+   "label": "hybrid-14b-events"
+  },
+  "3aa3994a7fe0": {
+   "qid": "ff04022d-8ae4-52a6-9c10-c7f9e261982d",
+   "label": "hybrid-14b-events"
+  },
+  "38f49f3c40b2": {
+   "qid": "06627efd-494f-56dc-bfb1-46d58eee2bde",
+   "label": "hybrid-14b-events"
+  },
+  "abf546fbed5e": {
+   "qid": "780a2502-c161-5c2a-bd37-344a59534d00",
+   "label": "hybrid-14b-events"
+  },
+  "00d36ae0c62a": {
+   "qid": "e407002a-09f2-5d0a-9d05-68c0081f47bf",
+   "label": "hybrid-14b-events"
+  },
+  "a0a4db5380d6": {
+   "qid": "b0f3bf0b-79eb-5b9f-8e6e-eaa3c4195dd5",
+   "label": "hybrid-14b-events"
+  },
+  "3cec780105cf": {
+   "qid": "de9e4b5a-c2b3-5b55-9289-8163a75c8637",
+   "label": "hybrid-14b-events"
+  },
+  "375766876c2c": {
+   "qid": "19abb13e-ec96-52b2-a200-10eb3612f2d0",
+   "label": "hybrid-14b-events"
+  },
+  "cc20c24c7d39": {
+   "qid": "d882e441-84fc-59a7-9998-cb6f699eb86c",
+   "label": "hybrid-14b-events"
+  },
+  "915592ef2fcc": {
+   "qid": "4e8f96c9-92d5-5f3e-979f-8a2c4d893260",
+   "label": "hybrid-14b-events"
+  },
+  "a0d9d0ff2551": {
+   "qid": "a0d2c5da-a987-5f53-b9f1-1d1df3fca1b1",
+   "label": "hybrid-14b-events"
+  },
+  "f8a93e4901c9": {
+   "qid": "f78ee2e9-ee02-5aad-8f07-ae7ffde5e50b",
+   "label": "hybrid-14b-events"
+  },
+  "af0dfeaddc8e": {
+   "qid": "822ac42e-511e-5fb0-99f0-7f8cb5f18d46",
+   "label": "hybrid-14b-events"
+  },
+  "5d8c79019be8": {
+   "qid": "2391837d-816b-5354-921e-19b1843dee3d",
+   "label": "hybrid-14b-events"
+  },
+  "a89f992bd859": {
+   "qid": "98c0b2c6-2ad7-5303-bce3-e0e6f5c72cae",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "724f7e4fb66a": {
+   "qid": "0d54cd0a-10a6-56d7-940c-9b6adcb4ffed",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "472aa5e38b5f": {
+   "qid": "9f4e8ad0-23ad-5282-9aaf-b7327d679355",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "58e4c3e4be9d": {
+   "qid": "0ff01351-457d-5d16-b312-3cab6b489aeb",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "ef2f5b0d2b8a": {
+   "qid": "c400a121-7a6f-524a-9d4d-e3d33e16a274",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "884e4fdf52f5": {
+   "qid": "02950903-1757-5815-886b-7cc88343107c",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "cf9ab73b4343": {
+   "qid": "ab7549bc-7883-50ee-9d79-57dd84c2188d",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "a8787d0bd1fb": {
+   "qid": "ff04022d-8ae4-52a6-9c10-c7f9e261982d",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "644caff927f2": {
+   "qid": "06627efd-494f-56dc-bfb1-46d58eee2bde",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "20253c14745e": {
+   "qid": "780a2502-c161-5c2a-bd37-344a59534d00",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "8791790e9b52": {
+   "qid": "e407002a-09f2-5d0a-9d05-68c0081f47bf",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "d31bfa2fee77": {
+   "qid": "b0f3bf0b-79eb-5b9f-8e6e-eaa3c4195dd5",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "902d6cebc722": {
+   "qid": "de9e4b5a-c2b3-5b55-9289-8163a75c8637",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "c599afabcaf1": {
+   "qid": "19abb13e-ec96-52b2-a200-10eb3612f2d0",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "f14f464175ca": {
+   "qid": "d882e441-84fc-59a7-9998-cb6f699eb86c",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "105e3d0761e8": {
+   "qid": "4e8f96c9-92d5-5f3e-979f-8a2c4d893260",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "49f80a71dc2a": {
+   "qid": "a0d2c5da-a987-5f53-b9f1-1d1df3fca1b1",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "22fb6382c7dc": {
+   "qid": "f78ee2e9-ee02-5aad-8f07-ae7ffde5e50b",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "86fa85717a11": {
+   "qid": "822ac42e-511e-5fb0-99f0-7f8cb5f18d46",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "60d7b0437fbc": {
+   "qid": "2391837d-816b-5354-921e-19b1843dee3d",
+   "label": "hybrid-14b-cf175e3"
+  },
+  "7cb30aa286ec": {
+   "qid": "780a2502-c161-5c2a-bd37-344a59534d00",
+   "label": "patch-qwen3cf-events"
+  },
+  "ee797dc2dd85": {
+   "qid": "e407002a-09f2-5d0a-9d05-68c0081f47bf",
+   "label": "patch-qwen3cf-events"
+  },
+  "9f7a8f58489d": {
+   "qid": "b0f3bf0b-79eb-5b9f-8e6e-eaa3c4195dd5",
+   "label": "patch-qwen3cf-events"
+  },
+  "2a77a8486c6e": {
+   "qid": "780a2502-c161-5c2a-bd37-344a59534d00",
+   "label": "hybrid-qwen3cf-think"
+  },
+  "54c5a0bbf7c1": {
+   "qid": "e407002a-09f2-5d0a-9d05-68c0081f47bf",
+   "label": "hybrid-qwen3cf-think"
+  },
+  "f8b72552d975": {
+   "qid": "b0f3bf0b-79eb-5b9f-8e6e-eaa3c4195dd5",
+   "label": "hybrid-qwen3cf-think"
+  }
+ }
+}

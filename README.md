@@ -436,12 +436,40 @@ agree on 92% of correctness grades and 96% of grounding grades (weighted κ 0.94
 The 14B's pass rate here (0.35) differs from its W5 figure (0.40) because the same answers
 were judged again in a new batch; correctness and grounding moved by 0.05 or less.
 
+### Fixes after the test runs (dev only)
+
+Both test runs are spent, so these changes were made and checked on dev only, and the test
+numbers above are from before them. The weak areas came from reading test answers; to avoid
+tuning on those questions, each fix is either a plain bug fix or a general mechanism checked
+away from the eval set, and none was revised after its dev result.
+
+- **Grouped citations** such as `[2, 4]` are parsed by the agent and `sga ask` as well as
+  the UI (`citations.py`), so they no longer trigger the "cite your evidence" rewrite or go
+  missing from the recorded citations. Source text is defanged the same way.
+- **Review ratios.** On dev the hosted model reported the 95% lower bound it ranked by as
+  the games' positive ratio. The prompt and the tool description now say the bound only
+  sets the order; both models then reported `positive_ratio` on the 3 dev catalog
+  questions.
+- **Patch dates are looked up, not guessed.** Before the agent plans its calls, the news
+  titles of the games in the question are matched against it (`tools/events.py`: exact
+  version strings such as "4.1" or "#17", otherwise distinctive words; announcements and
+  trailers rank below the release), and the best matches go into the agent prompt with
+  their dates. On 269 games that no eval question touches the first pick was right for 47
+  of 50 "after patch {version}" questions and 41 of 50 named-update questions, all 41 actual
+  patch notes (`scripts/validate_events.py`; most misses come from the strict ground truth
+  or bad template names). On dev every patch answer now tests the right date: the 14B no
+  longer turns "Update 2.0.1 in July 2023" into 1 July instead of 18 July. Judged answers
+  did not improve measurably: the 14B's correct moved −0.05 [−0.12, 0.00] (0 better, 2
+  worse), and the 3 of 5 questions that got worse had no matching patch note, so the change
+  looks like run-to-run variation. With the date right, the next weakness shows: the agent
+  sometimes picks a before/after window too short to show a change.
+
 ## Limitations
 
 - **About 4 answers in 10 are fully right.** The weak areas, local and hosted alike: catalog
   questions that run the wrong SQL (wrong tag, extra filter, subset instead of catalog),
-  patch-impact questions that test the wrong event date (5 hosted patch questions routed
-  exactly only once), SHAP directions read backwards, and significance claimed for
+  patch-impact questions with too short a before/after window (the event date is now
+  looked up, see above), SHAP directions read backwards, and significance claimed for
   comparisons no tool tested. Answers cite their evidence so a reader can check them.
 - **The data is a snapshot.** Reviews run to November 2024 and cover 299 games with review
   text (the full Steam catalog is queryable). Aspect complaints are computed on English
@@ -481,14 +509,15 @@ src/steam_game_analyst/
   data/            W1: download, clean, transform, subset, build (DuckDB)
   retrieval/       W2: chunking, embeddings, Qdrant, hybrid + rerank
   ml/              sentiment (TF-IDF + LR, DistilBERT), keyword and DistilBERT aspects, reception (LightGBM + SHAP)
-  tools/           W3: query_catalog, review_sentiment, predict_reception, review_trend
+  tools/           W3: query_catalog, review_sentiment, predict_reception, review_trend; W6: events.py (patch-note lookup)
+  citations.py     citation ids in answer text, shared by the agent, `sga ask` and the UI
   agent/           W3: LangGraph graph (router, retrieve, agent, tools, answer); W6: llm.py (Ollama or OpenAI-compatible)
   eval/            W4-5: gold set, retrieval + answer metrics
   ui/              W5: Streamlit app; W6: quota.py (daily caps)
 configs/           pipeline.yaml
 deploy/            W6: compose.yml + Caddyfile for the hosted VM
 docker/            app.Dockerfile (local, CUDA), app.cloud.Dockerfile (hosted, CPU, multi-arch)
-scripts/           deploy.sh (bootstrap, env, sync, index, up)
+scripts/           deploy.sh (bootstrap, env, sync, index, up), validate_events.py (held-out matcher check)
 notebooks/         EDA and model notebooks (they write models/)
 models/            trained models + metrics JSON (not committed)
 tests/             pytest (fixture-based)
