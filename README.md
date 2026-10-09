@@ -1,27 +1,55 @@
 # Steam Game Analyst
 
-A fully local LLM agent that answers analytical questions about PC games by combining
-retrieval over Steam reviews, patch notes and wiki pages with data-science tools
-(SQL over the catalog, a review sentiment classifier, a reception predictor, trend tests).
-Runs on one Linux box with an NVIDIA GPU via Docker Compose. No paid API.
+An LLM agent that answers analytical questions about PC games by combining retrieval over
+Steam reviews, patch notes and wiki pages with data-science tools (SQL over the catalog, a
+review sentiment classifier, a reception predictor, trend tests). It runs two ways, both at
+$0: fully local on one Linux box with an NVIDIA GPU (Qwen 2.5 14B via Ollama), or hosted on a
+free Oracle Cloud ARM VM with a free hosted LLM (Qwen3-30B-A3B on Cloudflare Workers AI).
 
-> Status: **W5 — end-to-end evaluation and UI**. Data pipeline (W1), retrieval with cited
-> answers (W2), the LangGraph agent with four data-science tools (W3), hybrid retrieval,
-> DistilBERT and the gold sets (W4), and a judged 60-question answer eval plus the Streamlit
-> UI (W5) work end to end. On the frozen test split 40% of answers are fully correct and
-> grounded ([results](#end-to-end-evaluation-w5)). See `docs/PRD.md` for the plan.
+**Live demo: <https://92-5-85-76.sslip.io>.** The free LLM allowance is shared, so it takes
+20 questions per visitor and 90 in total per day (reset at 00:00 UTC).
+
+> Status: **W6 — deploy and write-up**. Data pipeline (W1), retrieval with cited answers
+> (W2), the LangGraph agent with four data-science tools (W3), hybrid retrieval, DistilBERT
+> and the gold sets (W4), a judged 60-question answer eval and the Streamlit UI (W5), and
+> the hosted deploy (W6) work end to end. On the frozen test split 35–42% of answers are
+> fully correct and grounded, with the local and the hosted model alike
+> ([local](#end-to-end-evaluation-w5), [hosted](#hosted-deploy-w6)). See `docs/PRD.md` for
+> the plan.
 
 ## Stack
 
 | Layer | Choice |
 | --- | --- |
 | Storage | DuckDB over Parquet (`data/processed/`) |
-| LLM | Qwen 2.5 14B / 7B Instruct via Ollama (GPU) |
+| LLM | Qwen 2.5 14B / 7B Instruct via Ollama (local GPU); Qwen3-30B-A3B on Cloudflare Workers AI (hosted) |
 | Embeddings / reranker | `BAAI/bge-m3`, `BAAI/bge-reranker-base` (sentence-transformers) |
 | Vector store | Qdrant |
 | Agent | LangGraph |
 | ML | scikit-learn, LightGBM + SHAP, DistilBERT |
 | UI | Streamlit |
+| Hosting | Oracle Cloud Always Free A1 VM (arm64), Docker Compose, Caddy (HTTPS) |
+
+## Architecture
+
+```mermaid
+flowchart LR
+    U[Browser] -->|HTTPS| C[Caddy]
+    C --> UI[Streamlit UI]
+    UI --> G[LangGraph agent]
+    G -->|route, tool calls, answer| LLM["LLM<br/>local: Ollama, Qwen 2.5 14B<br/>hosted: Workers AI, Qwen3-30B-A3B"]
+    G --> R["Retriever<br/>bge-m3 dense + BM25, RRF"]
+    R --> Q[(Qdrant<br/>713k chunks)]
+    G --> T["Tools<br/>query_catalog · review_trend<br/>review_sentiment · predict_reception"]
+    T --> D[(DuckDB over Parquet)]
+    T --> M["Models<br/>DistilBERT sentiment + aspects<br/>LightGBM + SHAP"]
+```
+
+A router call decides whether the question is in scope, which tools it needs and whether
+quoted text is needed. Retrieval then fetches review, patch-note, news and wiki chunks; the
+agent calls tools for up to 6 rounds; a final call writes the answer, citing documents as
+`[n]` and tool results as `[Tn]`. Every number in an answer should come from a tool output
+or a document. Locally Caddy is absent and Ollama serves the LLM on the GPU.
 
 ## Data sources (all free; join key `appid`)
 
@@ -38,7 +66,7 @@ during cleaning; only derived artefacts (aggregates, embeddings, models) are pub
 Coverage, sampling choices, known gaps and privacy: [docs/DATA_CARD.md](docs/DATA_CARD.md).
 Exploratory analysis: [notebooks/01_eda.ipynb](notebooks/01_eda.ipynb).
 
-## Quick start (host with Docker + NVIDIA Container Toolkit)
+## Quick start: local (host with Docker + NVIDIA Container Toolkit)
 
 ```bash
 cp .env.example .env            # add your STEAM_API_KEY
@@ -325,6 +353,116 @@ claims. They come from the agent's tool-use choices rather than model size, so t
 stays. The 14B's 0.65 here is above its test result (0.40), because these 20 questions
 informed W5's decisions; the test number is the one to quote.
 
+## Hosted deploy (W6)
+
+No free machine runs the whole stack with a 14B-class model, so the hosted version keeps
+everything except the LLM on a free VM and moves the LLM to a free hosted endpoint.
+
+| Piece | Where | Notes |
+| --- | --- | --- |
+| Streamlit app, agent, tools, bge-m3 query embeddings | Oracle A1 VM, 2 OCPU / 12 GB, arm64 | CPU-only image (`docker/app.cloud.Dockerfile`) |
+| Qdrant (713,080 chunks) | same VM, not published | restored from a snapshot of the dev box's collection |
+| LLM | Cloudflare Workers AI, `@cf/qwen/qwen3-30b-a3b-fp8` | OpenAI-compatible API, reasoning on |
+| HTTPS | Caddy, Let's Encrypt certificate for `<ip>.sslip.io` | no domain needed |
+
+The VM uses 3.7 of 12 GB RAM (Qdrant 2.2 GB, the app 1 GB) and 22 GB of disk.
+
+```bash
+# from the dev box, which holds the data and the Qdrant collection
+export SGA_DEPLOY_HOST=ubuntu@<vm ip> SGA_DEPLOY_KEY=~/.ssh/<key>
+scripts/deploy.sh all        # bootstrap Docker + firewall, env, sync, index, up
+scripts/deploy.sh sync && scripts/deploy.sh up    # later: redeploy code
+```
+
+`.env` on the dev box needs `SGA_LLM_BASE_URL` (`https://api.cloudflare.com/client/v4/accounts/<account id>/ai/v1`)
+and `SGA_LLM_API_KEY` (an API token with Workers AI permission); `deploy.sh env` copies only
+those two lines to the VM. The Oracle VCN security list must allow TCP 80 and 443. `sync`
+copies the source, the Parquet tables and the trained models (~750 MB); `index` ships the
+Qdrant collection as a 6.2 GB snapshot; `up` builds the image on the VM, rebuilds
+`sga.duckdb` there (its views hold absolute paths) and loads bge-m3 once.
+
+The same code runs locally against any OpenAI-compatible endpoint:
+`SGA_LLM_PROVIDER=openai SGA_LLM_BASE_URL=... SGA_LLM_API_KEY=... SGA_LLM_MODEL=...`.
+
+**Free allowance.** Workers AI gives 10,000 neurons a day, and the free plan fails requests
+past that. With reasoning on, a question costs about 105 neurons (2,060 for the 20 dev
+questions, 4,282 for the 40 test questions), so about 95 questions a day. The app therefore
+caps questions at 20 per visitor and 90 in total per UTC day, and at 500 characters each.
+A capped visitor can still search the sources without a written answer. The "Thorough"
+(rerank) search is hidden here: the reranker is 2.2 GB and would score 50 passages per
+question on 2 ARM cores.
+
+### Choosing the hosted model
+
+All three configurations answered the 20 dev questions and were judged in one blind batch:
+
+| Dev (20 questions) | Local 14B | Qwen3-30B, reasoning off | Qwen3-30B, reasoning on |
+| --- | --- | --- | --- |
+| Correct / grounded (0–1) | 0.88 / 0.93 | 0.62 / 0.80 | 0.90 / 0.82 |
+| Pass [95% CI] (second judge) | 0.75 [0.55, 0.90] (0.60) | 0.35 [0.15, 0.55] (0.35) | 0.65 [0.45, 0.85] (0.60) |
+| Latency p50 / p95 | 20 s / 30 s | 4 s / 7 s | 17 s / 25 s |
+| Neurons per question | — | ~47 (estimated) | 103 |
+
+- **Reasoning stays on.** Without it Qwen3 misreads its own tool output: "no significant
+  change" next to a significant increase, the story ranked below gameplay when its numbers
+  said the opposite. Against the 14B it was worse on 8 questions and better on none
+  (correct −0.25 [−0.40, −0.12]). With reasoning it matches the 14B (+0.03 [−0.05, +0.12]);
+  without it, it also refused an in-game question the router should accept.
+- **Gemini's free tier was tried and dropped.** Gemini 3.8 Flash works through the same
+  client (its thought signatures are passed back with tool calls), but the free tier allows
+  5 requests a minute per model, about one question a minute for all visitors.
+
+### Test results (hosted, frozen split, run once)
+
+40 questions, hybrid retrieval, Qwen3-30B-A3B with reasoning on Workers AI, commit `9217bbb`,
+judged blind in one batch with the W5 14B test answers.
+
+| Routing exact | Required-tool recall | Unexpected tool | Scope correct | Latency p50 / p95 |
+| --- | --- | --- | --- | --- |
+| 85% | 94% | 0% | 98% | 17.4 s / 28.1 s |
+
+| Test (40 questions) | Local 14B (W5) | Hosted Qwen3-30B |
+| --- | --- | --- |
+| Correct (0–1) [95% CI] | 0.61 [0.49, 0.74] | 0.66 [0.55, 0.78] |
+| Grounded (0–1) [95% CI] | 0.84 [0.74, 0.93] | 0.72 [0.62, 0.82] |
+| Pass [95% CI] | 0.35 [0.20, 0.50] | 0.35 [0.22, 0.50] |
+| Pass, second judge | 0.42 [0.28, 0.57] | 0.38 [0.23, 0.53] |
+
+The two models tie on correctness (hosted − local: +0.05 [−0.06, +0.17], 9 questions better
+and 6 worse). The hosted model grounds less well: about one answer in eight carries a
+detail its evidence doesn't support, such as a significance claim no tool made or a
+confidence bound reported as a ratio, usually without changing the conclusion. The judges
+agree on 92% of correctness grades and 96% of grounding grades (weighted κ 0.94 and 0.95).
+The 14B's pass rate here (0.35) differs from its W5 figure (0.40) because the same answers
+were judged again in a new batch; correctness and grounding moved by 0.05 or less.
+
+## Limitations
+
+- **About 4 answers in 10 are fully right.** The weak areas, local and hosted alike: catalog
+  questions that run the wrong SQL (wrong tag, extra filter, subset instead of catalog),
+  patch-impact questions that test the wrong event date (5 hosted patch questions routed
+  exactly only once), SHAP directions read backwards, and significance claimed for
+  comparisons no tool tested. Answers cite their evidence so a reader can check them.
+- **The data is a snapshot.** Reviews run to November 2024 and cover 299 games with review
+  text (the full Steam catalog is queryable). Aspect complaints are computed on English
+  reviews only.
+- **The demo's capacity is about 90 questions a day**, shared. Question counts live in
+  memory, so a restart mid-day resets them; past the allowance Workers AI refuses requests
+  and the app shows a "usage limit" card.
+- **Free tiers can change.** Oracle has cut its Always Free tier for new accounts before,
+  and Cloudflare sets the neuron allowance. The deploy is reproducible from this repo plus
+  the dev box's data (`scripts/deploy.sh all`), and the local Docker version needs no
+  external service besides the data and model downloads.
+- **Questions sent to the hosted demo go to Cloudflare** for inference. The app keeps a
+  trace of each question and answer on the VM (`data/traces/agent.jsonl`) and no account
+  or chat memory.
+- **The grades come from LLM judges.** Two judges agree closely, but a blind human check in
+  W5 agreed only moderately on correctness (κ 0.58), always in the direction of the judges
+  being stricter.
+- **Data licences:** the demo shows short review and wiki excerpts with a link to their
+  source; wiki text is CC BY-SA 3.0. Author and Steam ids are removed before anything is
+  indexed.
+
 ## Local development (no Docker)
 
 ```bash
@@ -344,11 +482,13 @@ src/steam_game_analyst/
   retrieval/       W2: chunking, embeddings, Qdrant, hybrid + rerank
   ml/              sentiment (TF-IDF + LR, DistilBERT), keyword and DistilBERT aspects, reception (LightGBM + SHAP)
   tools/           W3: query_catalog, review_sentiment, predict_reception, review_trend
-  agent/           W3: LangGraph graph (router, retrieve, agent, tools, answer)
+  agent/           W3: LangGraph graph (router, retrieve, agent, tools, answer); W6: llm.py (Ollama or OpenAI-compatible)
   eval/            W4-5: gold set, retrieval + answer metrics
-  ui/              W5: Streamlit app
+  ui/              W5: Streamlit app; W6: quota.py (daily caps)
 configs/           pipeline.yaml
-docker/            app.Dockerfile
+deploy/            W6: compose.yml + Caddyfile for the hosted VM
+docker/            app.Dockerfile (local, CUDA), app.cloud.Dockerfile (hosted, CPU, multi-arch)
+scripts/           deploy.sh (bootstrap, env, sync, index, up)
 notebooks/         EDA and model notebooks (they write models/)
 models/            trained models + metrics JSON (not committed)
 tests/             pytest (fixture-based)
