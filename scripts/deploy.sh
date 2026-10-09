@@ -61,7 +61,8 @@ sync() {
     log "source, tables and models -> $HOST:$REMOTE_DIR"
     (cd "$ROOT" && git ls-files -z --cached --others --exclude-standard -- . ":!.claude" |
         copy --from0 --files-from=- --ignore-missing-args ./ "$HOST:$REMOTE_DIR/")
-    copy "$ROOT/data/processed/" "$HOST:$REMOTE_DIR/data/processed/"
+    # sga.duckdb holds views with absolute parquet paths: `up` rebuilds it inside the container
+    copy --exclude sga.duckdb "$ROOT/data/processed/" "$HOST:$REMOTE_DIR/data/processed/"
     # trained models only: the Hugging Face cache (bge-m3) downloads on the VM itself
     copy --exclude hf/ "$ROOT/models/" "$HOST:$REMOTE_DIR/models/"
 }
@@ -88,7 +89,11 @@ index() {
 
 up() {
     log "build + start on $HOST"
-    remote "cd $REMOTE_DIR && docker compose -f deploy/compose.yml up -d --build --wait"
+    local compose="docker compose -f deploy/compose.yml"
+    remote "cd $REMOTE_DIR && $compose build app"
+    log "DuckDB views over the parquet files at the container's paths"
+    remote "cd $REMOTE_DIR && $compose stop app && $compose run --rm --no-deps app sga data build duckdb"
+    remote "cd $REMOTE_DIR && $compose up -d --wait"
     log "warm-up: load bge-m3 (downloads once into models/hf) so no visitor waits for it"
     remote "docker exec sga-app python -c 'from steam_game_analyst.cli import _embedder; \
         _embedder(\"cpu\").encode([\"warm-up\"]); print(\"bge-m3 ready\")'"
