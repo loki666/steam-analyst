@@ -51,7 +51,8 @@ Which tool for which question:
   event_date and review_sentiment with split_date set to that date and no date_from/date_to.
 - Is a game trending up or down? review_trend with last_n_months.
 - Which games match criteria / rank best? query_catalog over games_all; a game's overall
-  review ratio is positive_ratio; rank by positive_ratio_lower95 and show n_votes.
+  review ratio is positive_ratio. ORDER BY positive_ratio_lower95 (it only sets the order)
+  and SELECT positive_ratio and n_votes: those are the numbers to report.
 - How would an unreleased or hypothetical game do? predict_reception with the attributes the
   question gives, mapped to Steam tag, genre and category names.
 

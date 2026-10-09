@@ -37,7 +37,8 @@ DESCRIPTIONS = {
         "300-game subset with review text), game_summary, review_monthly, reviews, news. "
         "Prices are in USD. tags/genres/categories are VARCHAR[] lists. positive_ratio is "
         "NULL for games without votes. To rank games by review ratio, ORDER BY "
-        "positive_ratio_lower95 (Wilson lower bound, penalises few votes) and return n_votes."
+        "positive_ratio_lower95 (Wilson lower bound, penalises few votes) but SELECT and "
+        "report positive_ratio and n_votes; the lower bound is not the ratio."
     ),
     "review_sentiment": (
         "Sentiment and aspect distribution (performance, bugs, gameplay, story, price, "
