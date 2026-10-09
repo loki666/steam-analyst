@@ -386,3 +386,16 @@ def test_grouped_citations_are_all_recorded(toolbox):
     )
     out = agent.run("how many games")
     assert [c["id"] for c in out["citations"]] == ["T1"]  # each once; unknown T9 dropped
+
+
+def test_patch_notes_matching_the_question_are_in_the_agent_prompt(toolbox):
+    agent, llm = make_agent(toolbox, [router(tools=["review_trend"]), "DONE", "No data [T1]."])
+    agent.run("Did Cyberpunk 2077 reviews change after Patch 1.5?")
+    system = llm.seen[1][0].content
+    assert 'Cyberpunk 2077 (1091500): 2023-11-14 "Patch 1.5 Notes"' in system
+
+
+def test_no_patch_section_when_nothing_matches(toolbox):
+    agent, llm = make_agent(toolbox, [router(tools=["review_trend"]), "DONE", "Flat [T1]."])
+    agent.run("Are Cyberpunk 2077 reviews trending up?")
+    assert "Patch notes whose titles match the question: none" in llm.seen[1][0].content

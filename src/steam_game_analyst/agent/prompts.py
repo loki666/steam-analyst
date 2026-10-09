@@ -59,6 +59,8 @@ Which tool for which question:
 Games named in the question:
 {games}
 
+{events}
+
 Plan from the router: {plan}
 
 Retrieved documents (already available to the final answer): {chunks}

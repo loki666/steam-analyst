@@ -33,6 +33,7 @@ from steam_game_analyst.citations import cited_ids
 from steam_game_analyst.retrieval.filters import SearchFilters
 from steam_game_analyst.retrieval.query import GameIndex
 from steam_game_analyst.retrieval.rag import _defang, _fit, describe
+from steam_game_analyst.tools.events import patch_candidates
 from steam_game_analyst.tools.registry import TOOL_NAMES, ToolBox
 
 MAX_ITERATIONS = 6
@@ -191,6 +192,17 @@ class Agent:
             for g in games
         )
 
+    @staticmethod
+    def _events_text(events: list[str]) -> str:
+        head = "Patch notes whose titles match the question"
+        if not events:
+            return f"{head}: none"
+        return (
+            f"{head} (for an event the question names, use the date of its release note as "
+            "event_date / split_date, not a date guessed from the question's wording):\n"
+            + "\n".join(f"- {e}" for e in events)
+        )
+
     def router(self, state: AgentState) -> dict[str, Any]:
         q = state["question"]
         games = [
@@ -206,7 +218,14 @@ class Agent:
         if decision is None:
             notes.append("router reply was not valid JSON: default plan (retrieve + tools)")
             decision = RouterDecision(retrieval_query=q)
-        return {"games": games, "route": decision, "plan": decision.plan, "notes": notes}
+        events = patch_candidates(self.toolbox.db, games, q) if decision.in_scope else []
+        return {
+            "games": games,
+            "route": decision,
+            "plan": decision.plan,
+            "events": events,
+            "notes": notes,
+        }
 
     def after_router(self, state: AgentState) -> Literal["refuse", "retrieve", "agent"]:
         route = state["route"]
@@ -253,6 +272,7 @@ class Agent:
             today=self.today.isoformat(),
             data_through=data_end.isoformat() if data_end else "unknown",
             games=self._games_text(state.get("games", [])),
+            events=self._events_text(state.get("events", [])),
             plan=state.get("plan") or "(none)",
             chunks="; ".join(f"[{c['n']}] {c['label']}" for c in state.get("chunks", [])) or "none",
             schema=self._schema(),

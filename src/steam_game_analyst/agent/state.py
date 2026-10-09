@@ -35,6 +35,7 @@ class AgentState(TypedDict, total=False):
     route: RouterDecision
     plan: str
     chunks: list[dict[str, Any]]  # retrieved documents: {n, id, label, text, url}
+    events: list[str]  # news titles matching the question, with dates (tools/events.py)
     messages: Annotated[list[BaseMessage], add_messages]  # the tool-calling loop
     tool_results: list[dict[str, Any]]  # {id: "T1", tool, args, ok, content}
     tool_errors: list[dict[str, Any]]  # {tool, args, error} for calls that were refused
