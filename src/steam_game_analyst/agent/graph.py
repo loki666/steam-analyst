@@ -29,6 +29,7 @@ from pydantic import ValidationError
 
 from steam_game_analyst.agent import prompts
 from steam_game_analyst.agent.state import AgentState, RouterDecision
+from steam_game_analyst.citations import cited_ids
 from steam_game_analyst.retrieval.filters import SearchFilters
 from steam_game_analyst.retrieval.query import GameIndex
 from steam_game_analyst.retrieval.rag import _defang, _fit, describe
@@ -40,7 +41,6 @@ MAX_CALLS_PER_TURN = 5  # a runaway turn of dozens of calls costs minutes on a 1
 RETRIEVE_K = 6
 DOC_BUDGET_TOKENS = 2400  # documents share of the answer prompt (num_ctx 8192)
 TOOL_BUDGET_CHARS = 14_000  # ~4k tokens of tool output, shared by all results
-_CITE = re.compile(r"\[(T?\d+)\]")
 _JSON_OBJ = re.compile(r"\{.*\}", re.S)
 
 
@@ -408,11 +408,8 @@ class Agent:
     ) -> list[dict[str, Any]]:
         by_tool = {t["id"]: t for t in tools}
         by_doc = {str(c["n"]): c for c in chunks}
-        out, seen = [], set()
-        for ref in _CITE.findall(text):
-            if ref in seen:
-                continue
-            seen.add(ref)
+        out = []
+        for ref in cited_ids(text):
             if ref in by_tool:
                 t = by_tool[ref]
                 out.append({"id": ref, "kind": "tool", "tool": t["tool"], "args": t["args"]})

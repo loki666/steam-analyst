@@ -372,3 +372,17 @@ def test_on_step_reports_each_node_and_returns_the_same_final_state(toolbox):
     ref = plain.run("Are Cyberpunk 2077 reviews trending up?")
     assert out["answer"] == ref["answer"] and out["citations"] == ref["citations"]
     assert out["tool_results"] == ref["tool_results"]
+
+
+def test_grouped_citations_are_all_recorded(toolbox):
+    agent, _ = make_agent(
+        toolbox,
+        [
+            router(),
+            call("query_catalog", {"sql": "SELECT count(*) FROM games"}),
+            "DONE",
+            "There are 4 games [T1, T1] and nothing else [T1,T9].",
+        ],
+    )
+    out = agent.run("how many games")
+    assert [c["id"] for c in out["citations"]] == ["T1"]  # each once; unknown T9 dropped

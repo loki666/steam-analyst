@@ -12,8 +12,10 @@ import re
 from dataclasses import dataclass
 from typing import Any, Literal
 
-# one bracket can hold several ids: "[3]", "[T2]", "[3, 2]", "[T1][2]"
-CITE_GROUP = re.compile(r"\[((?:T?\d+)(?:\s*,\s*T?\d+)*)\]")
+from steam_game_analyst.citations import CITE_GROUP, cited_ids
+
+__all__ = ["CITE_GROUP", "cited_ids"]  # re-exported for the UI modules
+
 _ONLY_CITES = re.compile(r"^\s*(?:\[(?:T?\d+)(?:\s*,\s*T?\d+)*\][\s.]*)+$")
 SNIPPET_CHARS = 280
 ARGS_CHARS = 140
@@ -96,15 +98,6 @@ def is_refusal(result: dict[str, Any]) -> bool:
 
 
 # ------------------------------------------------------------------ citations
-def cited_ids(answer: str) -> list[str]:
-    """Ids the answer cites, in reading order, each once ("T2", "4", ...)."""
-    seen: dict[str, None] = {}
-    for group in CITE_GROUP.findall(answer or ""):
-        for ref in group.split(","):
-            seen.setdefault(ref.strip(), None)
-    return list(seen)
-
-
 def snippet(text: str, n: int = SNIPPET_CHARS) -> str:
     flat = _WS.sub(" ", text or "").strip()
     if len(flat) <= n:

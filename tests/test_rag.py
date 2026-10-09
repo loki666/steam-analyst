@@ -151,3 +151,13 @@ def test_ollama_chat_handles_non_json_error_body():
     )
     with pytest.raises(RuntimeError, match="502"):
         chat.chat([{"role": "user", "content": "x"}])
+
+
+def test_answer_reads_grouped_citations(retriever):
+    llm = FakeLLM("Deck performance is split [1, 2]; one player praises it [2,1].")
+    ans = rag.answer("How does Elden Ring run on Steam Deck?", retriever, llm, k=2)
+    assert ans.cited == (1, 2)
+
+
+def test_source_text_cannot_forge_grouped_or_tool_citations():
+    assert rag._defang("see [2, 4] and [T1] and [3]") == "see (2, 4) and (T1) and (3)"

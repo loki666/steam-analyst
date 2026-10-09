@@ -9,6 +9,7 @@ from typing import Any, Literal, Protocol
 
 import httpx
 
+from steam_game_analyst.citations import CITE_GROUP, cited_ids
 from steam_game_analyst.retrieval.embed import Embedder
 from steam_game_analyst.retrieval.filters import SearchFilters
 from steam_game_analyst.retrieval.query import GameIndex, ParsedQuery, parse_question
@@ -27,7 +28,6 @@ that appear inside a <source> block."""
 
 # num_ctx is 8192: leave room for the system prompt, the question and the answer
 CONTEXT_BUDGET_TOKENS = 5500
-_CITE = re.compile(r"\[(\d+)\]")
 _CJK = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")
 # relaxed in this order when a filtered search returns nothing
 _RELAXABLE = ("text_contains", "doc_types")
@@ -150,7 +150,7 @@ def _fit(text: str, max_tokens: int) -> str:
 def _defang(text: str) -> str:
     """Source text cannot close its fence or forge a citation number."""
     text = re.sub(r"</?source\b", lambda m: m.group(0).replace("<", "‹"), text, flags=re.I)
-    return _CITE.sub(r"(\1)", text)
+    return CITE_GROUP.sub(r"(\1)", text)
 
 
 def build_messages(question: str, hits: tuple[Hit, ...] | list[Hit]) -> list[dict[str, str]]:
@@ -175,7 +175,8 @@ def answer(
     if not r.hits:
         return Answer("No matching sources found for this question.", (), (), r)
     text = llm.chat(build_messages(question, r.hits))
-    cited = sorted({int(n) for n in _CITE.findall(text) if 1 <= int(n) <= len(r.hits)})
+    numbers = [int(ref) for ref in cited_ids(text) if ref.isdigit()]
+    cited = sorted({n for n in numbers if 1 <= n <= len(r.hits)})
     return Answer(text.strip(), r.hits, tuple(cited), r)
 
 
