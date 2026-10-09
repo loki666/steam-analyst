@@ -1,0 +1,328 @@
+{
+ "runs": [
+  "data/eval/results/answers_test_hybrid-qwen3cf-think-9217bbb_20261009T072926Z.jsonl",
+  "data/eval/results/answers_test_hybrid-14b-final-cf175e3_20261008T131817Z.jsonl"
+ ],
+ "key": {
+  "663f08cbed9c": {
+   "qid": "a925f798-92cb-5223-97e5-6dc46fb5a82c",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "e9c008092185": {
+   "qid": "f0eb5307-cd16-56f5-81cd-2c9408a87aaa",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "f6683c90a012": {
+   "qid": "f675972a-c438-596e-9e91-578f9b741c67",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "d3f9d36a587a": {
+   "qid": "b983f6a4-4277-58d6-98f5-154709081d9d",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "d0c2918141c1": {
+   "qid": "022eca89-07c1-5dc4-85ec-572d85b45819",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "2cd9552569d5": {
+   "qid": "f5cb4471-d75f-5b31-938c-657572a7feb5",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "30f159d392d8": {
+   "qid": "c581e6a9-d15f-5786-9a91-78c0c309ecb7",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "1f220cbb428a": {
+   "qid": "e118ebed-a57b-5da3-ae0a-1ea6146c7b9a",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "0a2f16c718ed": {
+   "qid": "4084c666-d3ef-55df-92aa-6439aed01c1a",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "ef0770d64afb": {
+   "qid": "e8c770a5-d44f-5215-9a2d-f09263079a3a",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "9e4b31a3415d": {
+   "qid": "c4a9cb99-ca74-5f2b-ab77-14f09ecd7d16",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "e20fe3c8bbcb": {
+   "qid": "814de068-621d-5a16-83da-8b86c785d5b7",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "dfc7c1180b96": {
+   "qid": "987efede-ea68-57be-baa9-b42d322d11cf",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "ec23d39334e1": {
+   "qid": "ee0eeb46-8c6a-5d43-97c3-703b13dd2a7b",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "1df1c805cdb4": {
+   "qid": "15840106-35f3-54c0-98a6-98d852479f6e",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "6679be04c473": {
+   "qid": "3dd16cea-ea6d-537d-bf3a-00b5781c3335",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "9aa1b240dedd": {
+   "qid": "f00f86ec-9b85-56c7-a661-aaa845484c6f",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "319a629a1859": {
+   "qid": "8c331766-cd52-595b-854c-a983e4f222bb",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "896b5c2a1f00": {
+   "qid": "581aac3f-28e4-524a-b203-00a180301fbc",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "a770be26bfd2": {
+   "qid": "2a046f64-e0d2-5073-8492-08635de4c090",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "72f8de89f387": {
+   "qid": "de04efdc-0905-5518-98e4-d5491b104f48",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "252f77a4641f": {
+   "qid": "68d567ef-be4b-53c6-846a-48a1488279df",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "98a02fe047bb": {
+   "qid": "bab6941d-d650-5604-b341-a770955cc217",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "04fa27ed17e0": {
+   "qid": "8c5e4ff8-a947-5d0b-9429-285da1ea01dc",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "7728566b2827": {
+   "qid": "37f312de-7539-5fdf-a885-0329908a387d",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "e57949f44603": {
+   "qid": "df5cf3e6-304a-5bb6-9177-3a49958ae21a",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "8767a7f496b3": {
+   "qid": "e9faeaa6-4a2d-57ae-9da2-98241f57c33a",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "81354aeb08b8": {
+   "qid": "fb11c575-04f9-5951-a6c2-53650ed7d172",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "dc5e6fa76bf8": {
+   "qid": "7f5e1138-9b77-548c-a10d-7d3a15b2bc97",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "4107385dc1a4": {
+   "qid": "b05603dd-7a39-578b-b30f-95e9fc74fbf7",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "b784d4e90c6e": {
+   "qid": "fc567ee9-4ac3-5616-85c5-72ccc4f57086",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "5047fc704b53": {
+   "qid": "c9252235-b5ff-58e0-b3b7-291899c624f3",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "3470d7bbe470": {
+   "qid": "122be573-b17b-5031-9340-9d94f1e3ef46",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "f58422195d46": {
+   "qid": "3b003a75-9342-53c3-a980-9bbef7551793",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "dec9789613c8": {
+   "qid": "cdcfd6c3-1565-5e87-91a3-7768ab416d87",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "4e009723698a": {
+   "qid": "e07ee1a2-6682-5dac-8830-da31a08f906d",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "41e1a83bfed1": {
+   "qid": "b1d6756a-a455-5d93-91a0-b17dfd314604",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "f0656d801e0e": {
+   "qid": "06e40b2e-ead5-5e5b-ad20-ff1df2999dae",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "4b068b597933": {
+   "qid": "75ea054d-fc07-5023-bace-aae30e837a79",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "513acd782203": {
+   "qid": "ee07888c-1145-5715-81de-0511acd2676d",
+   "label": "hybrid-qwen3cf-think-9217bbb"
+  },
+  "c2d65da3650f": {
+   "qid": "a925f798-92cb-5223-97e5-6dc46fb5a82c",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "4806c5622b0f": {
+   "qid": "f0eb5307-cd16-56f5-81cd-2c9408a87aaa",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "b129a749cfb7": {
+   "qid": "f675972a-c438-596e-9e91-578f9b741c67",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "d7e3e66cd894": {
+   "qid": "b983f6a4-4277-58d6-98f5-154709081d9d",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "7e9d922c1654": {
+   "qid": "022eca89-07c1-5dc4-85ec-572d85b45819",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "7557e5adfc3b": {
+   "qid": "f5cb4471-d75f-5b31-938c-657572a7feb5",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "d9d18b308b10": {
+   "qid": "c581e6a9-d15f-5786-9a91-78c0c309ecb7",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "9bc2dc8217b5": {
+   "qid": "e118ebed-a57b-5da3-ae0a-1ea6146c7b9a",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "dc6f8208f25d": {
+   "qid": "4084c666-d3ef-55df-92aa-6439aed01c1a",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "d5dd8a2f5cdf": {
+   "qid": "e8c770a5-d44f-5215-9a2d-f09263079a3a",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "921412448e3f": {
+   "qid": "c4a9cb99-ca74-5f2b-ab77-14f09ecd7d16",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "850ac5c7d831": {
+   "qid": "814de068-621d-5a16-83da-8b86c785d5b7",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "2df8cec002d0": {
+   "qid": "987efede-ea68-57be-baa9-b42d322d11cf",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "fd65416f20fd": {
+   "qid": "ee0eeb46-8c6a-5d43-97c3-703b13dd2a7b",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "dc886e4eb1fa": {
+   "qid": "15840106-35f3-54c0-98a6-98d852479f6e",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "0db7a238da8d": {
+   "qid": "3dd16cea-ea6d-537d-bf3a-00b5781c3335",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "a53effecbf75": {
+   "qid": "f00f86ec-9b85-56c7-a661-aaa845484c6f",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "664b5a450057": {
+   "qid": "8c331766-cd52-595b-854c-a983e4f222bb",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "6b833170bdd7": {
+   "qid": "581aac3f-28e4-524a-b203-00a180301fbc",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "58ff815a4bad": {
+   "qid": "2a046f64-e0d2-5073-8492-08635de4c090",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "a6b5d9d0ced3": {
+   "qid": "de04efdc-0905-5518-98e4-d5491b104f48",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "c51d07171c78": {
+   "qid": "68d567ef-be4b-53c6-846a-48a1488279df",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "29f9ead0ac02": {
+   "qid": "bab6941d-d650-5604-b341-a770955cc217",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "ec26299e42e9": {
+   "qid": "8c5e4ff8-a947-5d0b-9429-285da1ea01dc",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "63b725b7570a": {
+   "qid": "37f312de-7539-5fdf-a885-0329908a387d",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "05a3b5ab093c": {
+   "qid": "df5cf3e6-304a-5bb6-9177-3a49958ae21a",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "12d5f0a69b72": {
+   "qid": "e9faeaa6-4a2d-57ae-9da2-98241f57c33a",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "9ef0809e9bac": {
+   "qid": "fb11c575-04f9-5951-a6c2-53650ed7d172",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "ed161f680818": {
+   "qid": "7f5e1138-9b77-548c-a10d-7d3a15b2bc97",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "1ad6ec1f516f": {
+   "qid": "b05603dd-7a39-578b-b30f-95e9fc74fbf7",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "64114f0c0ad1": {
+   "qid": "fc567ee9-4ac3-5616-85c5-72ccc4f57086",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "0b62bcb56a22": {
+   "qid": "c9252235-b5ff-58e0-b3b7-291899c624f3",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "472fbd8ee68f": {
+   "qid": "122be573-b17b-5031-9340-9d94f1e3ef46",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "ce9d11162713": {
+   "qid": "3b003a75-9342-53c3-a980-9bbef7551793",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "a2140143a15c": {
+   "qid": "cdcfd6c3-1565-5e87-91a3-7768ab416d87",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "4add470a63db": {
+   "qid": "e07ee1a2-6682-5dac-8830-da31a08f906d",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "a6b92c0901b2": {
+   "qid": "b1d6756a-a455-5d93-91a0-b17dfd314604",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "55e3161d647b": {
+   "qid": "06e40b2e-ead5-5e5b-ad20-ff1df2999dae",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "df0ccfdbf5b3": {
+   "qid": "75ea054d-fc07-5023-bace-aae30e837a79",
+   "label": "hybrid-14b-final-cf175e3"
+  },
+  "99547a07630b": {
+   "qid": "ee07888c-1145-5715-81de-0511acd2676d",
+   "label": "hybrid-14b-final-cf175e3"
+  }
+ }
+}
