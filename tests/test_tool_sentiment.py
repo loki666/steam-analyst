@@ -119,3 +119,53 @@ def test_weights_use_the_whole_sample_not_the_window_or_one_language():
     )
     w = stratum_weights(sample, population)
     assert w["weight"].to_list() == [100.0] * 4
+
+
+# ---------------------------------------------------------------- window widening
+from steam_game_analyst.tools.sentiment import choose_window  # noqa: E402
+
+SPLIT = date(2023, 9, 21)
+
+
+def counter(per_month_before: float, per_month_after: float):
+    """Fake effective-n per side: proportional to the months each side covers."""
+
+    def n_eff(start: date, end: date) -> tuple[float, float]:
+        before = (SPLIT - start).days / 30.4 * per_month_before
+        after = (end - SPLIT).days / 30.4 * per_month_after
+        return before, after
+
+    return n_eff
+
+
+def test_a_window_with_enough_reviews_is_kept():
+    start, end, used = choose_window(counter(50, 50), SPLIT, date(2023, 8, 21), date(2023, 10, 21))
+    assert (start, end, used) == (date(2023, 8, 21), date(2023, 10, 21), None)
+
+
+def test_a_thin_window_widens_to_six_months_each_side():
+    start, end, used = choose_window(counter(10, 10), SPLIT, date(2023, 8, 21), date(2023, 10, 21))
+    assert used == 6 and (start, end) == (date(2023, 3, 21), date(2024, 3, 21))
+
+
+def test_still_thin_at_six_months_widens_to_twelve_and_stops():
+    start, end, used = choose_window(counter(1, 1), SPLIT, date(2023, 8, 21), date(2023, 10, 21))
+    assert used == 12 and (start, end) == (date(2022, 9, 21), date(2024, 9, 21))
+
+
+def test_one_thin_side_is_enough_to_widen():
+    _, _, used = choose_window(counter(100, 2), SPLIT, date(2023, 6, 21), date(2023, 12, 21))
+    assert used == 12  # 6 months after hold 12 reviews; 12 months hold 24 (still thin) -> cap
+
+
+def test_a_wide_requested_window_is_never_shrunk():
+    start, end, used = choose_window(counter(1, 1), SPLIT, date(2021, 9, 21), date(2025, 9, 21))
+    assert (start, end, used) == (date(2021, 9, 21), date(2025, 9, 21), None)
+
+
+def test_the_tool_reports_a_widened_window(tool):
+    out = tool.run(SentimentArgs(appid=1091500, split_date=date(2022, 6, 1), window_months=1))
+    widened = out["window_widened"]
+    assert widened["requested"] == {"from": "2022-05-01", "to": "2022-07-01"}
+    assert widened["months_each_side"] in (6, 12)
+    assert "fewer than 30" in widened["reason"]

@@ -13,6 +13,7 @@ classifier, so a positive review can still carry a performance complaint:
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import date, datetime, time
 from pathlib import Path
 from typing import Any, Protocol
@@ -29,6 +30,12 @@ from steam_game_analyst.tools.catalog import CatalogDB
 LANGUAGE = "english"
 MIN_SIDE_DAYS = 28  # a before/after comparison needs about a month on each side
 MIN_REVIEWS = 30  # below this the window is flagged as a small sample
+# A before/after split with fewer than MIN_REVIEWS effective reviews on a side can hardly
+# detect anything: on 300 patch notes of games outside the eval set, 84% of 1-month and 39%
+# of 3-month windows were that thin, 15% at 6 months, 12% at 12. Thin splits widen
+# symmetrically to these months on each side; past 12 the windows mostly add other patches.
+WIDEN_MONTHS = (6, 12)
+DAYS_PER_MONTH = 30.4
 EXAMPLES_PER_ASPECT = 2
 EXAMPLE_CHARS = 160
 
@@ -87,6 +94,25 @@ class SentimentArgs(BaseModel):
         return self
 
 
+def choose_window(
+    n_eff: Callable[[date, date], tuple[float, float]], split: date, start: date, end: date
+) -> tuple[date, date, int | None]:
+    """The (start, end) to compare around `split`, widened when a side is thin.
+
+    n_eff(start, end) -> effective reviews (before, after). Returns the window and the
+    months on each side it was widened to (None when kept). A window already as wide as the
+    widest step is kept even when thin."""
+    half = min((split - start).days, (end - split).days) / DAYS_PER_MONTH
+    used = None
+    for months in WIDEN_MONTHS:
+        if min(n_eff(start, end)) >= MIN_REVIEWS:
+            break
+        if months <= half:
+            continue
+        start, end, used = _shift(split, -months), _shift(split, months), months
+    return start, end, used
+
+
 def stratum_weights(sample: pl.DataFrame, population: pl.DataFrame) -> pl.DataFrame:
     """sample (appid, year, voted_up, ...) + population (appid, year, n_reviews, n_positive)
     -> sample with a `weight` column: population stratum size / sampled stratum size."""
@@ -114,6 +140,24 @@ def stratum_weights(sample: pl.DataFrame, population: pl.DataFrame) -> pl.DataFr
             pl.col("N").is_null().alias("unweighted"),
         )
         .drop("n", "N")
+    )
+
+
+def _in_window(q: pl.DataFrame, start: date | None, end: date | None) -> pl.DataFrame:
+    if start:
+        q = q.filter(pl.col("created_at") >= datetime.combine(start, time.min))
+    if end:
+        q = q.filter(pl.col("created_at") <= datetime.combine(end, time.max))
+    return q
+
+
+def _side_n_eff(q: pl.DataFrame, split: date, start: date, end: date) -> tuple[float, float]:
+    """Effective reviews before and after `split` within [start, end]."""
+    df = _in_window(q, start, end)
+    after = df["created_at"] >= datetime.combine(split, time.min)
+    return (
+        stats.effective_n(df.filter(~after)["weight"].to_list()),
+        stats.effective_n(df.filter(after)["weight"].to_list()),
     )
 
 
@@ -215,11 +259,15 @@ class ReviewSentiment:
         )
         weighted = stratum_weights(full, self._population(args.appid)) if full.height else full
         q = weighted.filter(pl.col("language") == LANGUAGE)
-        if args.date_from:
-            q = q.filter(pl.col("created_at") >= datetime.combine(args.date_from, time.min))
-        if args.date_to:
-            q = q.filter(pl.col("created_at") <= datetime.combine(args.date_to, time.max))
-        df = q
+        start, end, widened = args.date_from, args.date_to, None
+        if args.split_date and start and end:
+            start, end, widened = choose_window(
+                lambda a, b: _side_n_eff(q, args.split_date, a, b),  # type: ignore[arg-type]
+                args.split_date,
+                start,
+                end,
+            )
+        df = _in_window(q, start, end)
         if df.is_empty():
             return {
                 "game": game,
@@ -248,6 +296,21 @@ class ReviewSentiment:
                     f"{args.window_months} months on each side instead"
                 }
                 if args.window_adjusted
+                else {}
+            ),
+            **(
+                {
+                    "window_widened": {
+                        "requested": {
+                            "from": args.date_from.isoformat(),  # type: ignore[union-attr]
+                            "to": args.date_to.isoformat(),  # type: ignore[union-attr]
+                        },
+                        "months_each_side": widened,
+                        "reason": f"fewer than {MIN_REVIEWS} effective reviews on a side of "
+                        "split_date in the requested window",
+                    }
+                }
+                if widened
                 else {}
             ),
             "positive_share": _r(_wmean(up, w)),

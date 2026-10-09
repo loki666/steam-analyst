@@ -45,7 +45,10 @@ DESCRIPTIONS = {
         "controls) of one game's English reviews in a date window: share of reviews "
         "mentioning each aspect, share of those mentions that are negative (complaints), "
         "and example review excerpts. Give split_date (e.g. a patch release date) to compare "
-        "aspect complaints before vs after it with a significance test. Needs the appid."
+        "aspect complaints before vs after it with a significance test. A split with fewer than "
+        "30 effective reviews on a side is widened to 6, then 12 months each side; the "
+        "output's window_widened says so, and the answer must report the window used. "
+        "Needs the appid."
     ),
     "predict_reception": (
         "Predict how a (possibly unreleased) game will be received from launch metadata: "
