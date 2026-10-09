@@ -1,0 +1,5 @@
+# HTTPS in front of Streamlit; the certificate comes from Let's Encrypt for $SITE_ADDRESS.
+{$SITE_ADDRESS} {
+	encode gzip
+	reverse_proxy app:8501
+}

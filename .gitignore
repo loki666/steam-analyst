@@ -27,3 +27,6 @@ models/*
 
 # reference code (not part of the project)
 _ref/
+
+# hosted deploy: Qdrant snapshots copied to the VM
+deploy/snapshots/

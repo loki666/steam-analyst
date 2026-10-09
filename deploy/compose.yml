@@ -1,0 +1,75 @@
+# Steam Game Analyst — hosted deploy (Oracle A1 arm64 VM, no GPU).
+#
+#   docker compose -f deploy/compose.yml up -d --build
+#
+# The LLM is Cloudflare Workers AI (Qwen3-30B-A3B, reasoning on); Qdrant and the app run here,
+# Caddy serves HTTPS on $SITE_ADDRESS. Secrets live in deploy/.env on the VM (never committed):
+#   SGA_LLM_BASE_URL=https://api.cloudflare.com/client/v4/accounts/<account id>/ai/v1
+#   SGA_LLM_API_KEY=<Workers AI token>
+#   SITE_ADDRESS=92-5-85-76.sslip.io   (or your own domain)
+# Data and models are copied from the dev box by scripts/deploy.sh.
+
+name: sga
+
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.19.2 # same version as the dev box, so its snapshot restores
+    container_name: sga-qdrant
+    restart: unless-stopped
+    volumes:
+      - qdrant_data:/qdrant/storage
+      - ./snapshots:/qdrant/snapshots
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/6333' || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: ..
+      dockerfile: docker/app.cloud.Dockerfile
+    image: steam-game-analyst-cloud:latest
+    container_name: sga-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SGA_LLM_PROVIDER: openai
+      SGA_LLM_MODEL: "@cf/qwen/qwen3-30b-a3b-fp8"
+      SGA_LLM_REASONING: "true"
+      # ~103 neurons a question against 10,000 free a day: stop just short of the allowance
+      SGA_UI_DAILY_QUESTIONS_PER_VISITOR: "20"
+      SGA_UI_DAILY_QUESTIONS_TOTAL: "90"
+      QDRANT_URL: http://qdrant:6333
+      SGA_DATA_DIR: /app/data
+      SGA_MODELS_DIR: /app/models
+      SGA_QUERY_EMBED_DEVICE: cpu
+      SGA_RERANK_DEVICE: cpu
+      HF_HOME: /app/models/hf
+    volumes:
+      - ../data:/app/data
+      - ../models:/app/models
+    depends_on:
+      qdrant:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2
+    container_name: sga-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in deploy/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  qdrant_data:
+  caddy_data:
+  caddy_config:

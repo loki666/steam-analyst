@@ -1,0 +1,14 @@
+# keep build contexts small: data, models and local envs are mounted or copied, never baked in
+.git
+.venv
+.env
+**/.env
+data
+models
+notebooks
+_ref
+deploy/snapshots
+**/__pycache__
+.mypy_cache
+.ruff_cache
+.pytest_cache
