@@ -463,6 +463,14 @@ away from the eval set, and none was revised after its dev result.
   worse), and the 3 of 5 questions that got worse had no matching patch note, so the change
   looks like run-to-run variation. With the date right, the next weakness shows: the agent
   sometimes picks a before/after window too short to show a change.
+- **Thin before/after windows are widened.** The agent often narrows `review_sentiment`'s
+  window (on dev, 19 of 33 split calls used 1 or 3 months instead of the default 6). On 300
+  patch notes of games outside the eval set, a split had fewer than 30 English sample
+  reviews on a side in 84% of 1-month windows, 39% at 3 months, 15% at 6 and 12% at 12.
+  The tool now widens such a split symmetrically to 6, then 12 months each side, and says
+  so in its output (`window_widened`); a wider requested window is never shrunk. On the dev
+  run after the change the rule never fired: the 14B asked for 3 to 6 months and every
+  side had at least 36 effective reviews, so dev cannot measure it.
 
 ## Limitations
 
