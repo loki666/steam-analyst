@@ -212,6 +212,11 @@ class CatalogDB:
                 cur = self._con.execute(self._bounded(sql, limit + 1))
                 rows = cur.fetchall()
                 columns = [d[0] for d in cur.description or []]
+                total = (
+                    self._con.execute(f"SELECT count(*) FROM ({sql}) AS q").fetchall()[0][0]
+                    if len(rows) > limit
+                    else None
+                )
             except duckdb.InterruptException as e:
                 raise SqlGuardError(f"query took longer than {self.TIMEOUT_S:.0f}s") from e
             except duckdb.Error as e:
@@ -221,11 +226,13 @@ class CatalogDB:
                 raise SqlGuardError(msg) from e
             finally:
                 timer.cancel()
+        # counts first: the registry cuts long outputs by characters, from the end
         out: dict[str, Any] = {
             "columns": columns,
-            "rows": [[_jsonable(v) for v in r] for r in rows[:limit]],
             "row_count": min(len(rows), limit),
-            "truncated": len(rows) > limit,
+            "truncated": total is not None,
+            **({"total_rows": total} if total is not None else {}),
+            "rows": [[_jsonable(v) for v in r] for r in rows[:limit]],
         }
         if not rows:
             out["hint"] = (

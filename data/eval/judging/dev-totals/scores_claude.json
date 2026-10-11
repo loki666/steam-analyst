@@ -1,0 +1,511 @@
+{
+ "judge": "claude",
+ "n_items": 40,
+ "unjudged": [],
+ "scores": {
+  "hybrid-14b-totals": {
+   "overall": {
+    "n": 20,
+    "correct": {
+     "mean": 0.775,
+     "lo": 0.65,
+     "hi": 0.9
+    },
+    "grounded": {
+     "mean": 0.825,
+     "lo": 0.7,
+     "hi": 0.95
+    },
+    "cites": {
+     "mean": 0.9,
+     "lo": 0.75,
+     "hi": 1.0
+    },
+    "pass": {
+     "mean": 0.5,
+     "lo": 0.29875000000000007,
+     "hi": 0.75
+    }
+   },
+   "by_category": {
+    "catalog": {
+     "n": 3,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "multi": {
+     "n": 1,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 0.5,
+      "lo": 0.5,
+      "hi": 0.5
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     }
+    },
+    "no_data": {
+     "n": 1,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "out_of_scope": {
+     "n": 1,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "patch": {
+     "n": 3,
+     "correct": {
+      "mean": 0.8333333333333334,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     }
+    },
+    "rag": {
+     "n": 3,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 0.8333333333333334,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 0.3333333333333333,
+      "lo": 0.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     }
+    },
+    "reception": {
+     "n": 2,
+     "correct": {
+      "mean": 0.5,
+      "lo": 0.5,
+      "hi": 0.5
+     },
+     "grounded": {
+      "mean": 0.75,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     }
+    },
+    "sentiment": {
+     "n": 3,
+     "correct": {
+      "mean": 0.3333333333333333,
+      "lo": 0.0,
+      "hi": 0.5
+     },
+     "grounded": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     }
+    },
+    "trend": {
+     "n": 3,
+     "correct": {
+      "mean": 0.6666666666666666,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 0.6666666666666666,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.3333333333333333,
+      "lo": 0.0,
+      "hi": 1.0
+     }
+    }
+   }
+  },
+  "hybrid-14b-widen": {
+   "overall": {
+    "n": 20,
+    "correct": {
+     "mean": 0.75,
+     "lo": 0.624375,
+     "hi": 0.875
+    },
+    "grounded": {
+     "mean": 0.75,
+     "lo": 0.6,
+     "hi": 0.875
+    },
+    "cites": {
+     "mean": 0.9,
+     "lo": 0.75,
+     "hi": 1.0
+    },
+    "pass": {
+     "mean": 0.45,
+     "lo": 0.25,
+     "hi": 0.65
+    }
+   },
+   "by_category": {
+    "catalog": {
+     "n": 3,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "multi": {
+     "n": 1,
+     "correct": {
+      "mean": 0.5,
+      "lo": 0.5,
+      "hi": 0.5
+     },
+     "grounded": {
+      "mean": 0.5,
+      "lo": 0.5,
+      "hi": 0.5
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     }
+    },
+    "no_data": {
+     "n": 1,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "out_of_scope": {
+     "n": 1,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     }
+    },
+    "patch": {
+     "n": 3,
+     "correct": {
+      "mean": 0.6666666666666666,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 0.5,
+      "lo": 0.5,
+      "hi": 0.5
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     }
+    },
+    "rag": {
+     "n": 3,
+     "correct": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 0.8333333333333334,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 0.3333333333333333,
+      "lo": 0.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     }
+    },
+    "reception": {
+     "n": 2,
+     "correct": {
+      "mean": 0.5,
+      "lo": 0.5,
+      "hi": 0.5
+     },
+     "grounded": {
+      "mean": 0.75,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     }
+    },
+    "sentiment": {
+     "n": 3,
+     "correct": {
+      "mean": 0.3333333333333333,
+      "lo": 0.0,
+      "hi": 0.5
+     },
+     "grounded": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+     }
+    },
+    "trend": {
+     "n": 3,
+     "correct": {
+      "mean": 0.8333333333333334,
+      "lo": 0.5,
+      "hi": 1.0
+     },
+     "grounded": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     },
+     "cites": {
+      "mean": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+     },
+     "pass": {
+      "mean": 0.6666666666666666,
+      "lo": 0.0,
+      "hi": 1.0
+     }
+    }
+   }
+  }
+ },
+ "vs_baseline": {
+  "hybrid-14b-totals": {
+   "n": 20,
+   "correct": {
+    "mean": 0.025,
+    "lo": -0.05,
+    "hi": 0.1,
+    "better": 2,
+    "worse": 1
+   },
+   "pass": {
+    "mean": 0.05,
+    "lo": -0.1,
+    "hi": 0.25,
+    "better": 2,
+    "worse": 1
+   }
+  }
+ },
+ "agreement": {
+  "correct": {
+   "n": 40,
+   "exact": 0.85,
+   "kappa_w": 0.783001808318264
+  },
+  "grounded": {
+   "n": 40,
+   "exact": 0.7,
+   "kappa_w": 0.513184584178499
+  },
+  "cites": {
+   "n": 40,
+   "exact": 0.95,
+   "kappa_w": 0.6428571428571428
+  }
+ }
+}

@@ -76,6 +76,19 @@ def test_check_sql_strips_trailing_semicolon_and_rejects_long_queries():
         check_sql("SELECT " + "1+" * 3000 + "1")
 
 
+def test_truncated_result_reports_the_total_before_the_rows(db):
+    total = db.query("SELECT count(*) FROM games")["rows"][0][0]
+    res = db.query("SELECT name FROM games", limit=2)
+    assert res["truncated"] is True and res["total_rows"] == total > 2
+    # the registry cuts long outputs by characters: the total must come before the rows
+    assert list(res).index("total_rows") < list(res).index("rows")
+
+
+def test_complete_result_has_no_total(db):
+    res = db.query("SELECT name FROM games", limit=200)
+    assert res["truncated"] is False and "total_rows" not in res
+
+
 def test_row_limit_is_capped(db):
     res = db.query("SELECT r.appid FROM reviews r, games g", limit=10_000)  # 480 rows
     assert len(res["rows"]) == CatalogDB.MAX_ROWS
