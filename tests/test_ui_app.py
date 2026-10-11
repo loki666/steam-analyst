@@ -58,7 +58,7 @@ def test_empty_state_offers_example_questions(app):
     assert not at.exception
     assert any("Ask about a Steam game" in m.value for m in at.markdown)
     keys = [b.key for b in at.button if (b.key or "").startswith("example-")]
-    assert keys == [f"example-{i}" for i in range(4)]
+    assert keys == [f"example-{i}" for i in range(len(render.EXAMPLES))]
 
 
 def test_an_answered_question_renders_cards_sources_and_trace(app, monkeypatch):

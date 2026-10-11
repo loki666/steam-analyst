@@ -30,6 +30,10 @@ EXAMPLES = (
     "Are reviews for Valheim trending up or down over the last 12 months?",
     "A co-op survival game at $25 with crafting and an open world launches in November 2026: "
     "how is it likely to be received?",
+    "Which roguelikes under $20 released since 2023 have the best reviews?",
+    "How does building stability work in Valheim?",
+    "How does breeding work in Palworld?",
+    "What changed in Valheim's 1.0 release?",
 )
 USER_AVATAR = ":material/person:"
 BOT_AVATAR = ":material/insights:"
