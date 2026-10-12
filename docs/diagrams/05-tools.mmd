@@ -1,0 +1,12 @@
+flowchart LR
+    AG[Agent] --> T1 & T2 & T3 & T4
+    T1["query_catalog(sql)<br/>sandboxed read-only SELECT<br/>Wilson lower bound for ranking"]
+    T2["review_trend(appid, event_date?)<br/>WLS trend · binomial change point<br/>before/after two-proportion test"]
+    T3["review_sentiment(appid, split_date?)<br/>DistilBERT polarity + aspect lexicon<br/>reweighted to population · n_eff ≥ 30"]
+    T4["predict_reception(features)<br/>LightGBM bucket probabilities<br/>TreeSHAP top features"]
+    T1 --> V1[(games_all · games<br/>game_summary · …)]
+    T2 --> V2[(review_monthly<br/>population counts)]
+    T3 --> V3[(reviews sample<br/>+ review_volume weights)]
+    T3 --> M1[[DistilBERT<br/>score cache]]
+    T4 --> M2[[LightGBM model<br/>dev/publisher priors]]
+    EV[events.py<br/>matching patch titles + dates] -.feeds event dates.-> AG

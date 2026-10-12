@@ -1,0 +1,15 @@
+flowchart LR
+    U([Browser]) -->|HTTPS| C[Caddy<br/>hosted only]
+    C --> UI
+    subgraph APP["App container"]
+        UI[Streamlit UI<br/>citations · tool cards · trace]
+        UI --> G[LangGraph agent]
+        G --> R[Retriever<br/>bge-m3 + BM25 · RRF]
+        G --> T[4 data-science tools]
+        T --> M[Models<br/>DistilBERT · LightGBM + SHAP]
+    end
+    G -->|router · tool calls · answer| LLM{{LLM}}
+    LLM -.local.-> O[Ollama on GPU<br/>Qwen 2.5 14B]
+    LLM -.hosted.-> W[Cloudflare Workers AI<br/>Qwen3-30B-A3B]
+    R --> Q[(Qdrant<br/>713k chunks<br/>dense + sparse)]
+    T --> D[(DuckDB<br/>over Parquet)]

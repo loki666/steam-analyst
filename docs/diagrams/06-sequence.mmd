@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    actor User
+    participant UI as Streamlit
+    participant G as LangGraph
+    participant L as LLM
+    participant R as Retriever / Qdrant
+    participant T as Tools / DuckDB
+    User->>UI: "Did performance complaints drop after patch 2.0 of Cyberpunk 2077?"
+    UI->>G: run (background thread, live steps)
+    G->>L: router prompt
+    L-->>G: in scope, needs retrieval, tools [review_sentiment, review_trend]
+    G->>R: hybrid search, filtered to appid 1091500
+    R-->>G: 6 chunks (patch notes, reviews)
+    G->>L: agent prompt + matching patch titles with dates
+    L-->>G: tool calls with split_date / event_date
+    G->>T: review_sentiment, review_trend
+    T-->>G: aspect shares before/after, p-values, trend
+    G->>L: answer prompt (evidence: tools + sources)
+    L-->>G: answer citing [T1] [T2] [1] [3]
+    G-->>UI: answer, tool cards, sources, trace
+    UI-->>User: rendered answer + charts

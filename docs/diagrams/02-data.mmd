@@ -1,0 +1,21 @@
+flowchart LR
+    subgraph SRC["Free sources (join key: appid)"]
+        S1[FronkonGames<br/>catalog]
+        S2[Mendeley<br/>31M reviews]
+        S3[Steam Web API<br/>patch notes / news]
+        S4[Fandom wikis<br/>MediaWiki API]
+    end
+    S1 --> CL[clean · transform<br/>drop author ids<br/>lingua language tags]
+    S2 --> CL
+    CL --> SUB[subset<br/>300 games · 2020–2024<br/>genre quota · 1,500 reviews/game<br/>stratified by year × voted_up]
+    S3 --> SUB
+    S4 --> SUB
+    CL --> VOL[review_volume<br/>population counts<br/>every cleaned review]
+    SUB --> PQ[(Parquet<br/>games_all · games<br/>reviews · news · wiki)]
+    VOL --> PQ
+    PQ --> DDB[(sga.duckdb<br/>views + review_monthly<br/>+ game_summary)]
+    PQ --> CH[chunking<br/>review = 1 chunk<br/>news by paragraph<br/>wiki by section]
+    CH --> EMB[bge-m3 dense<br/>+ BM25 sparse]
+    EMB --> QD[(Qdrant)]
+    PQ --> TR[train<br/>sentiment · aspects · reception]
+    TR --> MOD[(models/<br/>+ sentiment score cache)]

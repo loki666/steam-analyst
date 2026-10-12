@@ -1,0 +1,18 @@
+flowchart TB
+    subgraph RET["Retrieval eval"]
+        direction LR
+        C1[sampled chunks] --> SY[LLM writes 1 question<br/>per chunk]
+        SY --> SP[hash split<br/>dev 107 · test 88]
+        SP --> RUN1[bm25 · dense · hybrid · rerank<br/>top 10 each]
+        RUN1 --> POOL[pooled, blind<br/>Claude grades 0–2]
+        POOL --> MET1["hit@k · MRR · nDCG<br/>bootstrap CIs"]
+    end
+    subgraph ANS["Answer eval"]
+        direction LR
+        QS[60 hand-reviewed questions<br/>key points computed from data] --> RUN2[agent run]
+        RUN2 --> RT[routing exact · tool recall<br/>latency p50/p95]
+        RUN2 --> J[two blind Claude judges<br/>correct · grounded · cites]
+        J --> PASS[pass = correct 2 & grounded 2]
+        J --> AGR[judge agreement κ<br/>+ blind human check]
+    end
+    RET ~~~ ANS

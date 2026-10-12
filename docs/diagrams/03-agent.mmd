@@ -1,0 +1,14 @@
+flowchart TB
+    S((start)) --> RO[router<br/>JSON plan: in_scope · needs_retrieval<br/>retrieval_query · tools · plan]
+    RO -->|out of scope| RF[refuse] --> E((end))
+    RO -->|needs quoted text| RE[retrieve<br/>hybrid search, k = 6<br/>filtered to named games]
+    RO -->|tools only| AG
+    RE --> AG[agent<br/>LLM with 4 tools bound<br/>+ matching patch titles<br/>malformed calls fed back and retried]
+    AG -->|tool calls, ≤ 5 per round| TO[tools<br/>pydantic validation<br/>unseen appids rejected]
+    TO -->|results or validation errors| AG
+    AG -->|no more calls| AN
+    TO -->|cap: 6 rounds or 4 errors| AN[answer<br/>cites docs as n, tools as Tn<br/>uncited answer rewritten once]
+    AN --> E
+    style RO fill:#fff4d6,stroke:#c9a227
+    style AN fill:#e3f5e1,stroke:#4c9a4a
+    style RF fill:#fde2e1,stroke:#c0504d

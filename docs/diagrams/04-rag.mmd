@@ -1,0 +1,21 @@
+flowchart TB
+    Q[Question] --> P[parse_question<br/>game names via GameIndex<br/>filters: hours, 'mentioning X', since date]
+    P --> F[SearchFilters<br/>appids · doc_type · date · language<br/>recommended · playtime]
+    Q --> E[bge-m3 embedding]
+    Q --> B[BM25 tokens<br/>Qdrant supplies IDF]
+    E --> DL[dense leg<br/>top ≥ 50]
+    B --> SL[sparse leg<br/>top ≥ 50]
+    F --> DL
+    F --> SL
+    DL --> RRF[Reciprocal Rank Fusion]
+    SL --> RRF
+    RRF --> EMPTY{hits?}
+    EMPTY -->|none| RLX[relax filters<br/>text_contains, then doc_types] --> RRF
+    EMPTY -->|yes| RR{mode = rerank?}
+    RR -->|yes| CE[bge-reranker-base<br/>cross-encoder]
+    RR -->|no, default| K[top k = 6]
+    CE --> K
+    K --> CTX[fit to 2,400-token budget<br/>defang · label source]
+    CTX --> A[answer prompt]
+    style RRF fill:#e8f0fe,stroke:#4a6fd1
+    style K fill:#e8f0fe,stroke:#4a6fd1

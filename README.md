@@ -15,7 +15,7 @@ free Oracle Cloud ARM VM with a free hosted LLM (Qwen3-30B-A3B on Cloudflare Wor
 > the hosted deploy (W6) work end to end. On the frozen test split 35–42% of answers are
 > fully correct and grounded, with the local and the hosted model alike
 > ([local](#end-to-end-evaluation-w5), [hosted](#hosted-deploy-w6)). See `docs/PRD.md` for
-> the plan.
+> the plan and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for diagrams of every layer.
 
 ## Stack
 
